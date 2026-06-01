@@ -1,0 +1,214 @@
+/* Register the bundled font so it can be used by name in font-family stacks. */
+@font-face {
+  font-family: 'LyonArabicText';
+  src: url('./assets/fonts/LyonArabicText-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LyonArabicText';
+  src: url('./assets/fonts/LyonArabicText-SemiBold.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LyonArabicText';
+  src: url('./assets/fonts/LyonArabicText-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LyonArabicText';
+  src: url('./assets/fonts/LyonArabicText-Bold.otf') format('opentype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LyonArabicDisplay';
+  src: url('./assets/fonts/LyonArabicDisplay-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LyonArabicDisplay';
+  src: url('./assets/fonts/LyonArabicDisplay-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LamaSans';
+  src: url('./assets/fonts/LamaSans-SemiBold.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LamaSans';
+  src: url('./assets/fonts/LamaSans-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LamaSans';
+  src: url('./assets/fonts/LamaSans-BlackCondensed.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Dubai';
+  src: url('./assets/fonts/Dubai-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Dubai';
+  src: url('./assets/fonts/Dubai-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Dubai';
+  src: url('./assets/fonts/Dubai-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'PlayfairDisplay';
+  src: url('./assets/fonts/PlayfairDisplay-SemiBold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'PragatiNarrow';
+  src: url('./assets/fonts/PragatiNarrow-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'PragatiNarrow';
+  src: url('./assets/fonts/PragatiNarrow-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* --font-en: 'PragatiNarrow', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  --font-ar: 'LyonArabicText', 'Cairo', 'Tajawal', 'Arial', sans-serif; */
+
+  --font-en: 'LamaSans', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  --font-ar: 'LamaSans', 'Cairo', 'Tajawal', 'Arial', sans-serif;
+
+  --font-base: var(--font-ar);
+
+  font-family: var(--font-base);
+  line-height: 1.5;
+  font-weight: 400;
+
+  /*
+    Force LIGHT theme at the browser/UA level.
+    This prevents devices in Dark Mode from automatically changing built-in UI
+    (form controls, scrollbars, etc.) based on `prefers-color-scheme`.
+  */
+  color-scheme: light;
+  color: #111827;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Ensure the app can use full viewport width/height.
+   overflow-x: hidden is intentionally set on body ONLY (not html).
+   Setting it on html activates html as the scroll container, which breaks
+   MUI's scroll-lock mechanism — Modal/Dialog/Drawer sets `body { overflow: hidden }`
+   to freeze the page, but if html is the scroll container that lock is ignored
+   and the background page remains scrollable while a dialog is open. */
+body {
+  overflow-x: hidden;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+}
+
+/* Remove default spacing that can make layouts look "boxed in". */
+body {
+  margin: 0;
+  background: #ffffff;
+  color: #111827;
+}
+
+/* Language-specific font family overrides update --font-base */
+html[lang='en'] {
+  --font-base: var(--font-en);
+  font-family: var(--font-base);
+}
+
+html[lang='ar'] {
+  --font-base: var(--font-ar);
+  font-family: var(--font-base);
+}
+
+/* Custom Scrollbar Styling */
+/* Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 12px; /* Width of the vertical scrollbar */
+  height: 12px; /* Height of the horizontal scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: #ffffff; /* Updated track background to white */
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3698BF; /* Updated to palette light blue */
+  border-radius: 6px;
+  border: 2px solid #ffffff; /* Add border to create spacing effect from track */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0367A6; /* Updated to palette dark blue for hover */
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: #024a78; /* Even darker blue when clicked */
+}
+
+/* Firefox scrollbar styling */
+* {
+  scrollbar-width: thin; /* thin, auto, or none */
+  scrollbar-color: #0367A6 #ffffff; /* Updated thumb color to palette dark blue */
+}

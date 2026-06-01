@@ -1,0 +1,199 @@
+[
+    {
+        "fieldId": 107,
+        "formId": 16,
+        "fieldKey": "KPI_0076",
+        "labelEn": "Total number of government services in Aqaba that are accessible online, updated anually",
+        "labelAr": "العدد الإجمالي للخدمات الحكومية في العقبة التي يمكن الوصول إليها عبر الإنترنت، يتم تحديثها سنويًا",
+        "dataType": {
+            "dataTypeId": 1,
+            "typeKey": "INTEGER",
+            "typeName": "Integer"
+        },
+        "controlType": {
+            "controlTypeId": 2,
+            "controlKey": "NUMBER",
+            "controlName": "Number"
+        },
+        "isRequired": true,
+        "displayOrder": 1,
+        "isReadOnly": false,
+        "isVisible": true,
+        "lookupType": null,
+        "placeholderEn": "Enter total number of online government services",
+        "placeholderAr": "أدخل إجمالي عدد الخدمات الإلكترونية",
+        "helpTextEn": "Enter a non-negative whole number",
+        "helpTextAr": "أدخل رقمًا صحيحًا غير سالب",
+        "regexPattern": "^\\d+$",
+        "validationMessageEn": "Only non-negative integer values are allowed",
+        "validationMessageAr": "يسمح فقط بالأرقام الصحيحة غير السالبة",
+        "columns": null,
+        "kpiNextSubmissionDateEn": null,
+        "kpiNextSubmissionDateAr": null
+    },
+    {
+        "fieldId": 108,
+        "formId": 16,
+        "fieldKey": "KPI_0077",
+        "labelEn": "Percentage of users satisfied with online government services in Aqaba, measured through surveys, updated anually",
+        "labelAr": "النسبة المئوية للمستخدمين الراضين عن الخدمات الحكومية عبر الإنترنت في العقبة، والتي يتم قياسها من خلال الاستبيانات، ويتم تحديثها سنوياً",
+        "dataType": {
+            "dataTypeId": 2,
+            "typeKey": "DECIMAL",
+            "typeName": "Decimal"
+        },
+        "controlType": {
+            "controlTypeId": 11,
+            "controlKey": "PERCENTAGE",
+            "controlName": "Percentage"
+        },
+        "isRequired": true,
+        "displayOrder": 2,
+        "isReadOnly": false,
+        "isVisible": true,
+        "lookupType": null,
+        "placeholderEn": "Enter percentage of satisfied users",
+        "placeholderAr": "أدخل نسبة المستخدمين الراضين",
+        "helpTextEn": "Enter a non-negative number (up to 2 decimal places)",
+        "helpTextAr": "أدخل رقمًا غير سالب (حتى منزلتين عشريتين)",
+        "regexPattern": "^(100(\\.0+)?|[0-9]{1,2}(\\.\\d+)?)$",
+        "validationMessageEn": "Only non-negative decimal values are allowed",
+        "validationMessageAr": "يسمح فقط بالأرقام العشرية غير السالبة",
+        "columns": null,
+        "kpiNextSubmissionDateEn": null,
+        "kpiNextSubmissionDateAr": null
+    },
+    {
+        "fieldId": 109,
+        "formId": 16,
+        "fieldKey": "KPI_0078",
+        "labelEn": "Percentage of government documents in Aqaba that have been digitized, updated anually",
+        "labelAr": "نسبة الوثائق الحكومية التي تم رقمنتها في العقبة، يتم تحديثها سنوياً.",
+        "dataType": {
+            "dataTypeId": 2,
+            "typeKey": "DECIMAL",
+            "typeName": "Decimal"
+        },
+        "controlType": {
+            "controlTypeId": 11,
+            "controlKey": "PERCENTAGE",
+            "controlName": "Percentage"
+        },
+        "isRequired": true,
+        "displayOrder": 3,
+        "isReadOnly": false,
+        "isVisible": true,
+        "lookupType": null,
+        "placeholderEn": "Enter percentage of digitized documents",
+        "placeholderAr": "أدخل نسبة الوثائق الرقمية",
+        "helpTextEn": "Enter a non-negative number (up to 2 decimal places)",
+        "helpTextAr": "أدخل رقمًا غير سالب (حتى منزلتين عشريتين)",
+        "regexPattern": "^(100(\\.0+)?|[0-9]{1,2}(\\.\\d+)?)$",
+        "validationMessageEn": "Only non-negative decimal values are allowed",
+        "validationMessageAr": "يسمح فقط بالأرقام العشرية غير السالبة",
+        "columns": null,
+        "kpiNextSubmissionDateEn": null,
+        "kpiNextSubmissionDateAr": null
+    },
+    {
+        "fieldId": 110,
+        "formId": 16,
+        "fieldKey": "KPI_0079",
+        "labelEn": "Total number of digitalization training programs conducted for government employees in Aqaba, updated anually",
+        "labelAr": "إجمالي عدد برامج التدريب على الرقمنة للموظفين الحكوميين في العقبة، محدثة سنوياً",
+        "dataType": {
+            "dataTypeId": 1,
+            "typeKey": "INTEGER",
+            "typeName": "Integer"
+        },
+        "controlType": {
+            "controlTypeId": 2,
+            "controlKey": "NUMBER",
+            "controlName": "Number"
+        },
+        "isRequired": true,
+        "displayOrder": 4,
+        "isReadOnly": false,
+        "isVisible": true,
+        "lookupType": {
+            "lookupTypeId": 3,
+            "code": "TRAINING_TYPES",
+            "nameEn": "Training Types",
+            "nameAr": "أنواع التدريب"
+        },
+        "placeholderEn": "Enter total number of digitalization training programs",
+        "placeholderAr": "أدخل إجمالي عدد برامج تدريب الرقمنة",
+        "helpTextEn": "Enter a non-negative whole number",
+        "helpTextAr": "أدخل رقمًا صحيحًا غير سالب",
+        "regexPattern": "^\\d+$",
+        "validationMessageEn": "Only non-negative integer values are allowed",
+        "validationMessageAr": "يسمح فقط بالأرقام الصحيحة غير السالبة",
+        "columns": null,
+        "kpiNextSubmissionDateEn": null,
+        "kpiNextSubmissionDateAr": null
+    },
+    {
+        "fieldId": 111,
+        "formId": 16,
+        "fieldKey": "KPI_0080",
+        "labelEn": "Total number of government buildings in Aqaba equipped with public Wi-Fi access, updated anually",
+        "labelAr": "إجمالي عدد المباني الحكومية في العقبة المجهزة بخدمة الواي فاي العامة، محدثة سنوياً",
+        "dataType": {
+            "dataTypeId": 1,
+            "typeKey": "INTEGER",
+            "typeName": "Integer"
+        },
+        "controlType": {
+            "controlTypeId": 2,
+            "controlKey": "NUMBER",
+            "controlName": "Number"
+        },
+        "isRequired": true,
+        "displayOrder": 5,
+        "isReadOnly": false,
+        "isVisible": true,
+        "lookupType": null,
+        "placeholderEn": "Enter total number of Wi-Fi equipped buildings",
+        "placeholderAr": "أدخل إجمالي عدد المباني المجهزة بالواي فاي",
+        "helpTextEn": "Enter a non-negative whole number",
+        "helpTextAr": "أدخل رقمًا صحيحًا غير سالب",
+        "regexPattern": "^\\d+$",
+        "validationMessageEn": "Only non-negative integer values are allowed",
+        "validationMessageAr": "يسمح فقط بالأرقام الصحيحة غير السالبة",
+        "columns": null,
+        "kpiNextSubmissionDateEn": null,
+        "kpiNextSubmissionDateAr": null
+    },
+    {
+        "fieldId": 112,
+        "formId": 16,
+        "fieldKey": "KPI_0081",
+        "labelEn": "Total number of cybersecurity incidents reported within government institutions in Aqaba, updated anually",
+        "labelAr": "إجمالي عدد حوادث الأمن السيبراني التي تم الإبلاغ عنها داخل المؤسسات الحكومية في العقبة، محدثة سنوياً",
+        "dataType": {
+            "dataTypeId": 1,
+            "typeKey": "INTEGER",
+            "typeName": "Integer"
+        },
+        "controlType": {
+            "controlTypeId": 2,
+            "controlKey": "NUMBER",
+            "controlName": "Number"
+        },
+        "isRequired": true,
+        "displayOrder": 6,
+        "isReadOnly": false,
+        "isVisible": true,
+        "lookupType": null,
+        "placeholderEn": "Enter total number of cybersecurity incidents",
+        "placeholderAr": "أدخل إجمالي عدد حوادث الأمن السيبراني",
+        "helpTextEn": "Enter a non-negative whole number",
+        "helpTextAr": "أدخل رقمًا صحيحًا غير سالب",
+        "regexPattern": "^\\d+$",
+        "validationMessageEn": "Only non-negative integer values are allowed",
+        "validationMessageAr": "يسمح فقط بالأرقام الصحيحة غير السالبة",
+        "columns": null,
+        "kpiNextSubmissionDateEn": null,
+        "kpiNextSubmissionDateAr": null
+    }
+]

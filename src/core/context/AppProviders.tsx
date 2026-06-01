@@ -1,0 +1,33 @@
+import React from 'react';
+import { PublicClientApplication } from '@azure/msal-browser';
+import { MsalProvider } from '@azure/msal-react';
+
+import { DirectionProvider } from './DirectionContext';
+import { ThemeContextProvider } from './ThemeContext';
+import { AuthProvider } from './AuthContext';
+import { FetchingContextProvider } from './FetchingContext';
+import ErrorBoundary from './ErrorBoundary';
+import { msalConfig } from '../config/authConfig';
+
+// Created once at module level so it is never re-instantiated on re-renders.
+const msalInstance = new PublicClientApplication(msalConfig);
+
+const AppProviders: React.FC<React.PropsWithChildren> = ({ children }) => {
+  return (
+    <ErrorBoundary>
+      {/* MsalProvider must be the outermost auth wrapper so useMsal() is
+          available to AuthProvider and any hook/component beneath it. */}
+      <MsalProvider instance={msalInstance}>
+        <ThemeContextProvider>
+          <FetchingContextProvider>
+            <DirectionProvider>
+              <AuthProvider>{children}</AuthProvider>
+            </DirectionProvider>
+          </FetchingContextProvider>
+        </ThemeContextProvider>
+      </MsalProvider>
+    </ErrorBoundary>
+  );
+};
+
+export default AppProviders;

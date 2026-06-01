@@ -1,0 +1,721 @@
+[
+    {
+        "fieldId": 82,
+        "formId": 14,
+        "fieldKey": "KPI_0021",
+        "labelEn": "Total number of inspection tours done by directorate of oversight and enforcement directoarte on resturants and hotels updated daily",
+        "labelAr": "إجمالي عدد الجولات التفتيشية التي قامت بها مديرية الرقابة والتنفيذ على المطاعم والفنادق يتم تحديثها يومياً",
+        "dataType": {
+            "dataTypeId": 2,
+            "typeKey": "DECIMAL",
+            "typeName": "Decimal"
+        },
+        "controlType": {
+            "controlTypeId": 2,
+            "controlKey": "NUMBER",
+            "controlName": "Number"
+        },
+        "isRequired": true,
+        "displayOrder": 1,
+        "isReadOnly": false,
+        "isVisible": true,
+        "lookupType": null,
+        "placeholderEn": "Enter total number of inspection tours",
+        "placeholderAr": "أدخل إجمالي عدد الجولات التفتيشية",
+        "helpTextEn": "Enter a non-negative whole number",
+        "helpTextAr": "أدخل رقمًا صحيحًا غير سالب",
+        "regexPattern": "^\\d+$",
+        "validationMessageEn": "Only non-negative integer values are allowed",
+        "validationMessageAr": "يسمح فقط بالأرقام الصحيحة غير السالبة",
+        "columns": null
+    },
+    {
+        "fieldId": 83,
+        "formId": 14,
+        "fieldKey": "KPI_0022",
+        "labelEn": "Total Number of violating institutions in aqaba  updated daily",
+        "labelAr": "إجمالي عدد المؤسسات المخالفة في العقبة يتم تحديثه يومياً",
+        "dataType": {
+            "dataTypeId": 1,
+            "typeKey": "INTEGER",
+            "typeName": "Integer"
+        },
+        "controlType": {
+            "controlTypeId": 2,
+            "controlKey": "NUMBER",
+            "controlName": "Number"
+        },
+        "isRequired": true,
+        "displayOrder": 2,
+        "isReadOnly": false,
+        "isVisible": true,
+        "lookupType": null,
+        "placeholderEn": "Enter total number of violating institutions",
+        "placeholderAr": "أدخل إجمالي عدد المؤسسات المخالفة",
+        "helpTextEn": "Enter a non-negative whole number",
+        "helpTextAr": "أدخل رقمًا صحيحًا غير سالب",
+        "regexPattern": "^\\d+$",
+        "validationMessageEn": "Only non-negative integer values are allowed",
+        "validationMessageAr": "يسمح فقط بالأرقام الصحيحة غير السالبة",
+        "columns": null
+    },
+    {
+        "fieldId": 84,
+        "formId": 14,
+        "fieldKey": "KPI_0050",
+        "labelEn": "The total number of food poisoning cases reported and recorded by the Directorate of Oversight and Enforcement in Aqaba, classified by type of food and region, updated daily.",
+        "labelAr": "العدد الإجمالي لحالات التسمم الغذائي التي تم الإبلاغ عنها وتسجيلها من قبل مديرية الرقابة والتنفيذ في العقبة، مصنفة حسب نوع الغذاء والمنطقة، يتم تحديثها يومياً.",
+        "dataType": {
+            "dataTypeId": 2,
+            "typeKey": "DECIMAL",
+            "typeName": "Decimal"
+        },
+        "controlType": {
+            "controlTypeId": 10,
+            "controlKey": "TABLE",
+            "controlName": "Table/Grid"
+        },
+        "isRequired": true,
+        "displayOrder": 3,
+        "isReadOnly": false,
+        "isVisible": true,
+        "lookupType": null,
+        "placeholderEn": "Enter total number of food poisoning cases",
+        "placeholderAr": "أدخل إجمالي عدد حالات التسمم الغذائي",
+        "helpTextEn": "Enter a non-negative whole number",
+        "helpTextAr": "أدخل رقمًا صحيحًا غير سالب",
+        "regexPattern": "^\\d+$",
+        "validationMessageEn": "Only non-negative integer values are allowed",
+        "validationMessageAr": "يسمح فقط بالأرقام الصحيحة غير السالبة",
+        "columns": [
+            {
+                "columnKey": "FOOD_TYPE",
+                "labelEn": "Food Type",
+                "labelAr": "نوع الغذاء",
+                "dataType": {
+                    "dataTypeId": 3,
+                    "typeKey": "STRING",
+                    "typeName": "String"
+                },
+                "controlType": {
+                    "controlTypeId": 5,
+                    "controlKey": "DROPDOWN",
+                    "controlName": "Dropdown"
+                },
+                "lookupType": {
+                    "lookupTypeId": 8,
+                    "code": "FOOD_TYPES",
+                    "nameEn": "Food Types",
+                    "nameAr": "أنواع الغذاء"
+                }
+            },
+            {
+                "columnKey": "REGION",
+                "labelEn": "Region",
+                "labelAr": "المنطقة",
+                "dataType": {
+                    "dataTypeId": 3,
+                    "typeKey": "STRING",
+                    "typeName": "String"
+                },
+                "controlType": {
+                    "controlTypeId": 5,
+                    "controlKey": "DROPDOWN",
+                    "controlName": "Dropdown"
+                },
+                "lookupType": {
+                    "lookupTypeId": 6,
+                    "code": "REGIONS",
+                    "nameEn": "Regions",
+                    "nameAr": "المناطق"
+                }
+            },
+            {
+                "columnKey": "VALUE",
+                "labelEn": "Total Cases",
+                "labelAr": "عدد الحالات",
+                "dataType": {
+                    "dataTypeId": 2,
+                    "typeKey": "DECIMAL",
+                    "typeName": "Decimal"
+                },
+                "controlType": {
+                    "controlTypeId": 2,
+                    "controlKey": "NUMBER",
+                    "controlName": "Number"
+                },
+                "lookupType": null
+            }
+        ]
+    },
+    {
+        "fieldId": 85,
+        "formId": 14,
+        "fieldKey": "KPI_0051",
+        "labelEn": "Number of expatriate workers circulated to the Ministry of Interior",
+        "labelAr": "عدد العمالة الوافدة المعمم عليها لدى وزارة الداخلية",
+        "dataType": {
+            "dataTypeId": 1,
+            "typeKey": "INTEGER",
+            "typeName": "Integer"
+        },
+        "controlType": {
+            "controlTypeId": 2,
+            "controlKey": "NUMBER",
+            "controlName": "Number"
+        },
+        "isRequired": true,
+        "displayOrder": 4,
+        "isReadOnly": false,
+        "isVisible": true,
+        "lookupType": null,
+        "placeholderEn": "Enter number of expatriate workers",
+        "placeholderAr": "أدخل عدد العمالة الوافدة",
+        "helpTextEn": "Enter a non-negative whole number",
+        "helpTextAr": "أدخل رقمًا صحيحًا غير سالب",
+        "regexPattern": "^\\d+$",
+        "validationMessageEn": "Only non-negative integer values are allowed",
+        "validationMessageAr": "يسمح فقط بالأرقام الصحيحة غير السالبة",
+        "columns": null
+    },
+    {
+        "fieldId": 86,
+        "formId": 14,
+        "fieldKey": "KPI_0052",
+        "labelEn": "Number of violating institutions",
+        "labelAr": "عدد المؤسسات المخالفة",
+        "dataType": {
+            "dataTypeId": 1,
+            "typeKey": "INTEGER",
+            "typeName": "Integer"
+        },
+        "controlType": {
+            "controlTypeId": 2,
+            "controlKey": "NUMBER",
+            "controlName": "Number"
+        },
+        "isRequired": true,
+        "displayOrder": 5,
+        "isReadOnly": false,
+        "isVisible": true,
+        "lookupType": null,
+        "placeholderEn": "Enter number of violating institutions",
+        "placeholderAr": "أدخل عدد المؤسسات المخالفة",
+        "helpTextEn": "Enter a non-negative whole number",
+        "helpTextAr": "أدخل رقمًا صحيحًا غير سالب",
+        "regexPattern": "^\\d+$",
+        "validationMessageEn": "Only non-negative integer values are allowed",
+        "validationMessageAr": "يسمح فقط بالأرقام الصحيحة غير السالبة",
+        "columns": null
+    },
+    {
+        "fieldId": 87,
+        "formId": 14,
+        "fieldKey": "KPI_0053",
+        "labelEn": "Number of institutions that have corrected their status",
+        "labelAr": "عدد المؤسسات التي صوبت وضعها",
+        "dataType": {
+            "dataTypeId": 1,
+            "typeKey": "INTEGER",
+            "typeName": "Integer"
+        },
+        "controlType": {
+            "controlTypeId": 2,
+            "controlKey": "NUMBER",
+            "controlName": "Number"
+        },
+        "isRequired": true,
+        "displayOrder": 6,
+        "isReadOnly": false,
+        "isVisible": true,
+        "lookupType": null,
+        "placeholderEn": "Enter number of institutions that corrected their status",
+        "placeholderAr": "أدخل عدد المؤسسات التي صوبت وضعها",
+        "helpTextEn": "Enter a non-negative whole number",
+        "helpTextAr": "أدخل رقمًا صحيحًا غير سالب",
+        "regexPattern": "^\\d+$",
+        "validationMessageEn": "Only non-negative integer values are allowed",
+        "validationMessageAr": "يسمح فقط بالأرقام الصحيحة غير السالبة",
+        "columns": null
+    },
+    {
+        "fieldId": 88,
+        "formId": 14,
+        "fieldKey": "KPI_0054",
+        "labelEn": "Number of institutions transferred to the judiciary",
+        "labelAr": "عدد المؤسسات المحولة للقضاء",
+        "dataType": {
+            "dataTypeId": 1,
+            "typeKey": "INTEGER",
+            "typeName": "Integer"
+        },
+        "controlType": {
+            "controlTypeId": 2,
+            "controlKey": "NUMBER",
+            "controlName": "Number"
+        },
+        "isRequired": true,
+        "displayOrder": 7,
+        "isReadOnly": false,
+        "isVisible": true,
+        "lookupType": null,
+        "placeholderEn": "Enter number of institutions transferred to court",
+        "placeholderAr": "أدخل عدد المؤسسات المحولة للقضاء",
+        "helpTextEn": "Enter a non-negative whole number",
+        "helpTextAr": "أدخل رقمًا صحيحًا غير سالب",
+        "regexPattern": "^\\d+$",
+        "validationMessageEn": "Only non-negative integer values are allowed",
+        "validationMessageAr": "يسمح فقط بالأرقام الصحيحة غير السالبة",
+        "columns": null
+    },
+    {
+        "fieldId": 89,
+        "formId": 14,
+        "fieldKey": "KPI_0055",
+        "labelEn": "Number of food waste transactions",
+        "labelAr": "عدد معاملات اتلاف المواد الغذائية",
+        "dataType": {
+            "dataTypeId": 1,
+            "typeKey": "INTEGER",
+            "typeName": "Integer"
+        },
+        "controlType": {
+            "controlTypeId": 2,
+            "controlKey": "NUMBER",
+            "controlName": "Number"
+        },
+        "isRequired": true,
+        "displayOrder": 8,
+        "isReadOnly": false,
+        "isVisible": true,
+        "lookupType": null,
+        "placeholderEn": "Enter number of food waste transactions",
+        "placeholderAr": "أدخل عدد معاملات اتلاف المواد الغذائية",
+        "helpTextEn": "Enter a non-negative whole number",
+        "helpTextAr": "أدخل رقمًا صحيحًا غير سالب",
+        "regexPattern": "^\\d+$",
+        "validationMessageEn": "Only non-negative integer values are allowed",
+        "validationMessageAr": "يسمح فقط بالأرقام الصحيحة غير السالبة",
+        "columns": null
+    },
+    {
+        "fieldId": 90,
+        "formId": 14,
+        "fieldKey": "KPI_0056",
+        "labelEn": "Number of samples withdrawn from the market for laboratory examination purposes",
+        "labelAr": "عدد العينات المسحوبة من الأسواق لغايات الفحص المخبري",
+        "dataType": {
+            "dataTypeId": 1,
+            "typeKey": "INTEGER",
+            "typeName": "Integer"
+        },
+        "controlType": {
+            "controlTypeId": 2,
+            "controlKey": "NUMBER",
+            "controlName": "Number"
+        },
+        "isRequired": true,
+        "displayOrder": 9,
+        "isReadOnly": false,
+        "isVisible": true,
+        "lookupType": null,
+        "placeholderEn": "Enter number of samples withdrawn for lab testing",
+        "placeholderAr": "أدخل عدد العينات المسحوبة للفحص المخبري",
+        "helpTextEn": "Enter a non-negative whole number",
+        "helpTextAr": "أدخل رقمًا صحيحًا غير سالب",
+        "regexPattern": "^\\d+$",
+        "validationMessageEn": "Only non-negative integer values are allowed",
+        "validationMessageAr": "يسمح فقط بالأرقام الصحيحة غير السالبة",
+        "columns": null
+    },
+    {
+        "fieldId": 91,
+        "formId": 14,
+        "fieldKey": "KPI_0057",
+        "labelEn": "Number of establishments violating health conditions",
+        "labelAr": "عدد المنشآت المخالفة صحيا",
+        "dataType": {
+            "dataTypeId": 1,
+            "typeKey": "INTEGER",
+            "typeName": "Integer"
+        },
+        "controlType": {
+            "controlTypeId": 2,
+            "controlKey": "NUMBER",
+            "controlName": "Number"
+        },
+        "isRequired": true,
+        "displayOrder": 10,
+        "isReadOnly": false,
+        "isVisible": true,
+        "lookupType": null,
+        "placeholderEn": "Enter number of establishments with health violations",
+        "placeholderAr": "أدخل عدد المنشآت المخالفة صحيا",
+        "helpTextEn": "Enter a non-negative whole number",
+        "helpTextAr": "أدخل رقمًا صحيحًا غير سالب",
+        "regexPattern": "^\\d+$",
+        "validationMessageEn": "Only non-negative integer values are allowed",
+        "validationMessageAr": "يسمح فقط بالأرقام الصحيحة غير السالبة",
+        "columns": null
+    },
+    {
+        "fieldId": 92,
+        "formId": 14,
+        "fieldKey": "KPI_0058",
+        "labelEn": "Number of complaints received by the directorate of oversight and enfrocement",
+        "labelAr": "عدد الشكاوي المقدمة لمديرية الرقابة",
+        "dataType": {
+            "dataTypeId": 2,
+            "typeKey": "DECIMAL",
+            "typeName": "Decimal"
+        },
+        "controlType": {
+            "controlTypeId": 2,
+            "controlKey": "NUMBER",
+            "controlName": "Number"
+        },
+        "isRequired": true,
+        "displayOrder": 11,
+        "isReadOnly": false,
+        "isVisible": true,
+        "lookupType": null,
+        "placeholderEn": "Enter number of complaints received",
+        "placeholderAr": "أدخل عدد الشكاوي المقدمة",
+        "helpTextEn": "Enter a non-negative whole number",
+        "helpTextAr": "أدخل رقمًا صحيحًا غير سالب",
+        "regexPattern": "^\\d+$",
+        "validationMessageEn": "Only non-negative integer values are allowed",
+        "validationMessageAr": "يسمح فقط بالأرقام الصحيحة غير السالبة",
+        "columns": null
+    },
+    {
+        "fieldId": 93,
+        "formId": 14,
+        "fieldKey": "KPI_0059",
+        "labelEn": "Number of inspections of fish consignments",
+        "labelAr": "عدد معاينات ارساليات الأسماك",
+        "dataType": {
+            "dataTypeId": 1,
+            "typeKey": "INTEGER",
+            "typeName": "Integer"
+        },
+        "controlType": {
+            "controlTypeId": 2,
+            "controlKey": "NUMBER",
+            "controlName": "Number"
+        },
+        "isRequired": true,
+        "displayOrder": 12,
+        "isReadOnly": false,
+        "isVisible": true,
+        "lookupType": null,
+        "placeholderEn": "Enter number of fish consignment inspections",
+        "placeholderAr": "أدخل عدد معاينات ارساليات الأسماك",
+        "helpTextEn": "Enter a non-negative whole number",
+        "helpTextAr": "أدخل رقمًا صحيحًا غير سالب",
+        "regexPattern": "^\\d+$",
+        "validationMessageEn": "Only non-negative integer values are allowed",
+        "validationMessageAr": "يسمح فقط بالأرقام الصحيحة غير السالبة",
+        "columns": null
+    },
+    {
+        "fieldId": 94,
+        "formId": 14,
+        "fieldKey": "KPI_0060",
+        "labelEn": "Total Number of sacrifices in Aqaba, updated daily",
+        "labelAr": "عدد الذبائح",
+        "dataType": {
+            "dataTypeId": 1,
+            "typeKey": "INTEGER",
+            "typeName": "Integer"
+        },
+        "controlType": {
+            "controlTypeId": 2,
+            "controlKey": "NUMBER",
+            "controlName": "Number"
+        },
+        "isRequired": true,
+        "displayOrder": 13,
+        "isReadOnly": false,
+        "isVisible": true,
+        "lookupType": null,
+        "placeholderEn": "Enter total number of sacrifices",
+        "placeholderAr": "أدخل عدد الذبائح",
+        "helpTextEn": "Enter a non-negative whole number",
+        "helpTextAr": "أدخل رقمًا صحيحًا غير سالب",
+        "regexPattern": "^\\d+$",
+        "validationMessageEn": "Only non-negative integer values are allowed",
+        "validationMessageAr": "يسمح فقط بالأرقام الصحيحة غير السالبة",
+        "columns": null
+    },
+    {
+        "fieldId": 95,
+        "formId": 14,
+        "fieldKey": "KPI_0061",
+        "labelEn": "Fees and service fees for the Directorate of oversight and enforcement",
+        "labelAr": "الرسوم و بدل الخدمات لمديرية الرقابة",
+        "dataType": {
+            "dataTypeId": 2,
+            "typeKey": "DECIMAL",
+            "typeName": "Decimal"
+        },
+        "controlType": {
+            "controlTypeId": 2,
+            "controlKey": "NUMBER",
+            "controlName": "Number"
+        },
+        "isRequired": true,
+        "displayOrder": 14,
+        "isReadOnly": false,
+        "isVisible": true,
+        "lookupType": null,
+        "placeholderEn": "Enter fees and service fees amount",
+        "placeholderAr": "أدخل قيمة الرسوم وبدل الخدمات",
+        "helpTextEn": "Enter a non-negative number (up to 2 decimal places)",
+        "helpTextAr": "أدخل رقمًا غير سالب (حتى منزلتين عشريتين)",
+        "regexPattern": "^\\d+(\\.\\d{1,2})?$",
+        "validationMessageEn": "Only non-negative decimal values are allowed",
+        "validationMessageAr": "يسمح فقط بالأرقام العشرية غير السالبة",
+        "columns": null
+    },
+    {
+        "fieldId": 96,
+        "formId": 14,
+        "fieldKey": "KPI_0062",
+        "labelEn": "Number of environmental violations",
+        "labelAr": "عدد المخالفات البيئية",
+        "dataType": {
+            "dataTypeId": 1,
+            "typeKey": "INTEGER",
+            "typeName": "Integer"
+        },
+        "controlType": {
+            "controlTypeId": 2,
+            "controlKey": "NUMBER",
+            "controlName": "Number"
+        },
+        "isRequired": true,
+        "displayOrder": 15,
+        "isReadOnly": false,
+        "isVisible": true,
+        "lookupType": null,
+        "placeholderEn": "Enter number of environmental violations",
+        "placeholderAr": "أدخل عدد المخالفات البيئية",
+        "helpTextEn": "Enter a non-negative whole number",
+        "helpTextAr": "أدخل رقمًا صحيحًا غير سالب",
+        "regexPattern": "^\\d+$",
+        "validationMessageEn": "Only non-negative integer values are allowed",
+        "validationMessageAr": "يسمح فقط بالأرقام الصحيحة غير السالبة",
+        "columns": null
+    },
+    {
+        "fieldId": 97,
+        "formId": 14,
+        "fieldKey": "KPI_0063",
+        "labelEn": "Number of violations of construction workshops and buildings",
+        "labelAr": "عدد مخالفات ورش البناء و الأبنية",
+        "dataType": {
+            "dataTypeId": 1,
+            "typeKey": "INTEGER",
+            "typeName": "Integer"
+        },
+        "controlType": {
+            "controlTypeId": 2,
+            "controlKey": "NUMBER",
+            "controlName": "Number"
+        },
+        "isRequired": true,
+        "displayOrder": 16,
+        "isReadOnly": false,
+        "isVisible": true,
+        "lookupType": null,
+        "placeholderEn": "Enter number of construction violations",
+        "placeholderAr": "أدخل عدد مخالفات ورش البناء والأبنية",
+        "helpTextEn": "Enter a non-negative whole number",
+        "helpTextAr": "أدخل رقمًا صحيحًا غير سالب",
+        "regexPattern": "^\\d+$",
+        "validationMessageEn": "Only non-negative integer values are allowed",
+        "validationMessageAr": "يسمح فقط بالأرقام الصحيحة غير السالبة",
+        "columns": null
+    },
+    {
+        "fieldId": 98,
+        "formId": 14,
+        "fieldKey": "KPI_0064",
+        "labelEn": "Number of violations corrected",
+        "labelAr": "عدد المخالفات التي تم تصويبها",
+        "dataType": {
+            "dataTypeId": 1,
+            "typeKey": "INTEGER",
+            "typeName": "Integer"
+        },
+        "controlType": {
+            "controlTypeId": 2,
+            "controlKey": "NUMBER",
+            "controlName": "Number"
+        },
+        "isRequired": true,
+        "displayOrder": 17,
+        "isReadOnly": false,
+        "isVisible": true,
+        "lookupType": null,
+        "placeholderEn": "Enter number of violations corrected",
+        "placeholderAr": "أدخل عدد المخالفات التي تم تصويبها",
+        "helpTextEn": "Enter a non-negative whole number",
+        "helpTextAr": "أدخل رقمًا صحيحًا غير سالب",
+        "regexPattern": "^\\d+$",
+        "validationMessageEn": "Only non-negative integer values are allowed",
+        "validationMessageAr": "يسمح فقط بالأرقام الصحيحة غير السالبة",
+        "columns": null
+    },
+    {
+        "fieldId": 99,
+        "formId": 14,
+        "fieldKey": "KPI_0065",
+        "labelEn": "Number of violations referred to court",
+        "labelAr": "عدد المخالفت المحولة للمحكمة",
+        "dataType": {
+            "dataTypeId": 1,
+            "typeKey": "INTEGER",
+            "typeName": "Integer"
+        },
+        "controlType": {
+            "controlTypeId": 2,
+            "controlKey": "NUMBER",
+            "controlName": "Number"
+        },
+        "isRequired": true,
+        "displayOrder": 18,
+        "isReadOnly": false,
+        "isVisible": true,
+        "lookupType": null,
+        "placeholderEn": "Enter number of violations referred to court",
+        "placeholderAr": "أدخل عدد المخالفات المحولة للمحكمة",
+        "helpTextEn": "Enter a non-negative whole number",
+        "helpTextAr": "أدخل رقمًا صحيحًا غير سالب",
+        "regexPattern": "^\\d+$",
+        "validationMessageEn": "Only non-negative integer values are allowed",
+        "validationMessageAr": "يسمح فقط بالأرقام الصحيحة غير السالبة",
+        "columns": null
+    },
+    {
+        "fieldId": 100,
+        "formId": 14,
+        "fieldKey": "KPI_0066",
+        "labelEn": "Number of seizures and confiscations",
+        "labelAr": "عدد المضبوطات و المصادرات",
+        "dataType": {
+            "dataTypeId": 1,
+            "typeKey": "INTEGER",
+            "typeName": "Integer"
+        },
+        "controlType": {
+            "controlTypeId": 2,
+            "controlKey": "NUMBER",
+            "controlName": "Number"
+        },
+        "isRequired": true,
+        "displayOrder": 19,
+        "isReadOnly": false,
+        "isVisible": true,
+        "lookupType": null,
+        "placeholderEn": "Enter number of seizures and confiscations",
+        "placeholderAr": "أدخل عدد المضبوطات والمصادرات",
+        "helpTextEn": "Enter a non-negative whole number",
+        "helpTextAr": "أدخل رقمًا صحيحًا غير سالب",
+        "regexPattern": "^\\d+$",
+        "validationMessageEn": "Only non-negative integer values are allowed",
+        "validationMessageAr": "يسمح فقط بالأرقام الصحيحة غير السالبة",
+        "columns": null
+    },
+    {
+        "fieldId": 101,
+        "formId": 14,
+        "fieldKey": "KPI_0067",
+        "labelEn": "Number of notices to correct violations",
+        "labelAr": "عدد اشعارات تصويب المخالفات",
+        "dataType": {
+            "dataTypeId": 1,
+            "typeKey": "INTEGER",
+            "typeName": "Integer"
+        },
+        "controlType": {
+            "controlTypeId": 2,
+            "controlKey": "NUMBER",
+            "controlName": "Number"
+        },
+        "isRequired": true,
+        "displayOrder": 20,
+        "isReadOnly": false,
+        "isVisible": true,
+        "lookupType": null,
+        "placeholderEn": "Enter number of correction notices",
+        "placeholderAr": "أدخل عدد اشعارات تصويب المخالفات",
+        "helpTextEn": "Enter a non-negative whole number",
+        "helpTextAr": "أدخل رقمًا صحيحًا غير سالب",
+        "regexPattern": "^\\d+$",
+        "validationMessageEn": "Only non-negative integer values are allowed",
+        "validationMessageAr": "يسمح فقط بالأرقام الصحيحة غير السالبة",
+        "columns": null
+    },
+    {
+        "fieldId": 102,
+        "formId": 14,
+        "fieldKey": "KPI_0068",
+        "labelEn": "Number of Removal/closure campaigns",
+        "labelAr": "عدد حملات الازالة / الاغلاق",
+        "dataType": {
+            "dataTypeId": 1,
+            "typeKey": "INTEGER",
+            "typeName": "Integer"
+        },
+        "controlType": {
+            "controlTypeId": 2,
+            "controlKey": "NUMBER",
+            "controlName": "Number"
+        },
+        "isRequired": true,
+        "displayOrder": 21,
+        "isReadOnly": false,
+        "isVisible": true,
+        "lookupType": null,
+        "placeholderEn": "Enter number of removal/closure campaigns",
+        "placeholderAr": "أدخل عدد حملات الإزالة / الإغلاق",
+        "helpTextEn": "Enter a non-negative whole number",
+        "helpTextAr": "أدخل رقمًا صحيحًا غير سالب",
+        "regexPattern": "^\\d+$",
+        "validationMessageEn": "Only non-negative integer values are allowed",
+        "validationMessageAr": "يسمح فقط بالأرقام الصحيحة غير السالبة",
+        "columns": null
+    },
+    {
+        "fieldId": 103,
+        "formId": 14,
+        "fieldKey": "KPI_0069",
+        "labelEn": "Total number of complains solved related to environmental issues in Aqaba updated daily",
+        "labelAr": "العدد الإجمال للشكاوي التي تم حلها والمتعلقة بالقضايا البيئية في العقبة يتم تحديثه يومياً",
+        "dataType": {
+            "dataTypeId": 1,
+            "typeKey": "INTEGER",
+            "typeName": "Integer"
+        },
+        "controlType": {
+            "controlTypeId": 2,
+            "controlKey": "NUMBER",
+            "controlName": "Number"
+        },
+        "isRequired": true,
+        "displayOrder": 22,
+        "isReadOnly": false,
+        "isVisible": true,
+        "lookupType": null,
+        "placeholderEn": "Enter total number of solved environmental complaints",
+        "placeholderAr": "أدخل إجمالي عدد الشكاوى البيئية التي تم حلها",
+        "helpTextEn": "Enter a non-negative whole number",
+        "helpTextAr": "أدخل رقمًا صحيحًا غير سالب",
+        "regexPattern": "^\\d+$",
+        "validationMessageEn": "Only non-negative integer values are allowed",
+        "validationMessageAr": "يسمح فقط بالأرقام الصحيحة غير السالبة",
+        "columns": null
+    }
+]

@@ -1,0 +1,675 @@
+[
+    {
+      "id": 1,
+      "labelArabic": "متوسط الوقت المستغرق في إنجاز المعاملات حسب المناطق الحضرية ومديرية التراخيص يتم تحديثه سنويًا",
+      "labelEnglish": "Average Transaction completion time by urban and licesing directorate updated annually",
+      "type": "duration"
+    },
+    {
+      "id": 2,
+      "labelArabic": "إجمالي عدد الممتلكات التي تم تقييمها حديثاً في المنطقة الاقتصادية الخاصة  التي يتم تحديثها سنوياً",
+      "labelEnglish": "Total number of newly appraised proporties within ASEZA updated annually",
+      "type": "number"
+    },
+    {
+      "id": 3,
+      "labelArabic": "المساحة الإجمالية للشعاب المرجانية داخل المحمية البحرية، تقاس بالكيلو متر مربع في العقبة، ويتم تحديثها كل 5 سنوات",
+      "labelEnglish": "Total Area of coral reefs within the marine resrve, measured in sqaure kilo meters in Aqaba, updated every 5 years",
+      "type": "number"
+    },
+    {
+      "id": 4,
+      "labelArabic": "إجمالي عدد البرامج الإذاعية التي تقوم بها إدارة المحمية البحرية لبث التوعية بشكل مستمر",
+      "labelEnglish": "Total number of radio programs done by the marine reserve directorate to broadcast awareness is continuously updated",
+      "type": "number"
+    },
+    {
+      "id": 5,
+      "labelArabic": "إجمالي عدد متابعي وسائل التواصل الاجتماعي للمحمية البحرية يتم تحديثها باستمرار",
+      "labelEnglish": "Total number of social media followers for the marine reserve updated continuously",
+      "type": "number"
+    },
+    {
+      "id": 6,
+      "labelArabic": "عدد شركات تأجير الحافلات",
+      "labelEnglish": "Number of bus rental companies",
+      "type": "number"
+    },
+    {
+      "id": 7,
+      "labelArabic": "نسبة الأراضي المخصصة للاستخدام السكني في العقبة يتم تحديثها سنويا",
+      "labelEnglish": "Percentage of land designated for residential use in aqaba  updated annually",
+      "type": "percentage"
+    },
+    {
+      "id": 8,
+      "labelArabic": "عدد المخططات التنظيمية في العقبة التي يتم تحديثها سنويا.",
+      "labelEnglish": "Number of regulatory plans in aqaba  updated annually.",
+      "type": "number"
+    },
+    {
+      "id": 9,
+      "labelArabic": "إجمالي عدد المشاريع العمرانية حسب مديرية التخطيط العمراني  والتراخيص يتم تحديثه سنويا",
+      "labelEnglish": "Total number of urban projects by directorate of urban planning and licensing   updated annually",
+      "type": "number"
+    },
+    {
+      "id": 10,
+      "labelArabic": "إجمالي عدد التراخيص العمرانية الصادرة عن مديرية التخطيط العمراني  والترخيص والتي يتم تحديثها سنويا",
+      "labelEnglish": "Total number of urban issued licenses by the directorate of urban planning and licensing updated annually",
+      "type": "number"
+    },
+    {
+      "id": 11,
+      "labelArabic": "إجمالي عدد المعاملات العمرانية  المنجزة حسب مديرية التخطيط العمراني  والترخيص يتم تحديثها سنويا",
+      "labelEnglish": "Total number of completed urban transactions by directorate of urban planning and licensing  updated annually",
+      "type": "number"
+    },
+    {
+      "id": 12,
+      "labelArabic": "العدد الإجمالي لمواقع الغوص في العقبة",
+      "labelEnglish": "Total number of diving sites in Aqaba",
+      "type": "number"
+    },
+    {
+      "id": 13,
+      "labelArabic": "متوسط مدة الإقامة على الشاطئ لركاب السفن السياحية",
+      "labelEnglish": "Average duration spent on shore by cruise passengers",
+      "type": "duration"
+    },
+    {
+      "id": 14,
+      "labelArabic": "متوسط مدة الإقامة للسفن السياحية",
+      "labelEnglish": "Average length of stay for cruise ships",
+      "type": "duration"
+    },
+    {
+      "id": 15,
+      "labelArabic": "العدد الإجمالي للفعاليات السياحية والثقافية في العقبة، حسب نوع الحدث",
+      "labelEnglish": "Total number of tourist and cultural events in Aqaba, by type of event",
+      "type": "table",
+      "columns": [
+        { "key": "eventType", "labelArabic": "نوع الحدث", "labelEnglish": "Event Type" },
+        { "key": "count", "labelArabic": "العدد", "labelEnglish": "Count" }
+      ],
+      "rows": [
+        { "id": "row1", "eventType": "مهرجانات", "count": 12 },
+        { "id": "row2", "eventType": "معارض فنية", "count": 8 },
+        { "id": "row3", "eventType": "مؤتمرات", "count": 5 }
+      ]
+    },
+    {
+      "id": 16,
+      "labelArabic": "العدد الإجمالي للبرامج التدريبية المقدمة داخلياً من قبل سلطة منطقة العقبة الاقتصادية الخاصة (مديرية السياحة) في قطاع السياحة حسب نوع التدريب",
+      "labelEnglish": "Total number of training programs delivered internally by ASEZA (Tourism Directorate) in the tourism sector by type of training",
+      "type": "table",
+      "columns": [
+        { "key": "trainingType", "labelArabic": "نوع التدريب", "labelEnglish": "Training Type" },
+        { "key": "count", "labelArabic": "العدد", "labelEnglish": "Count" }
+      ],
+      "rows": [
+        { "id": "row1", "trainingType": "خدمة العملاء", "count": 15 },
+        { "id": "row2", "trainingType": "اللغات", "count": 10 },
+        { "id": "row3", "trainingType": "السياحة المستدامة", "count": 7 }
+      ]
+    },
+    {
+      "id": 17,
+      "labelArabic": "العدد الإجمالي للبرامج التدريبية المقدمة من قبل سلطة منطقة العقبة الاقتصادية الخاصة في قطاع السياحة بالتعاون مع الشركاء الدوليين حسب نوع التدريب والجهة المانحة",
+      "labelEnglish": "Total number of training programs delivered by ASEZA in the tourism sector in collaboration with international partners by type of training and donor agency",
+      "type": "table",
+      "columns": [
+        { "key": "trainingType", "labelArabic": "نوع التدريب", "labelEnglish": "Training Type" },
+        { "key": "donor", "labelArabic": "الجهة المانحة", "labelEnglish": "Donor Agency" },
+        { "key": "count", "labelArabic": "العدد", "labelEnglish": "Count" }
+      ],
+      "rows": [
+        { "id": "row1", "trainingType": "القيادة", "donor": "USAID", "count": 3 },
+        { "id": "row2", "trainingType": "التسويق الرقمي", "donor": "GIZ", "count": 4 },
+        { "id": "row3", "trainingType": "إدارة الوجهات", "donor": "UNWTO", "count": 2 }
+      ]
+    },
+    {
+      "id": 18,
+      "labelArabic": "الميزانية الإجمالية المخصصة من قبل سلطة منطقة العقبة الاقتصادية الخاصة للتسويق السياحي والحملات الترويجية، حسب نوع الإنفاق",
+      "labelEnglish": "Total budget allocated by ASEZA for tourism marketing and promotional campaigns, by spending type",
+      "type": "table",
+      "columns": [
+        { "key": "spendingType", "labelArabic": "نوع الإنفاق", "labelEnglish": "Spending Type" },
+        { "key": "amount", "labelArabic": "المبلغ (دينار)", "labelEnglish": "Amount (JOD)" }
+      ],
+      "rows": [
+        { "id": "row1", "spendingType": "الإعلانات الرقمية", "amount": 50000 },
+        { "id": "row2", "spendingType": "المعارض السياحية", "amount": 75000 },
+        { "id": "row3", "spendingType": "الحملات الإعلامية", "amount": 100000 }
+      ]
+    },
+    {
+      "id": 19,
+      "labelArabic": "عدد عطاءات أعمال البناء والخدمات الفنية في العقبة يتم تحديثه سنويا.",
+      "labelEnglish": "Number of tenders for construction works and technical services in aqaba  updated monthly.",
+      "type": "number"
+    },
+    {
+      "id": 20,
+      "labelArabic": "معدل إنجاز مشاريع مديرية التنمية الإقليمية.",
+      "labelEnglish": "Regional Development Directorate projects completion Rate.",
+      "type": "percentage"
+    },
+    {
+      "id": 21,
+      "labelArabic": "إجمالي عدد الجولات التفتيشية التي قامت بها مديرية الرقابة والتنفيذ على المطاعم والفنادق يتم تحديثها يومياً",
+      "labelEnglish": "Total number of inspection tours done by directorate of oversight and enforcement directoarte on resturants and hotels updated daily",
+      "type": "number"
+    },
+    {
+      "id": 22,
+      "labelArabic": "إجمالي عدد المؤسسات المخالفة في العقبة يتم تحديثه يومياً",
+      "labelEnglish": "Total Number of violating institutions in aqaba  updated daily",
+      "type": "number"
+    },
+    {
+      "id": 23,
+      "labelArabic": "إجمالي عدد الشكاوى التي تم حلها والمتعلقة بالقضايا البيئية في العقبة.",
+      "labelEnglish": "Total number of complaints solved related to environmental issues in aqaba.",
+      "type": "number"
+    },
+    {
+      "id": 24,
+      "labelArabic": "إجمالي عدد المستفيدين من مبادرات مديرية التنمية المجتمعية تحديث ربع سنوي",
+      "labelEnglish": "Total number of beneficiaries of initiatives by the directorate of community development  updated quarterly",
+      "type": "number"
+    },
+    {
+      "id": 25,
+      "labelArabic": "إجمالي عدد الشكاوى المقدمة من قبل مواطني العقبة.",
+      "labelEnglish": "Total number of complaints by Aqaba citizens.",
+      "type": "number"
+    },
+    {
+      "id": 26,
+      "labelArabic": "إجمالي عدد الشكاوى المحلولة داخل سلطة منطقة العقبة الاقتصادية الخاصة.",
+      "labelEnglish": "Total number of solved complaints within ASEZA updated.",
+      "type": "number"
+    },
+    {
+      "id": 27,
+      "labelArabic": "إجمالي عدد الحجوزات الفندقية لضيوف سلطة منطقة العقبة الاقتصادية الخاصة يتم تحديثها شهريا",
+      "labelEnglish": "Total number of hotel  booking for ASEZA guests updated  monthly",
+      "type": "number"
+    },
+    {
+      "id": 28,
+      "labelArabic": "إجمالي عدد العطاءات المكتملة داخل مديرية العطاءات والتوريدات يتم تحديثها شهرياً",
+      "labelEnglish": "Total Number of completed tenders within the tenders and supplies directorate updated monthly",
+      "type": "number"
+    },
+    {
+      "id": 29,
+      "labelArabic": "متوسط ​​وقت إتمام المعاملات للعطاءات يتم تحديثه شهرياً",
+      "labelEnglish": "Average transaction completion time for tenders updated monthly",
+      "type": "duration"
+    },
+    {
+      "id": 30,
+      "labelArabic": "معدل الالتزام بخطة الشراء ضمن مديرية العطاءات والموردين يتم تحديثه شهرياً",
+      "labelEnglish": "Adherence Rate to Purchasing Plan within tenders and suppliers directorate updated monthly",
+      "type": "percentage"
+    },
+    {
+      "id": 31,
+      "labelArabic": "إجمالي عدد جولات تنظيف البحر في العقبة، يتم تحديثه على مدار العام",
+      "labelEnglish": "Total Number of Sea Cleaning Rounds in Aqaba, updated continuously",
+      "type": "number"
+    },
+    {
+      "id": 32,
+      "labelArabic": "إجمالي عدد السفن التي تدخل الموانئ لأغراض سياحية يتم تحديثه شهريًا.",
+      "labelEnglish": "Total number of ships entering ports for tourism purposes updated monthly.",
+      "type": "number"
+    },
+    {
+      "id": 33,
+      "labelArabic": "إجمالي الإيرادات بالعملة المحلية الناتجة عن تأجير القوارب يتم تحديثها سنويًا.",
+      "labelEnglish": "Total revenue in local currency  generated from boat rentals in Aqaba updated annually.",
+      "type": "currency"
+    },
+    {
+      "id": 34,
+      "labelArabic": "إجمالي عدد القوارب المسجلة في العقبة (مصنفة حسب نوع القارب، الحجم، الخ...) يتم تحديثها سنوياً.",
+      "labelEnglish": "Total count of boats registered within Aqaba (Classified by boat type, size, etc…) updated annually.",
+      "type": "table",
+      "columns": [
+        { "key": "boatType", "labelArabic": "نوع القارب", "labelEnglish": "Boat Type" },
+        { "key": "size", "labelArabic": "الحجم (متر)", "labelEnglish": "Size (meters)" },
+        { "key": "count", "labelArabic": "العدد", "labelEnglish": "Count" }
+      ],
+      "rows": [
+        { "id": "row1", "boatType": "يخت", "size": "20-30", "count": 45 },
+        { "id": "row2", "boatType": "قارب صيد", "size": "5-10", "count": 120 },
+        { "id": "row3", "boatType": "قارب سياحي", "size": "10-20", "count": 35 },
+        { "id": "row4", "boatType": "زورق", "size": "3-5", "count": 80 }
+      ]
+    },
+    {
+      "id": 35,
+      "labelArabic": "العدد الإجمالي لمشاريع الحفاظ على البيئة البحرية الجارية في منطقة العقبة يتم تحديثه  سنويًا.",
+      "labelEnglish": "Total number of ongoing marine conservation projects within the Aqaba region updated annually.",
+      "type": "number"
+    },
+    {
+      "id": 36,
+      "labelArabic": "إجمالي عدد الغرامات الصادرة بسبب عدم الالتزام بأنظمة المحميات البحرية يتم تحديثها على مدار العام.",
+      "labelEnglish": "Total count of fines issued for non-compliance with marine reserve regulations updated continuously.",
+      "type": "number"
+    },
+    {
+      "id": 37,
+      "labelArabic": "إجمالي حركة المسافرين بحرا في العقبة يتم تحديثها سنويا",
+      "labelEnglish": "Total sea passenger traffic in Aqaba Updated annually",
+      "type": "number"
+    },
+    {
+      "id": 38,
+      "labelArabic": "إجمالي حركة المسافرين برا في العقبة يتم تحديثها سنويا",
+      "labelEnglish": "Total land passenger traffic in Aqaba Updated annually",
+      "type": "number"
+    },
+    {
+      "id": 39,
+      "labelArabic": "إجمالي عدد نزلاء الفنادق في العقبة شهريا",
+      "labelEnglish": "Total Monthly Aqaba Hotels' guests",
+      "type": "number"
+    },
+    {
+      "id": 40,
+      "labelArabic": "متوسط مدة الإقامة، العقبة (ALoS)",
+      "labelEnglish": "Average length of stay, Aqaba (ALoS)",
+      "type": "duration"
+    },
+    {
+      "id": 41,
+      "labelArabic": "أكبر 10 دول مصدرة للوافدين من الفنادق، العقبة",
+      "labelEnglish": "Top 10 source countries hotel arrivals, Aqaba",
+      "type": "table",
+      "columns": [
+        { "key": "rank", "labelArabic": "الترتيب", "labelEnglish": "Rank" },
+        { "key": "country", "labelArabic": "الدولة", "labelEnglish": "Country" },
+        { "key": "arrivals", "labelArabic": "عدد الوافدين", "labelEnglish": "Arrivals" }
+      ],
+      "rows": [
+        { "id": "row1", "rank": 1, "country": "ألمانيا", "arrivals": 12500 },
+        { "id": "row2", "rank": 2, "country": "فرنسا", "arrivals": 10800 },
+        { "id": "row3", "rank": 3, "country": "بريطانيا", "arrivals": 9500 },
+        { "id": "row4", "rank": 4, "country": "إيطاليا", "arrivals": 7200 },
+        { "id": "row5", "rank": 5, "country": "إسبانيا", "arrivals": 6800 }
+      ]
+    },
+    {
+      "id": 42,
+      "labelArabic": "المنشآت السياحية الحاصلة على اعتمادات دولية",
+      "labelEnglish": "Number of tourism facilities with international accreditation",
+      "type": "number"
+    },
+    {
+      "id": 43,
+      "labelArabic": "اجمالي عدد الحافلات المملوكة للمدارس المرخصه لدى المديرية",
+      "labelEnglish": "Total number of buses owned by schools licensed by the Directorate of Transport and logistics",
+      "type": "number"
+    },
+    {
+      "id": 44,
+      "labelArabic": "اجمالي عدد حافلات النقل التأجيري",
+      "labelEnglish": "Total number of rental buses",
+      "type": "number"
+    },
+    {
+      "id": 45,
+      "labelArabic": "عدد السيارات الفخمة (اللموزين)  في العقبة",
+      "labelEnglish": "Number of limousines cars in Aqaba",
+      "type": "number"
+    },
+    {
+      "id": 46,
+      "labelArabic": "عدد مكاتب السيارات الفخمة ( اللموزين) في العقبة",
+      "labelEnglish": "Number of limousine offices in Aqaba",
+      "type": "number"
+    },
+    {
+      "id": 47,
+      "labelArabic": "اجمالي عدد الزيارات التوعوية للتنمية البحرية لكل عام",
+      "labelEnglish": "Total number of marine development awareness visits per year",
+      "type": "number"
+    },
+    {
+      "id": 48,
+      "labelArabic": "اجمالي عدد النشرات الإخبارية الالكترونية المعدة من قبل مديرية المحمية البحرية",
+      "labelEnglish": "Total number of e-newsletters by Aqaba Marine reserve directorate",
+      "type": "number"
+    },
+    {
+      "id": 49,
+      "labelArabic": "اجمالي عدد المواد التوعوية و المؤشرات الصاردة عند المحمية",
+      "labelEnglish": "Total number of awareness materials and indicators issued at the reserve",
+      "type": "number"
+    },
+    {
+      "id": 50,
+      "labelArabic": "العدد الإجمالي لحالات التسمم الغذائي التي تم الإبلاغ عنها وتسجيلها من قبل مديرية الرقابة والتنفيذ في العقبة، مصنفة حسب نوع الغذاء والمنطقة، يتم تحديثها يومياً.",
+      "labelEnglish": "The total number of food poisoning cases reported and recorded by the Directorate of Oversight and Enforcement in Aqaba, classified by type of food and region, updated daily.",
+      "type": "table",
+      "columns": [
+        { "key": "foodType", "labelArabic": "نوع الغذاء", "labelEnglish": "Food Type" },
+        { "key": "region", "labelArabic": "المنطقة", "labelEnglish": "Region" },
+        { "key": "cases", "labelArabic": "عدد الحالات", "labelEnglish": "Cases" }
+      ],
+      "rows": [
+        { "id": "row1", "foodType": "مأكولات بحرية", "region": "وسط المدينة", "cases": 5 },
+        { "id": "row2", "foodType": "دجاج", "region": "المنطقة الجنوبية", "cases": 3 },
+        { "id": "row3", "foodType": "حلويات", "region": "المنطقة الشمالية", "cases": 2 }
+      ]
+    },
+    {
+      "id": 51,
+      "labelArabic": "عدد العمالة الوافدة المعمم عليها لدى وزارة الداخلية",
+      "labelEnglish": "Number of expatriate workers circulated to the Ministry of Interior",
+      "type": "number"
+    },
+    {
+      "id": 52,
+      "labelArabic": "عدد المؤسسات المخالفة",
+      "labelEnglish": "Number of violating institutions",
+      "type": "number"
+    },
+    {
+      "id": 53,
+      "labelArabic": "عدد المؤسسات التي صوبت وضعها",
+      "labelEnglish": "Number of institutions that have corrected their status",
+      "type": "number"
+    },
+    {
+      "id": 54,
+      "labelArabic": "عدد المؤسسات المحولة للقضاء",
+      "labelEnglish": "Number of institutions transferred to the judiciary",
+      "type": "number"
+    },
+    {
+      "id": 55,
+      "labelArabic": "عدد معاملات اتلاف المواد الغذائية",
+      "labelEnglish": "Number of food waste transactions",
+      "type": "number"
+    },
+    {
+      "id": 56,
+      "labelArabic": "عدد العينات المسحوبة من الأسواق لغايات الفحص المخبري",
+      "labelEnglish": "Number of samples withdrawn from the market for laboratory examination purposes",
+      "type": "number"
+    },
+    {
+      "id": 57,
+      "labelArabic": "عدد المنشآت المخالفة صحيا",
+      "labelEnglish": "Number of establishments violating health conditions",
+      "type": "number"
+    },
+    {
+      "id": 58,
+      "labelArabic": "عدد الشكاوي المقدمة لمديرية الرقابة",
+      "labelEnglish": "Number of complaints received by the directorate of oversight and enfrocement",
+      "type": "number"
+    },
+    {
+      "id": 59,
+      "labelArabic": "عدد معاينات ارساليات الأسماك",
+      "labelEnglish": "Number of inspections of fish consignments",
+      "type": "number"
+    },
+    {
+      "id": 60,
+      "labelArabic": "عدد الذبائح",
+      "labelEnglish": "Total Number of sacrifices in Aqaba, updated daily",
+      "type": "number"
+    },
+    {
+      "id": 61,
+      "labelArabic": "الرسوم و بدل الخدمات لمديرية الرقابة",
+      "labelEnglish": "Fees and service fees for the Directorate of oversight and enforcement",
+      "type": "currency"
+    },
+    {
+      "id": 62,
+      "labelArabic": "عدد المخالفات البيئية",
+      "labelEnglish": "Number of environmental violations",
+      "type": "number"
+    },
+    {
+      "id": 63,
+      "labelArabic": "عدد مخالفات ورش البناء و الأبنية",
+      "labelEnglish": "Number of violations of construction workshops and buildings",
+      "type": "number"
+    },
+    {
+      "id": 64,
+      "labelArabic": "عدد المخالفات التي تم تصويبها",
+      "labelEnglish": "Number of violations corrected",
+      "type": "number"
+    },
+    {
+      "id": 65,
+      "labelArabic": "عدد المخالفت المحولة للمحكمة",
+      "labelEnglish": "Number of violations referred to court",
+      "type": "number"
+    },
+    {
+      "id": 66,
+      "labelArabic": "عدد المضبوطات و المصادرات",
+      "labelEnglish": "Number of seizures and confiscations",
+      "type": "number"
+    },
+    {
+      "id": 67,
+      "labelArabic": "عدد اشعارات تصويب المخالفات",
+      "labelEnglish": "Number of notices to correct violations",
+      "type": "number"
+    },
+    {
+      "id": 68,
+      "labelArabic": "عدد حملات الازالة / الاغلاق",
+      "labelEnglish": "Number of Removal/closure campaigns",
+      "type": "number"
+    },
+    {
+      "id": 69,
+      "labelArabic": "العدد الإجمال للشكاوي التي تم حلها والمتعلقة بالقضايا البيئية في العقبة يتم تحديثه يومياً",
+      "labelEnglish": "Total number of complains solved related to environmental issues in Aqaba updated daily",
+      "type": "number"
+    },
+    {
+      "id": 70,
+      "labelArabic": "إجمالي عدد الاستفسارات السياحية التي أجابت عليها ASEZA، حسب نوع الاستفسار",
+      "labelEnglish": "Total number of tourist queries answered by ASEZA, by query type",
+      "type": "table",
+      "columns": [
+        { "key": "queryType", "labelArabic": "نوع الاستفسار", "labelEnglish": "Query Type" },
+        { "key": "count", "labelArabic": "العدد", "labelEnglish": "Count" }
+      ],
+      "rows": [
+        { "id": "row1", "queryType": "الفنادق والإقامة", "count": 450 },
+        { "id": "row2", "queryType": "الفعاليات", "count": 320 },
+        { "id": "row3", "queryType": "الأنشطة السياحية", "count": 280 },
+        { "id": "row4", "queryType": "المواصلات", "count": 190 }
+      ]
+    },
+    {
+      "id": 71,
+      "labelArabic": "مجموع عدد الفنادق المخطط افتتاحها أو قيد الإنشاء في العقبة، حسب تصنيف الفنادق وقيمة الاستثمار",
+      "labelEnglish": "Total number of hotels planned to open or under construction in Aqaba, by hotel classification and investment value",
+      "type": "table",
+      "columns": [
+        { "key": "classification", "labelArabic": "تصنيف الفندق", "labelEnglish": "Hotel Classification" },
+        { "key": "investmentValue", "labelArabic": "قيمة الاستثمار (مليون دينار)", "labelEnglish": "Investment Value (Million JOD)" },
+        { "key": "count", "labelArabic": "العدد", "labelEnglish": "Count" }
+      ],
+      "rows": [
+        { "id": "row1", "classification": "5 نجوم", "investmentValue": 50, "count": 3 },
+        { "id": "row2", "classification": "4 نجوم", "investmentValue": 25, "count": 5 },
+        { "id": "row3", "classification": "3 نجوم", "investmentValue": 10, "count": 7 },
+        { "id": "row4", "classification": "منتجعات", "investmentValue": 80, "count": 2 }
+      ]
+    },
+    {
+      "id": 72,
+      "labelArabic": "النسبة المئوية للأسر المعيشية في العقبة التي لديها اتصال بالإنترنت عريض النطاق، محدثة شهرياً",
+      "labelEnglish": "Percentage of households in Aqaba with broadband internet access, updated monthly",
+      "type": "percentage"
+    },
+    {
+      "id": 73,
+      "labelArabic": "إجمالي عدد المراكز الصحية الشاملة في وزارة الصحة في العقبة، محدثة سنويًا",
+      "labelEnglish": "Total number of comprehensive health centers in the Ministry of Health in Aqaba, updated annually",
+      "type": "number"
+    },
+    {
+      "id": 74,
+      "labelArabic": "العدد الإجمالي للمستشفيات في العقبة، محدثة سنويًا",
+      "labelEnglish": "Total number of hospitals in Aqaba updated annually",
+      "type": "number"
+    },
+    {
+      "id": 75,
+      "labelArabic": "إجمالي عدد مراكز الرعاية الصحية العامة في العقبة، ، محدثة سنوياً",
+      "labelEnglish": "Total number of public healthcare centers in Aqaba, updated annually",
+      "type": "number"
+    },
+    {
+      "id": 76,
+      "labelArabic": "العدد الإجمالي للخدمات الحكومية في العقبة التي يمكن الوصول إليها عبر الإنترنت، يتم تحديثها سنويًا",
+      "labelEnglish": "Total number of government services in Aqaba that are accessible online, updated anually",
+      "type": "number"
+    },
+    {
+      "id": 77,
+      "labelArabic": "النسبة المئوية للمستخدمين الراضين عن الخدمات الحكومية عبر الإنترنت في العقبة، والتي يتم قياسها من خلال الاستبيانات، ويتم تحديثها سنوياً",
+      "labelEnglish": "Percentage of users satisfied with online government services in Aqaba, measured through surveys, updated anually",
+      "type": "percentage"
+    },
+    {
+      "id": 78,
+      "labelArabic": "نسبة الوثائق الحكومية التي تم رقمنتها في العقبة، يتم تحديثها سنوياً.",
+      "labelEnglish": "Percentage of government documents in Aqaba that have been digitized, updated anually",
+      "type": "percentage"
+    },
+    {
+      "id": 79,
+      "labelArabic": "إجمالي عدد برامج التدريب على الرقمنة للموظفين الحكوميين في العقبة، محدثة سنوياً",
+      "labelEnglish": "Total number of digitalization training programs conducted for government employees in Aqaba, updated anually",
+      "type": "number"
+    },
+    {
+      "id": 80,
+      "labelArabic": "إجمالي عدد المباني الحكومية في العقبة المجهزة بخدمة الواي فاي العامة، محدثة سنوياً",
+      "labelEnglish": "Total number of government buildings in Aqaba equipped with public Wi-Fi access, updated anually",
+      "type": "number"
+    },
+    {
+      "id": 81,
+      "labelArabic": "إجمالي عدد حوادث الأمن السيبراني التي تم الإبلاغ عنها داخل المؤسسات الحكومية في العقبة، محدثة سنوياً",
+      "labelEnglish": "Total number of cybersecurity incidents reported within government institutions in Aqaba, updated anually",
+      "type": "number"
+    },
+    {
+      "id": 82,
+      "labelArabic": "إجمالي مبلغ الإيرادات من الغرامات البيئية يتم تحديثه سنويًا",
+      "labelEnglish": "Total revenue amount from environmental fines updated annually",
+      "type": "currency"
+    },
+    {
+      "id": 83,
+      "labelArabic": "إجمالي عدد المبادرات التي نفذتها مديرية حماية البيئة والاستدامة يتم تحديثها سنويًا",
+      "labelEnglish": "Total number of initiatives executed by the Directorate of Environmental Protection and Sustainability updated annually",
+      "type": "number"
+    },
+    {
+      "id": 84,
+      "labelArabic": "العدد الإجمالي للشكاوى التي تم حلها والمتعلقة بالقضايا البيئية في العقبة، محدثة يومياً",
+      "labelEnglish": "Total number of complaints solved related to environmental issues in Aqaba, updated daily",
+      "type": "number"
+    },
+    {
+      "id": 85,
+      "labelArabic": "إجمالي عدد الموظفين المدربين داخل المنطقة الاقتصادية الخاصة بالدقم يتم تحديثه يومياً",
+      "labelEnglish": "Total Number of trained Employees within ASEZA updated daily",
+      "type": "number"
+    },
+    {
+      "id": 86,
+      "labelArabic": "متوسط قيمة الرواتب داخل ASEZA محدثة شهرياً",
+      "labelEnglish": "Average value of salaries Within ASEZA updated monthly",
+      "type": "currency"
+    },
+    {
+      "id": 87,
+      "labelArabic": "العدد الإجمالي للأكياس البلاستيكية المستهلكة داخل مناطق العقبة، يتم تحديثها سنويًا",
+      "labelEnglish": "Total Number of plastic bags consumed within Aqaba regions, updated annually",
+      "type": "number"
+    },
+    {
+      "id": 88,
+      "labelArabic": "إجمالي عدد عينات المياه التي تم جمعها وفحصها من قبل وحدة السلامة العامة في العقبة، محدثة ربع سنوي",
+      "labelEnglish": "Total Number of Water Samples Collected and Tested by the Public Safety Unit in Aqaba, updated quarterly",
+      "type": "number"
+    },
+    {
+      "id": 89,
+      "labelArabic": "إجمالي عدد مشاريع التنمية المستدامة في العقبة، محدثة سنويا",
+      "labelEnglish": "Total number of sustainable development projects in Aqaba, updated annually",
+      "type": "number"
+    },
+    {
+      "id": 90,
+      "labelArabic": "عدد الحوادث البحرية في العقبة  يتم تحديثه سنويا",
+      "labelEnglish": "The number of marine accidents in Aqaba is updated annually.",
+      "type": "number"
+    },
+    {
+      "id": 91,
+      "labelArabic": "عدد المؤسسات المخالفة، تحديث أسبوعي",
+      "labelEnglish": "Number of violating institutions, updated weekly",
+      "type": "number"
+    },
+    {
+      "id": 92,
+      "labelArabic": "المسوحات الميدانية للمنشآت، يتم تحديثها ربع سنويًا",
+      "labelEnglish": "Field surveys of facilities, updated quarterly",
+      "type": "text"
+    },
+    {
+      "id": 93,
+      "labelArabic": "متابعة الحوادث البيئية (برية/بحرية)، يتم تحديثها ربع سنويًا",
+      "labelEnglish": "Follow-up on environmental incidents (land/sea), updated quarterly",
+      "type": "text"
+    },
+    {
+      "id": 94,
+      "labelArabic": "متابعة مخرجات دراسات التدقيق البيئي، يتم تحديثها ربع سنويًا",
+      "labelEnglish": "Follow-up on the outputs of environmental audit studies, updated quarterly",
+      "type": "text"
+    },
+    {
+      "id": 95,
+      "labelArabic": "حضور ومتابعة تمارين الطوارئ الوهمية للمنشآت، يتم تحديثها ربع سنويًا",
+      "labelEnglish": "Attend and follow-up on mock emergency exercises for facilities, updated quarterly",
+      "type": "text"
+    },
+    {
+      "id": 96,
+      "labelArabic": "حجم النفايات المنزلية والصلبة، محدث شهريا",
+      "labelEnglish": "Volume of household and solid waste, updated monthly",
+      "type": "number"
+    },
+    {
+      "id": 97,
+      "labelArabic": "زراعة الأشتال، محدث شهريا",
+      "labelEnglish": "Planting seedlings, updated monthly",
+      "type": "number"
+    }
+  ]
