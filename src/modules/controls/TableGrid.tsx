@@ -89,6 +89,7 @@ const columnToFormField = (
   /** Table cells do not carry a next-submission date — that belongs to the parent field */
   kpiNextSubmissionDateEn: null,
   kpiNextSubmissionDateAr: null,
+  calculation: null,
 });
 
 /** Renders a dynamic table/grid using useFieldArray for fields with controlKey "TABLE" */

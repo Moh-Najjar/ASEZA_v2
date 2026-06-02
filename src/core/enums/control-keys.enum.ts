@@ -9,6 +9,7 @@ export const ControlKeys = {
   Text: 'TEXT',
   RawTable: 'RAW_TABLE',
   Label: 'LABEL',
+  CalculatedField: 'CALCULATED_FIELD',
 } as const;
 
 /** Union type derived from the ControlKeys object values */

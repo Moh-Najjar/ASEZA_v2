@@ -48,7 +48,7 @@ const toFormField = (fv: FieldValue): FormField => ({
   },
   isRequired: fv.isRequired,
   displayOrder: fv.displayOrder,
-  isReadOnly: true,
+  isReadOnly: fv.isReadOnly,
   isVisible: fv.isVisible,
   lookupType:
     fv.lookupType !== null
@@ -101,6 +101,7 @@ const toFormField = (fv: FieldValue): FormField => ({
   validationMessageAr: fv.validationMessageAr,
   kpiNextSubmissionDateEn: fv.kpiNextSubmissionDateEn,
   kpiNextSubmissionDateAr: fv.kpiNextSubmissionDateAr,
+  calculation: null,
 });
 
 const ViewContent: React.FC<ViewContentProps> = ({

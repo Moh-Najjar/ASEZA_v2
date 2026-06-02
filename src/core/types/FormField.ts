@@ -99,6 +99,59 @@ export interface GridDef {
   cells: GridCell[];
 }
 
+/** Describes one input slot inside a CALCULATED_FIELD */
+export interface CalculationInput {
+  /** Token used in formulaExpression, e.g. "VALUE1" or "VALUE2" */
+  inputToken: string;
+  /** Column key used as the RHF sub-field path, e.g. "NUMBER_OF_OVERNIGHT_VISITORS" */
+  columnKey: string;
+  labelEn: string;
+  labelAr: string;
+  placeholderEn: string;
+  placeholderAr: string;
+  dataType: DataType;
+  controlType: ControlTypeDef;
+  /** Controls rendering order among inputs */
+  displayOrder: number;
+  isRequired: boolean;
+}
+
+/** Describes the read-only result slot inside a CALCULATED_FIELD */
+export interface CalculationResult {
+  /** Column key used as the RHF sub-field path, e.g. "RESULT" */
+  columnKey: string;
+  labelEn: string;
+  labelAr: string;
+  placeholderEn: string;
+  placeholderAr: string;
+  dataType: DataType;
+  controlType: ControlTypeDef;
+  isReadOnly: boolean;
+}
+
+/**
+ * Full calculation descriptor for a CALCULATED_FIELD control.
+ * formulaExpression is a simple two-operand expression whose operands are
+ * the inputToken values defined in the inputs array, e.g. "VALUE2 / VALUE1".
+ */
+export interface CalculationDef {
+  /** Two-token arithmetic expression, e.g. "VALUE2 / VALUE1" or "VALUE1 / VALUE2" */
+  formulaExpression: string;
+  /** columnKey of the result input; must match result.columnKey */
+  resultColumnKey: string;
+  resultLabelEn: string;
+  resultLabelAr: string;
+  /** Number of decimal places to round the result to */
+  resultPrecision: number;
+  buttonLabelEn: string;
+  buttonLabelAr: string;
+  /** Human-readable formula shown to the user, e.g. "Result = Bed Nights ÷ Visitors" */
+  displayFormulaEn: string;
+  displayFormulaAr: string;
+  inputs: CalculationInput[];
+  result: CalculationResult;
+}
+
 /** Represents a single form field from formData-v1.json */
 export interface FormField {
   fieldId: number;
@@ -140,4 +193,9 @@ export interface FormField {
   validationMessageEn: string | null;
   kpiNextSubmissionDateEn: string | null;
   kpiNextSubmissionDateAr: string | null;
+  /**
+   * Present only when controlType.controlKey is "CALCULATED_FIELD".
+   * Carries the formula, input definitions, and result descriptor.
+   */
+  calculation: CalculationDef | null;
 }

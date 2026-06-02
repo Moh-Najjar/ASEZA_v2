@@ -6,6 +6,7 @@ import DropDown from "../../modules/controls/DropDown";
 import DatePicker from "../../modules/controls/Date";
 import RawTable from "../../modules/controls/RawTable";
 import Label from "../../modules/controls/Label";
+import CalculatedField from "../../modules/controls/CalculatedField";
 
 import { ControlKeys } from "../enums/control-keys.enum";
 import { FormField } from "../types/FormField";
@@ -38,6 +39,7 @@ export const getControlType = (
     [ControlKeys.Table]: TableGrid,
     [ControlKeys.RawTable]: RawTable,
     [ControlKeys.Label]: Label,
+    [ControlKeys.CalculatedField]: CalculatedField,
   };
 
   return controlTypes[controlKey];

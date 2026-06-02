@@ -66,6 +66,7 @@ const gridCellToFormField = (
   validationMessageAr: cell.validationMessageAr,
   kpiNextSubmissionDateEn: null,
   kpiNextSubmissionDateAr: null,
+  calculation: null,
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
