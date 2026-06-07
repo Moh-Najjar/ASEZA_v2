@@ -3,13 +3,15 @@ import React, { useMemo, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import ListAltIcon from '@mui/icons-material/ListAlt';
+
 import RefreshIcon from '@mui/icons-material/Refresh';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
@@ -26,6 +28,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { alpha, useTheme } from '@mui/material/styles';
 import type { SelectChangeEvent } from '@mui/material/Select';
+import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
@@ -36,7 +39,11 @@ import HeroBanner from '../shared/HeroBanner';
 
 import type { RequestStatus } from './types';
 import { mapApiStatus } from './utils/statusHelpers';
-import { useGetMySubmissions } from '../../core/hooks/useFormApi';
+import { exportSubmissionToDocx } from './utils/exportToDocx';
+import { SUBMISSION_DETAILS_QUERY_KEY, DROPDOWN_LIST_VALUES_QUERY_KEY, useGetMySubmissions } from '../../core/hooks/useFormApi';
+import { getSubmissionDetails, getDropdownListValues } from '../../core/api/form';
+import type { GetSubmissionDetailsResponse } from '../../core/types/getSubmissionDetailsResponse';
+import type { GetDropdownListValuesResponse } from '../../core/types/getDropdownListValuesResponse';
 import type { SubmissionItem } from '../../core/types/getMySubmissionsResponse';
 import { useAuth } from '../../core/context/AuthContext';
 import { useLocale } from '../../core/hooks/useLocale';
@@ -300,6 +307,7 @@ const MyRequests: React.FC = () => {
   const { isAr } = useLocale();
   const theme = useTheme();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const deviceType = useDeviceType();
   const isMobile = deviceType === 'mobile';
@@ -324,6 +332,9 @@ const MyRequests: React.FC = () => {
 
   // ─── Delete dialog state ────────────────────────────────────────────────────
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget | null>(null);
+
+  // ─── Export loading state: tracks which submissionId is currently exporting ─
+  const [exportingId, setExportingId] = useState<number | null>(null);
 
   // ─── Handlers ──────────────────────────────────────────────────────────────
 
@@ -351,6 +362,71 @@ const MyRequests: React.FC = () => {
   const handleRowsPerPageChange = (rows: number): void => {
     setRowsPerPage(rows);
     setPage(0);
+  };
+
+  /**
+   * Imperatively fetches submission details and all required dropdown values,
+   * then triggers a DOCX download. Uses React Query cache when possible.
+   */
+  const handleExport = async (submissionId: number): Promise<void> => {
+    if (exportingId !== null) return; // Prevent concurrent exports
+
+    setExportingId(submissionId);
+
+    try {
+      // Fetch submission details (use cache if available)
+      const detail = await queryClient.fetchQuery<GetSubmissionDetailsResponse, Error>({
+        queryKey: [SUBMISSION_DETAILS_QUERY_KEY, submissionId],
+        queryFn: () => getSubmissionDetails({ submissionId }),
+        staleTime: 0,
+      });
+
+      // Collect all unique lookupTypeIds from dropdown and multiselect fields
+      const lookupTypeIds: number[] = [];
+      for (const fv of detail.fieldValues) {
+        const controlKey = fv.controlType.controlKey;
+        const hasLookup =
+          (controlKey === 'DROPDOWN' || controlKey === 'MULTISELECT') &&
+          fv.lookupType !== null;
+
+        if (hasLookup && fv.lookupType !== null) {
+          const id = fv.lookupType.lookupTypeId;
+          if (!lookupTypeIds.includes(id)) {
+            lookupTypeIds.push(id);
+          }
+        }
+
+        // Also check table column lookups
+        if (fv.columns !== null) {
+          for (const col of fv.columns) {
+            if (col.lookupType !== null) {
+              const id = col.lookupType.lookupTypeId;
+              if (!lookupTypeIds.includes(id)) {
+                lookupTypeIds.push(id);
+              }
+            }
+          }
+        }
+      }
+
+      // Fetch all dropdown options in a single batched request (use cache if available)
+      let dropdownData: GetDropdownListValuesResponse = {};
+      if (lookupTypeIds.length > 0) {
+        const sortedIds = [...lookupTypeIds].sort((a, b) => a - b);
+        dropdownData = await queryClient.fetchQuery<GetDropdownListValuesResponse, Error>({
+          queryKey: [DROPDOWN_LIST_VALUES_QUERY_KEY, 'multi', ...sortedIds],
+          queryFn: () => getDropdownListValues({ lookupTypeIds: sortedIds }),
+          staleTime: Infinity,
+        });
+      }
+
+      await exportSubmissionToDocx(detail, dropdownData, isAr, locale);
+    } catch (err) {
+      // Log error silently — user sees no feedback since the export failed
+      console.error('Export failed:', err);
+    } finally {
+      setExportingId(null);
+    }
   };
 
   // ─── Render ────────────────────────────────────────────────────────────────
@@ -600,23 +676,33 @@ const MyRequests: React.FC = () => {
                                 </IconButton>
                               </Tooltip>
 
-                              {/* Delete */}
-                              {/* <Tooltip title={t('myRequests.actions.delete')} arrow>
-                                <IconButton
-                                  size="small"
-                                  onClick={() => handleDeleteClick(item)}
-                                  sx={{
-                                    width: 30, height: 30,
-                                    border: '1px solid',
-                                    borderColor: alpha('#E53E3E', 0.45),
-                                    borderRadius: 1.5,
-                                    color: '#E53E3E',
-                                    bgcolor: alpha('#E53E3E', 0.05),
-                                    '&:hover': { bgcolor: alpha('#E53E3E', 0.12), borderColor: '#E53E3E' },
-                                  }}>
-                                  <DeleteOutlineIcon sx={{ fontSize: 15 }} />
-                                </IconButton>
-                              </Tooltip> */}
+                              {/* Export DOCX */}
+                              <Tooltip title={t('myRequests.actions.export', 'Export DOCX')} arrow>
+                                <span>
+                                  <IconButton
+                                    size="small"
+                                    disabled={exportingId !== null}
+                                    onClick={() => { void handleExport(item.submissionId); }}
+                                    sx={{
+                                      width: 30, height: 30,
+                                      border: '1px solid',
+                                      borderColor: exportingId === item.submissionId
+                                        ? alpha('#14A697', 0.25)
+                                        : alpha('#14A697', 0.45),
+                                      borderRadius: 1.5,
+                                      color: '#14A697',
+                                      bgcolor: alpha('#14A697', 0.05),
+                                      '&:hover': { bgcolor: alpha('#14A697', 0.12), borderColor: '#14A697' },
+                                      '&.Mui-disabled': { opacity: 0.45 },
+                                    }}>
+                                    {exportingId === item.submissionId ? (
+                                      <CircularProgress size={13} sx={{ color: '#14A697' }} />
+                                    ) : (
+                                      <FileDownloadOutlinedIcon sx={{ fontSize: 15 }} />
+                                    )}
+                                  </IconButton>
+                                </span>
+                              </Tooltip>
 
                             </Box>
                           </TableCell>

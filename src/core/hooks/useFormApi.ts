@@ -9,7 +9,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import type { FormField } from "../types/FormField";
 import { useAuth } from "../context/AuthContext";
 
-const DROPDOWN_LIST_VALUES_QUERY_KEY = 'dropdown-list-values';
+export const DROPDOWN_LIST_VALUES_QUERY_KEY = 'dropdown-list-values';
 const SUBMIT_FORM_MUTATION_KEY = ['submit-form'];
 export const FORM_FIELDS_QUERY_KEY = 'form-fields';
 export const MY_SUBMISSIONS_QUERY_KEY = 'my-submissions';
