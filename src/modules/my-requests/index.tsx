@@ -677,7 +677,7 @@ const MyRequests: React.FC = () => {
                               </Tooltip>
 
                               {/* Export DOCX */}
-                              <Tooltip title={t('myRequests.actions.export', 'Export DOCX')} arrow>
+                              <Tooltip title={t('myRequests.export')} arrow>
                                 <span>
                                   <IconButton
                                     size="small"

@@ -39,6 +39,7 @@
   "myRequests.tableAriaLabel": "KPI submission requests table",
   "myRequests.addNewRequest": "Add New Request",
   "myRequests.noData": "No recent requests found.",
+  "myRequests.export": "Export DOCX",
 
   "myRequests.stats.total": "Total Requests",
   "myRequests.stats.pending": "Pending / Returned",

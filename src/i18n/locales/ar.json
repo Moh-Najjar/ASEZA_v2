@@ -31,11 +31,14 @@
   "notFound.requestedPathLabel": "المسار المطلوب:",
   "notFound.goHome": "الرئيسية",
   "notFound.goBack": "رجوع",
+
   "myRequests.pageTitle": "طلباتي",
   "myRequests.pageSubtitle": "إدارة وتتبع طلبات إدخال بيانات مؤشرات الأداء الرئيسية عبر جميع المديريات.",
   "myRequests.tableAriaLabel": "جدول طلبات تقديم مؤشرات الأداء",
   "myRequests.addNewRequest": "إضافة طلب جديد",
   "myRequests.noData": "لا توجد طلبات حديثة.",
+  "myRequests.export": "تصدير DOCX",
+  
   "myRequests.stats.total": "إجمالي الطلبات",
   "myRequests.stats.pending": "قيد المراجعة / مُعادة",
   "myRequests.stats.approved": "معتمدة",
