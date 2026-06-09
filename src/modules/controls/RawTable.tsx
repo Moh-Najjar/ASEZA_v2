@@ -38,7 +38,8 @@ interface RenderRow {
 const gridCellToFormField = (
   cell: GridCell,
   fieldName: string,
-  isParentReadOnly: boolean
+  parentField: FormField,
+  isRequired: boolean = false
 ): FormField => ({
   fieldId: 0,
   formId: 0,
@@ -47,9 +48,9 @@ const gridCellToFormField = (
   labelAr: cell.columnLabelAr,
   dataType: cell.dataType,
   controlType: cell.controlType,
-  isRequired: cell.isRequired,
+  isRequired: isRequired,
   displayOrder: cell.column,
-  isReadOnly: isParentReadOnly || cell.isReadOnly,
+  isReadOnly: parentField.isReadOnly || cell.isReadOnly,
   isVisible: cell.isVisible,
   lookupType: cell.lookupType,
   placeholderEn: cell.placeholderEn,
@@ -64,8 +65,10 @@ const gridCellToFormField = (
   regexPattern: null,
   validationMessageEn: cell.validationMessageEn,
   validationMessageAr: cell.validationMessageAr,
-  kpiNextSubmissionDateEn: null,
-  kpiNextSubmissionDateAr: null,
+  // Inherit next-submission date from the parent RAW_TABLE field so cell
+  // controls apply the same read-only + helper-text behaviour as InputField.
+  kpiNextSubmissionDateEn: parentField.kpiNextSubmissionDateEn,
+  kpiNextSubmissionDateAr: parentField.kpiNextSubmissionDateAr,
   calculation: null,
 });
 
@@ -95,10 +98,20 @@ const RawTable: React.FC<RawTableProps> = ({
 }) => {
   const { loc } = useLocale();
   const { setValue, getValues } = formMethods;
-  const isParentReadOnly = formField.isReadOnly;
+
+  /** True when a next-submission date is provided for this RAW_TABLE KPI field */
+  const kpiDateEn = formField.kpiNextSubmissionDateEn ?? "";
+  const kpiDateAr = formField.kpiNextSubmissionDateAr ?? "";
+  const kpiNextSubmissionDate = loc(kpiDateEn, kpiDateAr);
+  const hasNextSubmissionDate =
+    kpiNextSubmissionDate !== null && kpiNextSubmissionDate !== "";
+
+  /** The table is read-only either by its own flag or when a next-submission date is set */
+  const isTableReadOnly = formField.isReadOnly || hasNextSubmissionDate;
 
   /** Column definitions are taken directly from formField.columns */
   const columns = formField.columns ?? [];
+  const isRequired = formField.isRequired;
 
   /**
    * Row-label column is shown only when the field provides a non-empty header label.
@@ -178,6 +191,7 @@ const RawTable: React.FC<RawTableProps> = ({
       if (
         cell.controlType.controlKey !== "DROPDOWN" ||
         cell.lookupType === null ||
+        isTableReadOnly ||
         cell.isReadOnly ||
         !cell.isVisible
       ) {
@@ -203,12 +217,13 @@ const RawTable: React.FC<RawTableProps> = ({
    */
   const getCellFormField = (
     rowKey: string,
-    colKey: string
+    colKey: string,
+    isRequired: boolean = false
   ): FormField | null => {
     const cell = cellMap.get(`${rowKey}.${colKey}`);
     if (cell === undefined || !cell.isVisible) return null;
     const fieldName = `${formField.fieldKey}.${rowKey}.${colKey}`;
-    return gridCellToFormField(cell, fieldName, isParentReadOnly);
+    return gridCellToFormField(cell, fieldName, formField, isRequired);
   };
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -267,7 +282,8 @@ const RawTable: React.FC<RawTableProps> = ({
                 {columns.map((col) => {
                   const cellField = getCellFormField(
                     row.rowKey,
-                    col.columnKey
+                    col.columnKey,
+                    isRequired
                   );
 
                   if (cellField === null) {
@@ -305,8 +321,20 @@ const RawTable: React.FC<RawTableProps> = ({
         </Table>
       </TableContainer>
 
-      {/* Optional field-level help text */}
+      {/* Next-submission date helper — shown once below the table */}
+      {!hideHelperText && hasNextSubmissionDate && (
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ mt: 0.5, display: "block", fontSize: "0.75rem" }}
+        >
+          {kpiNextSubmissionDate}
+        </Typography>
+      )}
+
+      {/* Regular field-level help text when no next-submission date is set */}
       {!hideHelperText &&
+        !hasNextSubmissionDate &&
         (formField.helpTextEn !== "" || formField.helpTextAr !== "") && (
           <Typography
             variant="caption"

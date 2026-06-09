@@ -6,6 +6,7 @@ import { DirectionProvider } from './DirectionContext';
 import { ThemeContextProvider } from './ThemeContext';
 import { AuthProvider } from './AuthContext';
 import { FetchingContextProvider } from './FetchingContext';
+import { TourProvider } from './TourContext';
 import ErrorBoundary from './ErrorBoundary';
 import { msalConfig } from '../config/authConfig';
 
@@ -21,7 +22,11 @@ const AppProviders: React.FC<React.PropsWithChildren> = ({ children }) => {
         <ThemeContextProvider>
           <FetchingContextProvider>
             <DirectionProvider>
-              <AuthProvider>{children}</AuthProvider>
+              <AuthProvider>
+                {/* TourProvider is placed inside BrowserRouter (in App.tsx)
+                    so AppTour can use react-router hooks for navigation. */}
+                <TourProvider>{children}</TourProvider>
+              </AuthProvider>
             </DirectionProvider>
           </FetchingContextProvider>
         </ThemeContextProvider>

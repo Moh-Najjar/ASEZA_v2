@@ -195,6 +195,7 @@ const Home: React.FC = () => {
         {/* Stats Row                                                         */}
         {/* ---------------------------------------------------------------- */}
         <Box
+          data-tour="home-stats"
           sx={{
             display: 'grid',
             gridTemplateColumns: { xs: '1fr 1fr', md: 'repeat(4, 1fr)' },
@@ -268,7 +269,7 @@ const Home: React.FC = () => {
           }}>
 
           {/* Quick Actions ------------------------------------------------ */}
-          <Box sx={{ width: { xs: '100%', lg: '340px' }, flexShrink: 0 }}>
+          <Box data-tour="home-quick-actions" sx={{ width: { xs: '100%', lg: '340px' }, flexShrink: 0 }}>
             <Paper
               elevation={0}
               sx={{
@@ -381,7 +382,7 @@ const Home: React.FC = () => {
           </Box>
 
           {/* Recent Submissions ------------------------------------------- */}
-          <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Box data-tour="home-recent" sx={{ flex: 1, minWidth: 0 }}>
             <Paper
               elevation={0}
               sx={{

@@ -29,6 +29,8 @@ const InputField: React.FC<InputFieldProps> = ({
   const { control } = formMethods;
   const { loc, t } = useLocale();
 
+  console.log(formField);
+
   const { controlKey } = formField.controlType;
   const typeName = controlKey === ControlKeys.Number ? 'number' : 'text';
 

@@ -464,6 +464,7 @@ const MyRequests: React.FC = () => {
                 mb: 3,
               }}>
               <Button
+                data-tour="new-request-btn"
                 variant="contained"
                 startIcon={<AddIcon />}
                 onClick={handleAddNew}
@@ -491,6 +492,7 @@ const MyRequests: React.FC = () => {
 
           {/* ── Requests table ── */}
           <Paper
+            data-tour="requests-table"
             elevation={0}
             sx={{
               borderRadius: 3,

@@ -14,6 +14,7 @@
   "nav.search": "البحث",
   "nav.language": "اللغة",
   "nav.my-requests": "طلباتي",
+  "nav.userGuide": "دليل المستخدم",
   "login.tagline": "البوابة الرسمية لمنطقة العقبة الاقتصادية الخاصة",
   "login.taglineSubtitle": "تصفّح الخدمات وأدر ملفك الشخصي وابقَ على تواصل مع المنصة الرقمية لسلطة منطقة العقبة الاقتصادية الخاصة.",
   "login.trustSecureSso": "🔒 تسجيل دخول آمن",
@@ -196,5 +197,56 @@
   "submission.success.confirm": "حسناً",
 
   "breadcrumbs.aria.label": "مسار التنقل",
-  "breadcrumbs.requestNo": "طلب رقم {{number}}"
+  "breadcrumbs.requestNo": "طلب رقم {{number}}",
+
+  "userGuide.hero.title": "دليل المستخدم",
+  "userGuide.hero.subtitle": "تعلّم كيفية استخدام بوابة ASEZA خطوة بخطوة — من تسجيل الدخول حتى رفع طلبك الأول.",
+  "userGuide.hero.badge": "دليل الاستخدام",
+
+  "userGuide.tour.title": "جرّب الجولة التفاعلية",
+  "userGuide.tour.subtitle": "دعنا نرشدك خطوة بخطوة داخل التطبيق مباشرةً — أسرع من قراءة الدليل!",
+  "userGuide.tour.startBtn": "ابدأ الجولة الآن",
+
+  "userGuide.step.label": "الخطوة {{number}}",
+  "userGuide.tips.title": "نصائح مفيدة",
+
+  "userGuide.cta.title": "أنت جاهز لتقديم طلبك الأول!",
+  "userGuide.cta.subtitle": "إذا واجهت أي مشكلة، يمكنك الرجوع لهذا الدليل في أي وقت أو تشغيل الجولة التفاعلية من أيقونة المصباح في شريط التنقل.",
+  "userGuide.cta.btn": "ابدأ الجولة التفاعلية",
+
+  "userGuide.steps.login.title": "تسجيل الدخول",
+  "userGuide.steps.login.description": "افتح التطبيق وسيظهر لك شاشة تسجيل الدخول. اضغط على زر \"تسجيل الدخول بحساب ASEZA\" وسيتم تحويلك تلقائياً إلى صفحة Microsoft لإدخال بيانات حسابك المؤسسي.",
+  "userGuide.steps.login.tip1": "استخدم بريدك الإلكتروني المؤسسي (@aseza.jo)",
+  "userGuide.steps.login.tip2": "ستُحفظ جلستك تلقائياً — لا داعي لتسجيل الدخول في كل مرة",
+  "userGuide.steps.login.tip3": "في حال انتهاء الجلسة، سيُعيد النظام توجيهك لصفحة الدخول",
+
+  "userGuide.steps.home.title": "الصفحة الرئيسية",
+  "userGuide.steps.home.description": "بعد تسجيل الدخول ستصل إلى لوحة التحكم الرئيسية. تعرض 4 بطاقات إحصائية: إجمالي طلباتك، الطلبات قيد المراجعة، الطلبات المعتمدة، والطلبات المرفوضة. كما تظهر آخر 5 طلبات في جدول سريع.",
+  "userGuide.steps.home.tip1": "الأرقام تُحدَّث تلقائياً من الخادم عند كل زيارة",
+  "userGuide.steps.home.tip2": "اضغط على \"عرض الكل\" للانتقال لصفحة طلباتي",
+  "userGuide.steps.home.tip3": "يمكنك بدء طلب جديد مباشرة من بطاقة \"الإجراءات السريعة\"",
+
+  "userGuide.steps.requests.title": "صفحة طلباتي",
+  "userGuide.steps.requests.description": "تحتوي هذه الصفحة على جدول بجميع طلباتك. يمكنك تصفية الطلبات حسب الحالة، البحث برقم الطلب أو اسم النموذج، والتنقل بين صفحات النتائج.",
+  "userGuide.steps.requests.tip1": "اضغط على أيقونة العين لعرض تفاصيل أي طلب",
+  "userGuide.steps.requests.tip2": "يمكنك تصدير تفاصيل الطلب ملف Word (DOCX)",
+  "userGuide.steps.requests.tip3": "حالات الطلبات: مسودة، مُقدَّم، معتمد، مرفوض، مُعاد",
+
+  "userGuide.steps.newRequest.title": "إنشاء طلب جديد",
+  "userGuide.steps.newRequest.description": "اضغط زر \"+ إضافة طلب جديد\" في أعلى صفحة طلباتي. سيفتح نموذج متعدد الخطوات خاص بمؤشرات الأداء (KPI) الخاصة بمديريتك.",
+  "userGuide.steps.newRequest.tip1": "الزر يظهر فقط لمستخدمي صلاحية \"إدخال البيانات\"",
+  "userGuide.steps.newRequest.tip2": "لا يمكن الانتقال للخطوة التالية إلا بعد ملء الحقول الإلزامية",
+  "userGuide.steps.newRequest.tip3": "يُعرض في الشريط الجانبي: اسم النموذج، المديرية، والفترة الزمنية",
+
+  "userGuide.steps.fillSteps.title": "ملء الخطوات",
+  "userGuide.steps.fillSteps.description": "النموذج مقسّم إلى خطوات واضحة. كل خطوة تحتوي على مجموعة من حقول البيانات (نصوص، أرقام، قوائم منسدلة، تواريخ، جداول). يُظهر الشريط العلوي الخطوة الحالية ونسبة الإنجاز في الشريط الجانبي.",
+  "userGuide.steps.fillSteps.tip1": "الحقول المُعلَّمة بـ (*) إلزامية",
+  "userGuide.steps.fillSteps.tip2": "اضغط \"السابق\" للرجوع إلى خطوة سابقة دون فقدان البيانات",
+  "userGuide.steps.fillSteps.tip3": "تأكد من صحة القيم قبل الانتقال — تحدث المراجعة تلقائياً عند الضغط على \"التالي\"",
+
+  "userGuide.steps.submit.title": "إرسال الطلب",
+  "userGuide.steps.submit.description": "في الخطوة الأخيرة من النموذج، اضغط زر \"إرسال\". سيتم رفع الطلب إلى الخادم وستظهر نافذة تأكيد عند نجاح العملية. بعد ذلك سيتم تحويلك تلقائياً إلى صفحة \"طلباتي\".",
+  "userGuide.steps.submit.tip1": "تأكد من مراجعة جميع الحقول قبل الإرسال",
+  "userGuide.steps.submit.tip2": "بعد الإرسال لا يمكن تعديل الطلب إلا بعد إعادته من قِبل المعتمِد",
+  "userGuide.steps.submit.tip3": "ستُرسل إشعارات تلقائية عند تغيير حالة الطلب"
 }

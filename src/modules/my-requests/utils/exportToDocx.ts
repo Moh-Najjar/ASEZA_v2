@@ -24,6 +24,7 @@ import type { GetDropdownListValuesResponse } from '../../../core/types/getDropd
 const CONTROL_KEY_DROPDOWN = 'DROPDOWN';
 const CONTROL_KEY_MULTISELECT = 'MULTISELECT';
 const CONTROL_KEY_TABLE = 'TABLE';
+const CONTROL_KEY_RAW_TABLE = 'RAW_TABLE';
 const CONTROL_KEY_DATEPICKER = 'DATEPICKER';
 
 // ─── Colour palette (hex without #) ──────────────────────────────────────────
@@ -353,6 +354,82 @@ const buildTableControl = (
   });
 };
 
+// ─── Helper: build a styled data table for a RAW_TABLE-type field ────────────
+
+const buildRawTableControl = (
+  fv: FieldValue,
+  dropdownData: GetDropdownListValuesResponse,
+  isAr: boolean,
+): Table | null => {
+  if (fv.columns === null || fv.rawTableValues === null || fv.rawTableValues.length === 0) return null;
+
+  const colDefs = fv.columns;
+  const colWidthPct = Math.floor(100 / colDefs.length);
+
+  const headerRow = new TableRow({
+    children: colDefs.map((col) =>
+      new TableCell({
+        width: { size: colWidthPct, type: WidthType.PERCENTAGE },
+        shading: { fill: COLORS.primary },
+        borders: ALL_CELL_BORDER,
+        children: [
+          new Paragraph({
+            alignment: AlignmentType.CENTER,
+            spacing: { before: 80, after: 80 },
+            bidirectional: isAr,
+            children: [
+              new TextRun({
+                text: isAr ? col.labelAr : col.labelEn,
+                bold: true,
+                color: COLORS.white,
+                size: 18,
+                rightToLeft: isAr,
+              }),
+            ],
+          }),
+        ],
+      })
+    ),
+  });
+
+  const dataRows = fv.rawTableValues.map((row, rowIdx) => {
+    const bgColor = rowIdx % 2 === 0 ? COLORS.white : COLORS.lightGrey;
+
+    const cells = colDefs.map((col) => {
+      const rawValue = row.columns[col.columnKey];
+      let cellText = rawValue !== undefined ? String(rawValue) : '—';
+
+      if (col.controlType.controlKey === CONTROL_KEY_DROPDOWN && col.lookupType !== null) {
+        cellText = resolveDropdownLabel(cellText, col.lookupType.lookupTypeId, dropdownData, isAr);
+      }
+
+      return new TableCell({
+        width: { size: colWidthPct, type: WidthType.PERCENTAGE },
+        shading: { fill: bgColor },
+        borders: ALL_CELL_BORDER,
+        children: [
+          new Paragraph({
+            alignment: AlignmentType.CENTER,
+            spacing: { before: 80, after: 80 },
+            bidirectional: isAr,
+            children: [
+              new TextRun({ text: cellText, size: 18, color: COLORS.black, rightToLeft: isAr }),
+            ],
+          }),
+        ],
+      });
+    });
+
+    return new TableRow({ children: cells });
+  });
+
+  return new Table({
+    width: { size: 100, type: WidthType.PERCENTAGE },
+    visuallyRightToLeft: isAr,
+    rows: [headerRow, ...dataRows],
+  });
+};
+
 // ─── Main export function ─────────────────────────────────────────────────────
 
 /**
@@ -476,7 +553,10 @@ export const exportSubmissionToDocx = async (
   const tableFields: FieldValue[] = [];
 
   for (const fv of visibleFields) {
-    if (fv.controlType.controlKey === CONTROL_KEY_TABLE) {
+    if (
+      fv.controlType.controlKey === CONTROL_KEY_TABLE ||
+      fv.controlType.controlKey === CONTROL_KEY_RAW_TABLE
+    ) {
       tableFields.push(fv);
     } else {
       const label = isAr ? fv.labelAr : fv.labelEn;
@@ -493,7 +573,10 @@ export const exportSubmissionToDocx = async (
   const tableBlocks: Array<Paragraph | Table> = [];
   for (const fv of tableFields) {
     const label = isAr ? fv.labelAr : fv.labelEn;
-    const tableBlock = buildTableControl(fv, dropdownData, isAr);
+    const tableBlock =
+      fv.controlType.controlKey === CONTROL_KEY_RAW_TABLE
+        ? buildRawTableControl(fv, dropdownData, isAr)
+        : buildTableControl(fv, dropdownData, isAr);
 
     tableBlocks.push(buildTableSectionBanner(isAr));
 

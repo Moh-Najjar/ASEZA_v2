@@ -9,6 +9,7 @@ import {
   Search,
   ShoppingCartOutlined,
 } from '@mui/icons-material';
+import TourIcon from '@mui/icons-material/EmojiObjects';
 import {
   Badge,
   Box,
@@ -45,6 +46,7 @@ import { UserProfile } from './UserProfile';
 import { useNavItems } from './useNavItems';
 import type { UserRole } from '../../../core/types/roles';
 import ThemeToggle from '../ThemeToggle';
+import { useTour } from '../../../core/context/TourContext';
 
 export interface NavbarProps {
   logoSrc?: string;
@@ -113,6 +115,7 @@ const Navbar: React.FC<NavbarProps> = ({
   const location = useLocation();
   // Pull isAuthenticated for conditional UI and userRoles for RBAC filtering.
   const { isAuthenticated, userRoles } = useAuth();
+  const { startTour } = useTour();
 
 
   const navigate = useNavigate();
@@ -336,6 +339,16 @@ const Navbar: React.FC<NavbarProps> = ({
                   <Language fontSize="small" />
                 </IconButton>
               </Tooltip>
+
+              {/* Tour launcher (mobile) */}
+              <Tooltip title="جولة تفاعلية">
+                <IconButton
+                  color="primary"
+                  onClick={startTour}
+                  sx={{ p: 0.5 }}>
+                  <TourIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
             </Stack>
           </Stack>
 
@@ -548,6 +561,17 @@ const Navbar: React.FC<NavbarProps> = ({
                 <Tooltip title={t('nav.language')}>
                   <IconButton color="primary" onClick={toggleLanguage}>
                     <Language sx={{ color: theme.palette.primary.main, fontSize: '25px' }} />
+                  </IconButton>
+                </Tooltip>
+
+                {/* Tour launcher — opens the interactive walkthrough */}
+                <Tooltip title="جولة تفاعلية">
+                  <IconButton
+                    data-tour="tour-btn"
+                    color="primary"
+                    onClick={startTour}
+                    sx={{ color: theme.palette.primary.main }}>
+                    <TourIcon sx={{ fontSize: '26px' }} />
                   </IconButton>
                 </Tooltip>
 

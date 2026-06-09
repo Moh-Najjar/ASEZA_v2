@@ -14,6 +14,7 @@
   "nav.search": "Search",
   "nav.language": "Language",
   "nav.my-requests": "My Requests",
+  "nav.userGuide": "User Guide",
   
   "login.tagline": "The Gateway to Aqaba's Special Economic Zone",
   "login.taglineSubtitle": "Access services, manage your profile, and stay connected with ASEZA's digital platform.",
@@ -210,5 +211,56 @@
   "submission.success.confirm": "OK",
 
   "breadcrumbs.aria.label": "Breadcrumbs",
-  "breadcrumbs.requestNo": "Request No. {{number}}"
+  "breadcrumbs.requestNo": "Request No. {{number}}",
+
+  "userGuide.hero.title": "User Guide",
+  "userGuide.hero.subtitle": "Learn how to use the ASEZA portal step by step — from login to submitting your first request.",
+  "userGuide.hero.badge": "User Manual",
+
+  "userGuide.tour.title": "Try the Interactive Tour",
+  "userGuide.tour.subtitle": "Let us guide you step by step through the app — faster than reading the guide!",
+  "userGuide.tour.startBtn": "Start Tour Now",
+
+  "userGuide.step.label": "Step {{number}}",
+  "userGuide.tips.title": "Helpful Tips",
+
+  "userGuide.cta.title": "You're ready to submit your first request!",
+  "userGuide.cta.subtitle": "If you run into any issues, you can return to this guide at any time or launch the interactive tour from the lightbulb icon in the navigation bar.",
+  "userGuide.cta.btn": "Start Interactive Tour",
+
+  "userGuide.steps.login.title": "Sign In",
+  "userGuide.steps.login.description": "Open the app and the login screen will appear. Click the \"Sign in with ASEZA account\" button and you will be automatically redirected to the Microsoft page to enter your institutional credentials.",
+  "userGuide.steps.login.tip1": "Use your institutional email address (@aseza.jo)",
+  "userGuide.steps.login.tip2": "Your session is saved automatically — no need to sign in every time",
+  "userGuide.steps.login.tip3": "If your session expires, the system will redirect you to the login page",
+
+  "userGuide.steps.home.title": "Home Dashboard",
+  "userGuide.steps.home.description": "After signing in you'll land on the main dashboard. It displays 4 stat cards: total requests, under review, approved, and rejected. Your 5 most recent submissions also appear in a quick table.",
+  "userGuide.steps.home.tip1": "Numbers are refreshed automatically from the server on every visit",
+  "userGuide.steps.home.tip2": "Click \"View All\" to navigate to the My Requests page",
+  "userGuide.steps.home.tip3": "You can start a new request directly from the \"Quick Actions\" card",
+
+  "userGuide.steps.requests.title": "My Requests",
+  "userGuide.steps.requests.description": "This page contains a table of all your submissions. You can filter by status, search by request number or form name, and paginate through results.",
+  "userGuide.steps.requests.tip1": "Click the eye icon to view the full details of any request",
+  "userGuide.steps.requests.tip2": "You can export request details as a Word file (DOCX)",
+  "userGuide.steps.requests.tip3": "Request statuses: Draft, Submitted, Approved, Rejected, Returned",
+
+  "userGuide.steps.newRequest.title": "Create a New Request",
+  "userGuide.steps.newRequest.description": "Click the \"+ Add New Request\" button at the top of the My Requests page. A multi-step form specific to your directorate's KPI indicators will open.",
+  "userGuide.steps.newRequest.tip1": "The button is only visible to users with the \"Data Entry\" role",
+  "userGuide.steps.newRequest.tip2": "You cannot advance to the next step until all required fields are filled",
+  "userGuide.steps.newRequest.tip3": "The sidebar displays the form name, directorate, and reporting period",
+
+  "userGuide.steps.fillSteps.title": "Fill in the Steps",
+  "userGuide.steps.fillSteps.description": "The form is divided into clear steps. Each step contains a set of data fields (text, numbers, dropdowns, dates, tables). The top bar shows the current step and the sidebar tracks your completion percentage.",
+  "userGuide.steps.fillSteps.tip1": "Fields marked with (*) are required",
+  "userGuide.steps.fillSteps.tip2": "Press \"Back\" to return to a previous step without losing your data",
+  "userGuide.steps.fillSteps.tip3": "Values are validated automatically when you press \"Next\"",
+
+  "userGuide.steps.submit.title": "Submit the Request",
+  "userGuide.steps.submit.description": "On the last step of the form, press the \"Submit\" button. The request will be sent to the server and a confirmation dialog will appear on success. You will then be redirected automatically to My Requests.",
+  "userGuide.steps.submit.tip1": "Review all fields carefully before submitting",
+  "userGuide.steps.submit.tip2": "After submission the request can only be edited if returned by an approver",
+  "userGuide.steps.submit.tip3": "Automatic notifications are sent whenever the request status changes"
 }

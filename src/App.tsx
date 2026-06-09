@@ -3,6 +3,7 @@ import { BrowserRouter } from 'react-router-dom';
 import AppProviders from './core/context/AppProviders';
 import Navbar from './modules/shared/Navbar-v2';
 import AppRoutes from './core/routes';
+import AppTour from './modules/shared/AppTour';
 
 import './App.css';
 import Container from './modules/shared/Container';
@@ -18,6 +19,8 @@ function App() {
   return (
     <AppProviders>
       <BrowserRouter>
+        {/* AppTour uses react-router hooks so it must live inside BrowserRouter. */}
+        <AppTour />
         <Container>
           <Navbar />
           <AppRoutes />

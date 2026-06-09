@@ -29,6 +29,7 @@ const Actions: React.FC<ActionsProps> = ({
  
   return (
     <Box
+      data-tour="stepper-actions"
       className={styles.actionsContainer}
       sx={{
         mt: 4,

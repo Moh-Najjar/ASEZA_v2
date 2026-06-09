@@ -5,7 +5,7 @@ export interface DataType {
   typeName: string;
 }
 
-// Nested control-type descriptor (e.g. NUMBER, DROPDOWN, TABLE)
+// Nested control-type descriptor (e.g. NUMBER, DROPDOWN, TABLE, RAW_TABLE)
 export interface ControlType {
   controlTypeId: number;
   controlKey: string;
@@ -20,7 +20,7 @@ export interface LookupType {
   nameAr: string;
 }
 
-// Column definition used by TABLE/Grid control fields
+// Column definition used by TABLE / RAW_TABLE control fields
 export interface TableColumn {
   columnKey: string;
   labelEn: string;
@@ -30,9 +30,20 @@ export interface TableColumn {
   lookupType: LookupType | null;
 }
 
-// A single row inside a TABLE control field value
+// A single row inside a dynamic TABLE control field value
 export interface TableValueRow {
   rowIndex: number;
+  columns: Record<string, string | number>;
+}
+
+/**
+ * A single row inside a fixed RAW_TABLE control field value.
+ * Rows are identified by a stable rowKey rather than a positional index.
+ */
+export interface RawTableValueRow {
+  rowKey: string;
+  rowLabelEn: string;
+  rowLabelAr: string;
   columns: Record<string, string | number>;
 }
 
@@ -50,10 +61,10 @@ export interface FieldValue {
   isReadOnly: boolean;
   isVisible: boolean;
   lookupType: LookupType | null;
-  placeholderEn: string;
-  placeholderAr: string;
-  helpTextEn: string;
-  helpTextAr: string;
+  placeholderEn: string | null;
+  placeholderAr: string | null;
+  helpTextEn: string | null;
+  helpTextAr: string | null;
   regexPattern: string | null;
   validationMessageEn: string | null;
   validationMessageAr: string | null;
@@ -61,8 +72,7 @@ export interface FieldValue {
   value: string | null;
   multiSelectValues: string[] | null;
   tableValues: TableValueRow[] | null;
-  kpiNextSubmissionDateEn: string | null;
-  kpiNextSubmissionDateAr: string | null;
+  rawTableValues: RawTableValueRow[] | null;
 }
 
 // Full response returned by GET /submissions/:submissionId
@@ -79,7 +89,7 @@ export interface GetSubmissionDetailsResponse {
   submissionStatus: string;
   periodYear: number;
   periodMonth: number;
-  kpiId: number;
+  kpiId: number | null;
   notes: string | null;
   createdAt: string;
   enteredByUserId: number;

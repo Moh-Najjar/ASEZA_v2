@@ -44,6 +44,16 @@ const buildDefaultValues = (fields: FieldValue[]): Record<string, unknown> =>
   fields.reduce<Record<string, unknown>>((acc, fv) => {
     if (fv.controlType.controlKey === ControlKeys.Table) {
       acc[fv.fieldKey] = (fv.tableValues ?? []).map((row) => row.columns);
+    } else if (fv.controlType.controlKey === ControlKeys.RawTable) {
+      // RAW_TABLE RHF shape: { [rowKey]: { [columnKey]: value } }
+      const rawTableRows = fv.rawTableValues ?? [];
+      acc[fv.fieldKey] = rawTableRows.reduce<Record<string, Record<string, string | number>>>(
+        (rowAcc, row) => {
+          rowAcc[row.rowKey] = row.columns;
+          return rowAcc;
+        },
+        {},
+      );
     } else if (fv.controlType.controlKey === ControlKeys.Multiselect) {
       acc[fv.fieldKey] = fv.multiSelectValues ?? [];
     } else {

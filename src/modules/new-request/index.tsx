@@ -68,7 +68,7 @@ const NewRequest: React.FC = () => {
 
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, gap: isMobile ? 8 : 4 }}>
           {/* Main Content Area - Stepper */}
-          <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Box data-tour="stepper-container" sx={{ flex: 1, minWidth: 0 }}>
             <Paper
               elevation={0}
               sx={{
@@ -84,7 +84,7 @@ const NewRequest: React.FC = () => {
           </Box>
 
           {/* Sidebar - Request Summary & Guidelines */}
-          <Box sx={{ width: { xs: '100%', lg: '350px' }, display: 'flex', flexDirection: 'column', gap: isMobile ? 8 : 3 }}>
+          <Box data-tour="progress-sidebar" sx={{ width: { xs: '100%', lg: '350px' }, display: 'flex', flexDirection: 'column', gap: isMobile ? 8 : 3 }}>
 
             {/* Completion Progress Card */}
             <Paper

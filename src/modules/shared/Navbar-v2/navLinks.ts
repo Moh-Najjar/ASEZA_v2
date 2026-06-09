@@ -33,7 +33,12 @@ export function createNavLinks(t: TFunction, options?: CreateNavLinksOptions): R
       id: 'my-requests',
       label: t('nav.my-requests'),
       to: '/my-requests',
-    }
+    },
+    {
+      id: 'user-guide',
+      label: t('nav.userGuide'),
+      to: '/user-guide',
+    },
   ];
   return items;
 }
