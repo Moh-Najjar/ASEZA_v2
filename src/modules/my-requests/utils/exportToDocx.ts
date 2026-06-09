@@ -15,6 +15,8 @@ import { saveAs } from 'file-saver';
 import type {
   GetSubmissionDetailsResponse,
   FieldValue,
+  RawTableValueRow,
+  TableColumn,
   TableValueRow,
 } from '../../../core/types/getSubmissionDetailsResponse';
 import type { GetDropdownListValuesResponse } from '../../../core/types/getDropdownListValuesResponse';
@@ -25,7 +27,14 @@ const CONTROL_KEY_DROPDOWN = 'DROPDOWN';
 const CONTROL_KEY_MULTISELECT = 'MULTISELECT';
 const CONTROL_KEY_TABLE = 'TABLE';
 const CONTROL_KEY_RAW_TABLE = 'RAW_TABLE';
+const CONTROL_KEY_LABEL = 'LABEL';
 const CONTROL_KEY_DATEPICKER = 'DATEPICKER';
+
+/** Field row / info-line vertical spacing (twentieths of a point) */
+const FIELD_ROW_SPACING = 180;
+const INFO_LINE_SPACING = 120;
+const SECTION_GAP_SPACING = 360;
+const TABLE_BLOCK_GAP_SPACING = 320;
 
 // ─── Colour palette (hex without #) ──────────────────────────────────────────
 
@@ -68,6 +77,10 @@ const ALL_CELL_BORDER = {
 /** Returns START alignment (left in LTR, right in RTL) for body text. */
 const startAlign = (isAr: boolean): (typeof AlignmentType)[keyof typeof AlignmentType] =>
   isAr ? AlignmentType.RIGHT : AlignmentType.LEFT;
+
+/** Picks the English or Arabic string based on export locale. */
+const locText = (enVal: string, arVal: string, isAr: boolean): string =>
+  isAr ? arVal : enVal;
 
 // ─── Helper: resolve a dropdown code → display label ─────────────────────────
 
@@ -151,7 +164,7 @@ const buildSectionHeader = (text: string, isAr: boolean): Paragraph =>
 
 const buildInfoLine = (label: string, value: string, isAr: boolean): Paragraph =>
   new Paragraph({
-    spacing: { before: 60, after: 60 },
+    spacing: { before: INFO_LINE_SPACING, after: INFO_LINE_SPACING },
     bidirectional: isAr,
     children: [
       new TextRun({ text: `${label}: `, bold: true, color: COLORS.labelGrey, size: 19, rightToLeft: isAr }),
@@ -171,7 +184,7 @@ const buildFieldRow = (label: string, value: string, isEvenRow: boolean, isAr: b
         borders: ALL_CELL_BORDER,
         children: [
           new Paragraph({
-            spacing: { before: 100, after: 100 },
+            spacing: { before: FIELD_ROW_SPACING, after: FIELD_ROW_SPACING },
             bidirectional: isAr,
             alignment: startAlign(isAr),
             children: [
@@ -187,7 +200,7 @@ const buildFieldRow = (label: string, value: string, isEvenRow: boolean, isAr: b
         children: [
           new Paragraph({
             alignment: AlignmentType.CENTER,
-            spacing: { before: 100, after: 100 },
+            spacing: { before: FIELD_ROW_SPACING, after: FIELD_ROW_SPACING },
             bidirectional: isAr,
             children: [
               new TextRun({ text: value, bold: true, color: COLORS.primary, size: 18, rightToLeft: isAr }),
@@ -209,7 +222,7 @@ const buildFieldsTable = (rows: Array<[string, string]>, isAr: boolean): Table =
         borders: ALL_CELL_BORDER,
         children: [
           new Paragraph({
-            spacing: { before: 100, after: 100 },
+            spacing: { before: FIELD_ROW_SPACING, after: FIELD_ROW_SPACING },
             bidirectional: isAr,
             alignment: startAlign(isAr),
             children: [
@@ -231,7 +244,7 @@ const buildFieldsTable = (rows: Array<[string, string]>, isAr: boolean): Table =
         children: [
           new Paragraph({
             alignment: AlignmentType.CENTER,
-            spacing: { before: 100, after: 100 },
+            spacing: { before: FIELD_ROW_SPACING, after: FIELD_ROW_SPACING },
             bidirectional: isAr,
             children: [
               new TextRun({
@@ -299,11 +312,11 @@ const buildTableControl = (
         children: [
           new Paragraph({
             alignment: AlignmentType.CENTER,
-            spacing: { before: 80, after: 80 },
+            spacing: { before: FIELD_ROW_SPACING, after: FIELD_ROW_SPACING },
             bidirectional: isAr,
             children: [
               new TextRun({
-                text: isAr ? col.labelAr : col.labelEn,
+                text: locText(col.labelEn, col.labelAr, isAr),
                 bold: true,
                 color: COLORS.white,
                 size: 18,
@@ -334,7 +347,7 @@ const buildTableControl = (
         children: [
           new Paragraph({
             alignment: AlignmentType.CENTER,
-            spacing: { before: 80, after: 80 },
+            spacing: { before: FIELD_ROW_SPACING, after: FIELD_ROW_SPACING },
             bidirectional: isAr,
             children: [
               new TextRun({ text: cellText, size: 18, color: COLORS.black, rightToLeft: isAr }),
@@ -354,6 +367,120 @@ const buildTableControl = (
   });
 };
 
+// ─── RAW_TABLE helpers (mirrors RawTable.tsx / fieldValueToFormField.ts) ─────
+
+/** True when the RAW_TABLE uses a dedicated LABEL column for row text */
+const hasLabelColumn = (columns: TableColumn[]): boolean =>
+  columns.some((col) => col.controlType.controlKey === CONTROL_KEY_LABEL);
+
+/**
+ * Resolves the optional row-label column header for RAW_TABLE fields that do
+ * not include a dedicated LABEL column (e.g. DESCRIPTION).
+ */
+const resolveRawTableRowLabelHeaders = (
+  columns: TableColumn[],
+): { rowLabelEn: string; rowLabelAr: string } | null => {
+  if (hasLabelColumn(columns)) return null;
+  return { rowLabelEn: 'Description', rowLabelAr: 'الوصف' };
+};
+
+/** Resolves bilingual display text for a LABEL grid cell */
+const resolveLabelCellText = (
+  rowLabelEn: string,
+  rowLabelAr: string,
+  columnValue: string | number | undefined,
+  isAr: boolean,
+): string => {
+  const fallback = columnValue !== undefined ? String(columnValue) : '—';
+  const en = rowLabelEn.trim() !== '' ? rowLabelEn : fallback;
+  const ar = rowLabelAr.trim() !== '' ? rowLabelAr : fallback;
+  return locText(en, ar, isAr);
+};
+
+/** Resolves a single RAW_TABLE cell value with locale-aware labels and control types */
+const resolveRawTableCellText = (
+  col: TableColumn,
+  row: RawTableValueRow,
+  dropdownData: GetDropdownListValuesResponse,
+  isAr: boolean,
+): string => {
+  const rawValue = row.columns[col.columnKey];
+
+  if (col.controlType.controlKey === CONTROL_KEY_LABEL) {
+    return resolveLabelCellText(row.rowLabelEn, row.rowLabelAr, rawValue, isAr);
+  }
+
+  if (rawValue === undefined || String(rawValue).trim() === '') return '—';
+  const strValue = String(rawValue);
+
+  if (col.controlType.controlKey === CONTROL_KEY_DROPDOWN && col.lookupType !== null) {
+    return resolveDropdownLabel(strValue, col.lookupType.lookupTypeId, dropdownData, isAr);
+  }
+
+  if (col.controlType.controlKey === CONTROL_KEY_DATEPICKER) {
+    try {
+      return new Date(strValue).toLocaleDateString(isAr ? 'ar-JO' : 'en-GB', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      });
+    } catch {
+      return strValue;
+    }
+  }
+
+  return strValue;
+};
+
+const buildRawTableHeaderCell = (
+  label: string,
+  colWidthPct: number,
+  isAr: boolean,
+): TableCell =>
+  new TableCell({
+    width: { size: colWidthPct, type: WidthType.PERCENTAGE },
+    shading: { fill: COLORS.primary },
+    borders: ALL_CELL_BORDER,
+    children: [
+      new Paragraph({
+        alignment: AlignmentType.CENTER,
+        spacing: { before: FIELD_ROW_SPACING, after: FIELD_ROW_SPACING },
+        bidirectional: isAr,
+        children: [
+          new TextRun({
+            text: label,
+            bold: true,
+            color: COLORS.white,
+            size: 18,
+            rightToLeft: isAr,
+          }),
+        ],
+      }),
+    ],
+  });
+
+const buildRawTableDataCell = (
+  cellText: string,
+  colWidthPct: number,
+  bgColor: string,
+  isAr: boolean,
+): TableCell =>
+  new TableCell({
+    width: { size: colWidthPct, type: WidthType.PERCENTAGE },
+    shading: { fill: bgColor },
+    borders: ALL_CELL_BORDER,
+    children: [
+      new Paragraph({
+        alignment: AlignmentType.CENTER,
+        spacing: { before: FIELD_ROW_SPACING, after: FIELD_ROW_SPACING },
+        bidirectional: isAr,
+        children: [
+          new TextRun({ text: cellText, size: 18, color: COLORS.black, rightToLeft: isAr }),
+        ],
+      }),
+    ],
+  });
+
 // ─── Helper: build a styled data table for a RAW_TABLE-type field ────────────
 
 const buildRawTableControl = (
@@ -364,61 +491,57 @@ const buildRawTableControl = (
   if (fv.columns === null || fv.rawTableValues === null || fv.rawTableValues.length === 0) return null;
 
   const colDefs = fv.columns;
-  const colWidthPct = Math.floor(100 / colDefs.length);
+  const rowLabelHeaders = resolveRawTableRowLabelHeaders(colDefs);
+  const hasRowLabelColumn = rowLabelHeaders !== null;
+  const totalColumns = colDefs.length + (hasRowLabelColumn ? 1 : 0);
+  const colWidthPct = Math.floor(100 / totalColumns);
 
-  const headerRow = new TableRow({
-    children: colDefs.map((col) =>
-      new TableCell({
-        width: { size: colWidthPct, type: WidthType.PERCENTAGE },
-        shading: { fill: COLORS.primary },
-        borders: ALL_CELL_BORDER,
-        children: [
-          new Paragraph({
-            alignment: AlignmentType.CENTER,
-            spacing: { before: 80, after: 80 },
-            bidirectional: isAr,
-            children: [
-              new TextRun({
-                text: isAr ? col.labelAr : col.labelEn,
-                bold: true,
-                color: COLORS.white,
-                size: 18,
-                rightToLeft: isAr,
-              }),
-            ],
-          }),
-        ],
-      })
+  const headerCells: TableCell[] = [];
+
+  if (hasRowLabelColumn && rowLabelHeaders !== null) {
+    headerCells.push(
+      buildRawTableHeaderCell(
+        locText(rowLabelHeaders.rowLabelEn, rowLabelHeaders.rowLabelAr, isAr),
+        colWidthPct,
+        isAr,
+      ),
+    );
+  }
+
+  headerCells.push(
+    ...colDefs.map((col) =>
+      buildRawTableHeaderCell(locText(col.labelEn, col.labelAr, isAr), colWidthPct, isAr),
     ),
-  });
+  );
+
+  const headerRow = new TableRow({ children: headerCells });
 
   const dataRows = fv.rawTableValues.map((row, rowIdx) => {
     const bgColor = rowIdx % 2 === 0 ? COLORS.white : COLORS.lightGrey;
+    const cells: TableCell[] = [];
 
-    const cells = colDefs.map((col) => {
-      const rawValue = row.columns[col.columnKey];
-      let cellText = rawValue !== undefined ? String(rawValue) : '—';
+    if (hasRowLabelColumn) {
+      const rowLabelText = locText(row.rowLabelEn, row.rowLabelAr, isAr);
+      cells.push(
+        buildRawTableDataCell(
+          rowLabelText.trim() !== '' ? rowLabelText : '—',
+          colWidthPct,
+          bgColor,
+          isAr,
+        ),
+      );
+    }
 
-      if (col.controlType.controlKey === CONTROL_KEY_DROPDOWN && col.lookupType !== null) {
-        cellText = resolveDropdownLabel(cellText, col.lookupType.lookupTypeId, dropdownData, isAr);
-      }
-
-      return new TableCell({
-        width: { size: colWidthPct, type: WidthType.PERCENTAGE },
-        shading: { fill: bgColor },
-        borders: ALL_CELL_BORDER,
-        children: [
-          new Paragraph({
-            alignment: AlignmentType.CENTER,
-            spacing: { before: 80, after: 80 },
-            bidirectional: isAr,
-            children: [
-              new TextRun({ text: cellText, size: 18, color: COLORS.black, rightToLeft: isAr }),
-            ],
-          }),
-        ],
-      });
-    });
+    cells.push(
+      ...colDefs.map((col) =>
+        buildRawTableDataCell(
+          resolveRawTableCellText(col, row, dropdownData, isAr),
+          colWidthPct,
+          bgColor,
+          isAr,
+        ),
+      ),
+    );
 
     return new TableRow({ children: cells });
   });
@@ -536,7 +659,7 @@ export const exportSubmissionToDocx = async (
     ...notesLine,
   ];
 
-  const spacerAfterMeta = new Paragraph({ spacing: { after: 240 }, children: [] });
+  const spacerAfterMeta = new Paragraph({ spacing: { after: SECTION_GAP_SPACING }, children: [] });
 
   // ── KPI Field Values section ─────────────────────────────────────────────
 
@@ -582,7 +705,7 @@ export const exportSubmissionToDocx = async (
 
     tableBlocks.push(
       new Paragraph({
-        spacing: { before: 120, after: 120 },
+        spacing: { before: FIELD_ROW_SPACING, after: FIELD_ROW_SPACING },
         bidirectional: isAr,
         alignment: startAlign(isAr),
         children: [
@@ -596,14 +719,14 @@ export const exportSubmissionToDocx = async (
     } else {
       tableBlocks.push(
         new Paragraph({
-          spacing: { after: 80 },
+          spacing: { after: FIELD_ROW_SPACING },
           bidirectional: isAr,
           children: [new TextRun({ text: '—', color: COLORS.refGrey, size: 18, rightToLeft: isAr })],
         })
       );
     }
 
-    tableBlocks.push(new Paragraph({ spacing: { after: 200 }, children: [] }));
+    tableBlocks.push(new Paragraph({ spacing: { after: TABLE_BLOCK_GAP_SPACING }, children: [] }));
   }
 
   // ── Footer ───────────────────────────────────────────────────────────────

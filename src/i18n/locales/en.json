@@ -145,6 +145,11 @@
   "stepper.noFormFields": "No form fields found",
   "stepper.loadingFormFields": "Loading form fields",
   "stepper.loadFormFieldsError": "Failed to load form fields",
+  "stepper.review": "Review & Confirm",
+  "stepper.reviewConfirm": "I confirm that the information is correct.",
+  "stepper.edit": "Edit",
+  "stepper.reviewValidationSummary": "Please fix the following required fields before submitting:",
+  "stepper.reviewSectionErrors": "{{count}} field(s) need attention",
 
   "errorBoundary.title": "Something went wrong",
   "errorBoundary.subtitle": "An unexpected error occurred. You can try reloading the page or go back to the home screen.",

@@ -38,8 +38,7 @@ interface RenderRow {
 const gridCellToFormField = (
   cell: GridCell,
   fieldName: string,
-  parentField: FormField,
-  isRequired: boolean = false
+  parentField: FormField
 ): FormField => ({
   fieldId: 0,
   formId: 0,
@@ -48,7 +47,7 @@ const gridCellToFormField = (
   labelAr: cell.columnLabelAr,
   dataType: cell.dataType,
   controlType: cell.controlType,
-  isRequired: isRequired,
+  isRequired: parentField.isRequired,
   displayOrder: cell.column,
   isReadOnly: parentField.isReadOnly || cell.isReadOnly,
   isVisible: cell.isVisible,
@@ -111,7 +110,6 @@ const RawTable: React.FC<RawTableProps> = ({
 
   /** Column definitions are taken directly from formField.columns */
   const columns = formField.columns ?? [];
-  const isRequired = formField.isRequired;
 
   /**
    * Row-label column is shown only when the field provides a non-empty header label.
@@ -218,12 +216,11 @@ const RawTable: React.FC<RawTableProps> = ({
   const getCellFormField = (
     rowKey: string,
     colKey: string,
-    isRequired: boolean = false
   ): FormField | null => {
     const cell = cellMap.get(`${rowKey}.${colKey}`);
     if (cell === undefined || !cell.isVisible) return null;
     const fieldName = `${formField.fieldKey}.${rowKey}.${colKey}`;
-    return gridCellToFormField(cell, fieldName, formField, isRequired);
+    return gridCellToFormField(cell, fieldName, formField);
   };
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -282,8 +279,7 @@ const RawTable: React.FC<RawTableProps> = ({
                 {columns.map((col) => {
                   const cellField = getCellFormField(
                     row.rowKey,
-                    col.columnKey,
-                    isRequired
+                    col.columnKey
                   );
 
                   if (cellField === null) {

@@ -181,11 +181,11 @@ const BILINGUAL_STEPS: BilingualStep[] = [
     placement: 'top',
     ar: {
       title: '✅ الإرسال النهائي',
-      content: 'بعد إكمال جميع الخطوات، اضغط زر "إرسال" لرفع الطلب. ستظهر رسالة تأكيد عند نجاح الإرسال.',
+      content: 'بعد إكمال جميع الخطوات، ستنتقل إلى خطوة "مراجعة وتأكيد" لمراجعة بياناتك. حدّد خانة التأكيد ثم اضغط "تقديم" لإرسال الطلب.',
     },
     en: {
       title: '✅ Final Submission',
-      content: 'After completing all steps, press the "Submit" button to send your request. A confirmation message will appear on success.',
+      content: 'After completing all steps, you will reach the "Review & Confirm" step to verify your data. Check the confirmation box, then press "Submit" to send your request.',
     },
   },
 ];

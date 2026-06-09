@@ -4,14 +4,15 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
 import styles from "./Stepper.module.css";
 import { useLocale } from "../../../core/hooks/useLocale";
-import { FormField } from "../../../core/types/FormField";
-import { useMemo } from "react";
 
 interface ActionsProps {
   activeStep: number;
-  stepsCount: number;
+  isReviewStep: boolean;
+  isSubmitDisabled: boolean;
+  isSubmitting: boolean;
   onBack: () => void;
   onNext: () => void;
   onSubmit: () => void;
@@ -19,14 +20,15 @@ interface ActionsProps {
 
 const Actions: React.FC<ActionsProps> = ({
   activeStep,
-  stepsCount,
+  isReviewStep,
+  isSubmitDisabled,
+  isSubmitting,
   onBack,
   onNext,
   onSubmit,
 }) => {
   const { t, isAr } = useLocale();
-  const isLastStep = activeStep === stepsCount - 1;
- 
+
   return (
     <Box
       data-tour="stepper-actions"
@@ -40,7 +42,6 @@ const Actions: React.FC<ActionsProps> = ({
         alignItems: "center",
       }}
     >
-      {/* ── Left: Back ── */}
       <Button
         disabled={activeStep === 0}
         onClick={onBack}
@@ -52,17 +53,27 @@ const Actions: React.FC<ActionsProps> = ({
         {t("stepper.back")}
       </Button>
 
-      {/* ── Right: Next / Submit ── */}
       <Button
-        onClick={isLastStep ? onSubmit : onNext}
+        onClick={isReviewStep ? onSubmit : onNext}
         variant="contained"
         color="primary"
         disableElevation
-        startIcon={isLastStep ? <CheckCircleOutlineIcon /> : undefined}
-        endIcon={!isLastStep ? (isAr ? <ArrowBackIcon /> : <ArrowForwardIcon />) : undefined}
+        disabled={isReviewStep && (isSubmitDisabled || isSubmitting)}
+        startIcon={
+          isReviewStep ? (
+            isSubmitting ? (
+              <CircularProgress size={18} color="inherit" />
+            ) : (
+              <CheckCircleOutlineIcon />
+            )
+          ) : undefined
+        }
+        endIcon={
+          !isReviewStep ? (isAr ? <ArrowBackIcon /> : <ArrowForwardIcon />) : undefined
+        }
         sx={{ borderRadius: "8px", px: 4, textTransform: "none", fontWeight: 600 }}
       >
-        {isLastStep ? t("stepper.submit") : t("stepper.next")}
+        {isReviewStep ? t("stepper.submit") : t("stepper.next")}
       </Button>
     </Box>
   );

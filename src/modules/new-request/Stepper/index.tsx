@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Box } from "@mui/material";
@@ -7,8 +7,10 @@ import { useStepper } from "../../../core/hooks/useStepper";
 import { useLocale } from "../../../core/hooks/useLocale";
 import { useFormFields } from "../../../core/hooks/useFormApi";
 import { FIELDS_PER_PAGE } from "../../../core/utils/groupAttributesByPage";
+import type { ValidationIssue } from "../../../core/utils/validateAllFormFields";
 import SubmissionSuccessDialog from "../../shared/SubmissionSuccessDialog";
 import Content from "./Content";
+import ReviewContent from "./ReviewContent";
 import Actions from "./Actions";
 import Header from "./Header";
 import styles from "./Stepper.module.css";
@@ -22,10 +24,10 @@ const Stepper: React.FC<StepperProps> = ({ onStepChange }) => {
   const { t } = useLocale();
   const { i18n } = useTranslation();
 
-  // Fetch form field definitions here so totalSteps can be derived from real API data.
   const { data: formFieldsData, isError, error, isLoading, isSuccess } = useFormFields();
-  /** Total number of stepper pages — derived from the live API response. */
-  const totalSteps = useMemo(
+
+  /** Number of data-entry pages derived from the live API response */
+  const dataStepCount = useMemo(
     () =>
       formFieldsData !== undefined && formFieldsData.length > 0
         ? Math.ceil(formFieldsData.length / FIELDS_PER_PAGE)
@@ -33,24 +35,14 @@ const Stepper: React.FC<StepperProps> = ({ onStepChange }) => {
     [formFieldsData]
   );
 
+  /** Total steps includes one final review & confirm page */
+  const totalSteps = dataStepCount + 1;
+
   const methods = useForm<Record<string, unknown>>({
     mode: "onChange",
+    shouldUnregister: false,
   });
 
-  /**
-   * Re-trigger ONLY fields that already have visible errors whenever the
-   * language changes, so their messages are re-evaluated in the new locale.
-   *
-   * Calling methods.trigger() without arguments would validate every field —
-   * including untouched ones — which makes validation messages appear as if
-   * the form had been submitted. By scoping the trigger to fields that already
-   * carry an error we preserve the current validation state while updating the
-   * error text to the newly selected language.
-   *
-   * Comparing against the stored previous language value (rather than using
-   * a "first render" flag) makes this StrictMode-safe: effects running twice
-   * on mount will find the language unchanged and skip the trigger both times.
-   */
   const prevLanguageRef = useRef(i18n.language);
   useEffect(() => {
     if (prevLanguageRef.current === i18n.language) return;
@@ -65,34 +57,62 @@ const Stepper: React.FC<StepperProps> = ({ onStepChange }) => {
     }
   }, [i18n.language, methods]);
 
-  /**
-   * Build page titles inside the component so they re-evaluate
-   * whenever the language changes (t() is reactive to i18n.language).
-   */
   const attributePagesTitles = useMemo(
-    () =>
-      Array.from({ length: totalSteps }, (_, i) => ({
+    () => [
+      ...Array.from({ length: dataStepCount }, (_, i) => ({
         Key: i + 1,
         Title: t("stepper.page", { n: i + 1 }),
         UIViewAlias: null as string | null,
       })),
-    [totalSteps, t]
+      {
+        Key: dataStepCount + 1,
+        Title: t("stepper.review"),
+        UIViewAlias: null as string | null,
+      },
+    ],
+    [dataStepCount, t]
   );
 
   const {
     activeStep,
+    reviewStepIndex,
     handleNext,
     handleBack,
+    handleGoToStep,
     handleSubmit,
+    isSubmitting,
     isSuccessDialogOpen,
     handleSuccessDialogConfirm,
   } = useStepper(attributePagesTitles, methods, formFieldsData ?? []);
+
+  const isReviewStep = dataStepCount > 0 && activeStep === reviewStepIndex;
+
+  const [isConfirmed, setIsConfirmed] = useState(false);
+  const [validationIssues, setValidationIssues] = useState<ValidationIssue[]>([]);
+
+  /** Reset confirmation when leaving the review step */
+  useEffect(() => {
+    if (!isReviewStep) {
+      setIsConfirmed(false);
+    }
+  }, [isReviewStep]);
+
+  const handleValidationChange = useCallback((issues: ValidationIssue[]): void => {
+    setValidationIssues(issues);
+  }, []);
+
+  const handleEditSection = useCallback(
+    (sectionIndex: number): void => {
+      setIsConfirmed(false);
+      handleGoToStep(sectionIndex);
+    },
+    [handleGoToStep]
+  );
 
   useEffect(() => {
     onStepChange?.(activeStep, totalSteps);
   }, [activeStep, totalSteps, onStepChange]);
 
-  /** Ref attached to the top of the stepper so we can scroll back to it on every step change. */
   const topRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -100,7 +120,9 @@ const Stepper: React.FC<StepperProps> = ({ onStepChange }) => {
   }, [activeStep]);
 
   const deviceType = useDeviceType();
-  const isMobile = deviceType === 'mobile';
+  const isMobile = deviceType === "mobile";
+
+  const isSubmitDisabled = !isConfirmed || validationIssues.length > 0;
 
   return (
     <>
@@ -112,18 +134,31 @@ const Stepper: React.FC<StepperProps> = ({ onStepChange }) => {
         <form onSubmit={methods.handleSubmit(handleSubmit)}>
           <Box ref={topRef} className={styles.stepperContainer} sx={{ p: isMobile ? 5 : 0 }}>
             <Header activeStep={activeStep} steps={attributePagesTitles} />
-            <Content
-              activeStep={activeStep}
-              formMethods={methods}
-              formFieldsData={formFieldsData}
-              isLoading={isLoading}
-              isError={isError}
-              isSuccess={isSuccess}
-              error={error instanceof Error ? error : null}
-            />
+            {isReviewStep ? (
+              <ReviewContent
+                formFieldsData={formFieldsData ?? []}
+                formMethods={methods}
+                onEditSection={handleEditSection}
+                isConfirmed={isConfirmed}
+                onConfirmChange={setIsConfirmed}
+                onValidationChange={handleValidationChange}
+              />
+            ) : (
+              <Content
+                activeStep={activeStep}
+                formMethods={methods}
+                formFieldsData={formFieldsData}
+                isLoading={isLoading}
+                isError={isError}
+                isSuccess={isSuccess}
+                error={error instanceof Error ? error : null}
+              />
+            )}
             <Actions
               activeStep={activeStep}
-              stepsCount={attributePagesTitles.length}
+              isReviewStep={isReviewStep}
+              isSubmitDisabled={isSubmitDisabled}
+              isSubmitting={isSubmitting}
               onBack={handleBack}
               onNext={handleNext}
               onSubmit={methods.handleSubmit(handleSubmit)}
