@@ -211,10 +211,10 @@ const RequestDetailDrawer: React.FC<RequestDetailDrawerProps> = ({
         <Box sx={{ minWidth: 0 }}>
           <Typography
             variant="overline"
-            sx={{ color: alpha('#fff', 0.7), fontWeight: 700, letterSpacing: '0.12em' }}>
+            sx={{ color: (t) => alpha(t.palette.primary.contrastText, 0.7), fontWeight: 700, letterSpacing: '0.12em' }}>
             {t('myRequests.detail.title')}
           </Typography>
-          <Typography variant="h6" sx={{ color: '#fff', fontWeight: 800, lineHeight: 1.3, mt: 0.3 }}>
+          <Typography variant="h6" sx={{ color: 'primary.contrastText', fontWeight: 800, lineHeight: 1.3, mt: 0.3 }}>
             {detail?.referenceNumber ?? (isLoading ? '…' : '—')}
           </Typography>
         </Box>
@@ -222,9 +222,9 @@ const RequestDetailDrawer: React.FC<RequestDetailDrawerProps> = ({
           onClick={onClose}
           size="small"
           sx={{
-            color: alpha('#fff', 0.8),
-            bgcolor: alpha('#fff', 0.1),
-            '&:hover': { bgcolor: alpha('#fff', 0.2) },
+            color: (t) => alpha(t.palette.primary.contrastText, 0.8),
+            bgcolor: (t) => alpha(t.palette.primary.contrastText, 0.1),
+            '&:hover': { bgcolor: (t) => alpha(t.palette.primary.contrastText, 0.2) },
           }}>
           <CloseIcon fontSize="small" />
         </IconButton>

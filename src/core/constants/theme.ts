@@ -19,17 +19,17 @@ export const GRAY_SCALE = {
     900: '#212121',
   } satisfies GrayScale,
   dark: {
-    // Same ramp is still useful in dark mode; pick shades based on contrast needs.
-    50: '#fafafa',
-    100: '#f5f5f5',
-    200: '#eeeeee',
-    300: '#e0e0e0',
-    400: '#bdbdbd',
-    500: '#9e9e9e',
-    600: '#757575',
-    700: '#616161',
-    800: '#424242',
-    900: '#212121',
+    // Inverted ramp for dark surfaces — lighter shades read as text, darker as backgrounds.
+    50: '#131e2e',
+    100: '#1a2838',
+    200: '#243648',
+    300: '#2d4258',
+    400: '#4a6f90',
+    500: '#6a8fb0',
+    600: '#8aaad0',
+    700: '#a8c0de',
+    800: '#c8daf5',
+    900: '#e8eef5',
   } satisfies GrayScale,
 } as const;
 

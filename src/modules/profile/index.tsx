@@ -12,6 +12,8 @@ import {
   Paper,
   Stack,
   Typography,
+  alpha,
+  useTheme,
 } from '@mui/material';
 import {
   CheckCircle as CheckCircleIcon,
@@ -25,12 +27,6 @@ import {
 import { useGraphUserProfile } from '../../core/hooks/useGraph';
 import useTokenSession from '../../core/hooks/useTokenSession';
 import { useAuth } from '../../core/context/AuthContext';
-
-// ─── Design tokens ───────────────────────────────────────────────────────────
-
-const NAVY = '#0367A6';
-const BLUE = '#3698BF';
-const BG = '#f0f4f9';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -52,15 +48,18 @@ interface DetailCardProps {
   value: string;
 }
 
-const DetailCard: React.FC<DetailCardProps> = ({ icon, iconBg, label, value }) => (
+const DetailCard: React.FC<DetailCardProps> = ({ icon, iconBg, label, value }) => {
+  const theme = useTheme();
+
+  return (
   <Card
     variant="outlined"
     sx={{
       borderRadius: 2.5,
       transition: 'box-shadow 0.2s, border-color 0.2s',
       '&:hover': {
-        boxShadow: '0 4px 16px rgba(13,37,69,0.10)',
-        borderColor: '#c5d0e6',
+        boxShadow: `0 4px 16px ${alpha(theme.palette.primary.dark, 0.1)}`,
+        borderColor: 'divider',
       },
     }}
   >
@@ -97,7 +96,8 @@ const DetailCard: React.FC<DetailCardProps> = ({ icon, iconBg, label, value }) =
       </Box>
     </CardContent>
   </Card>
-);
+  );
+};
 
 // ─── Profile page ─────────────────────────────────────────────────────────────
 
@@ -117,7 +117,7 @@ const Profile: React.FC = () => {
   // ── Token-level error (MSAL could not acquire a token at all) ──
   if (tokenError !== null) {
     return (
-      <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center" bgcolor={BG}>
+      <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center" bgcolor="background.default">
         <Card sx={{ maxWidth: 380, width: '100%', borderRadius: 3, p: 2, textAlign: 'center' }}>
           <CardContent>
             <Typography fontSize={42} mb={1}>⚠️</Typography>
@@ -127,7 +127,7 @@ const Profile: React.FC = () => {
             <Typography variant="body2" color="text.secondary" mb={3}>
               {tokenError}
             </Typography>
-            <Button variant="contained" onClick={logout} sx={{ bgcolor: NAVY, borderRadius: 2 }}>
+            <Button variant="contained" color="primary" onClick={logout} sx={{ borderRadius: 2 }}>
               Sign in again
             </Button>
           </CardContent>
@@ -139,7 +139,7 @@ const Profile: React.FC = () => {
   // ── Graph API error ──
   if (profileError !== null) {
     return (
-      <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center" bgcolor={BG}>
+      <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center" bgcolor="background.default">
         <Card sx={{ maxWidth: 380, width: '100%', borderRadius: 3, p: 2, textAlign: 'center' }}>
           <CardContent>
             <Typography fontSize={42} mb={1}>😕</Typography>
@@ -149,7 +149,7 @@ const Profile: React.FC = () => {
             <Typography variant="body2" color="text.secondary" mb={3}>
               {profileError}
             </Typography>
-            <Button variant="contained" onClick={logout} sx={{ bgcolor: NAVY, borderRadius: 2 }}>
+            <Button variant="contained" color="primary" onClick={logout} sx={{ borderRadius: 2 }}>
               Sign out
             </Button>
           </CardContent>
@@ -161,7 +161,7 @@ const Profile: React.FC = () => {
   // ── Loading state ──
   if (isLoading) {
     return (
-      <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center" bgcolor={BG}>
+      <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center" bgcolor="background.default">
         <CircularProgress />
       </Box>
     );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, CircularProgress, Typography, useTheme } from '@mui/material';
+import { Box, CircularProgress, Typography, alpha, useTheme } from '@mui/material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 interface ToastPendingProps {
@@ -38,7 +38,7 @@ const ToastPending: React.FC<ToastPendingProps> = ({ message, hint }) => {
           size={24}
           thickness={4.5}
           value={100}
-          sx={{ color: theme.palette.grey[200] }}
+          sx={{ color: alpha(theme.palette.text.primary, 0.12) }}
         />
         <CircularProgress
           variant="indeterminate"

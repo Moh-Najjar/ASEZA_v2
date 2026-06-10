@@ -1,4 +1,6 @@
 import type { ChipProps } from '@mui/material/Chip';
+import type { Theme } from '@mui/material/styles';
+import { alpha } from '@mui/material/styles';
 import type { TFunction } from 'i18next';
 
 import type { RequestStatus } from '../types';
@@ -43,5 +45,27 @@ export const getStatusChipProps = (
   return {
     label: t(labelKeyMap[status]),
     color: STATUS_COLOR_MAP[status],
+  };
+};
+
+/** Theme-aware soft pill styles for status badges in tables and lists. */
+export const getStatusBadgeStyles = (
+  status: RequestStatus,
+  theme: Theme,
+): { bg: string; color: string } => {
+  const colorByStatus: Record<RequestStatus, string> = {
+    DRAFT: theme.palette.text.secondary,
+    SUBMITTED: theme.palette.primary.main,
+    APPROVED: theme.palette.success.main,
+    REJECTED: theme.palette.error.main,
+    RETURNED: theme.palette.warning.main,
+  };
+
+  const color = colorByStatus[status];
+  const bgAlpha = theme.palette.mode === 'dark' ? 0.18 : 0.1;
+
+  return {
+    bg: alpha(color, bgAlpha),
+    color,
   };
 };

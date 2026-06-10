@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Box, Card, CardMedia, Grid, Typography, useTheme } from '@mui/material';
+import { Box, Card, CardMedia, Grid, Typography, alpha, useTheme } from '@mui/material';
 import type { SxProps, Theme } from '@mui/material/styles';
 
 export interface ImageCard {
@@ -95,14 +95,16 @@ const ImageCardGrid: React.FC<ImageCardGridProps> = ({
                 borderRadius: '16px',
                 cursor: 'pointer',
                 boxShadow: isActive
-                  ? '0 8px 24px rgba(0,143,222,0.3)'
-                  : '0 4px 12px rgba(0,0,0,0.08)',
-                border: isActive ? '2px solid #008FDE' : '1px solid #eee',
+                  ? `0 8px 24px ${alpha(theme.palette.primary.main, 0.3)}`
+                  : `0 4px 12px ${alpha(theme.palette.common.black, 0.08)}`,
+                border: isActive
+                  ? `2px solid ${theme.palette.primary.main}`
+                  : `1px solid ${theme.palette.divider}`,
                 transition: 'all 0.3s ease',
                 overflow: 'hidden',
                 '&:hover': {
                   transform: 'translateY(-5px)',
-                  boxShadow: '0 8px 20px rgba(0,0,0,0.12)',
+                  boxShadow: `0 8px 20px ${alpha(theme.palette.common.black, 0.12)}`,
                 },
                 height: cardSize.height,
                 width: cardSize.width,

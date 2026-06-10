@@ -93,7 +93,8 @@ const PresetAmountStrip: React.FC<PresetAmountStripProps> = ({
     <Box
       sx={{
         mt: { xs: 6, md: 2 },
-        background: "linear-gradient(to bottom, #FDFDFD 50%, #F1F1F2 100%)",
+        background: (t) =>
+          `linear-gradient(to bottom, ${t.palette.background.paper} 50%, ${alpha(t.palette.action.hover, t.palette.mode === 'dark' ? 0.6 : 1)} 100%)`,
         borderRadius: 1,
         border: `1px solid ${alpha(theme.palette.primary.main, 0.65)}`,
         display: "flex",

@@ -158,8 +158,9 @@ export const useStepper = (
   /** Closes the success dialog and navigates to the my-requests page */
   const handleSuccessDialogConfirm = (): void => {
     setIsSuccessDialogOpen(false);
-    navigate("/my-requests");
+    navigate("/my-requests", { replace: true });
   };
+
 
   return {
     activeStep,

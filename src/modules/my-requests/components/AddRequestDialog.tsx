@@ -144,15 +144,18 @@ const AddRequestDialog: React.FC<AddRequestDialogProps> = ({ open, onClose, onSu
             justifyContent: 'space-between',
           }}>
           <Stack direction="row" spacing={1.5} alignItems="center">
-            <AddCircleOutlineIcon sx={{ color: 'rgba(255,255,255,0.85)', fontSize: 22 }} />
-            <Typography variant="h6" sx={{ color: '#fff', fontWeight: 800 }}>
+            <AddCircleOutlineIcon sx={{ color: (t) => alpha(t.palette.primary.contrastText, 0.85), fontSize: 22 }} />
+            <Typography variant="h6" sx={{ color: 'primary.contrastText', fontWeight: 800 }}>
               {t('myRequests.dialog.title')}
             </Typography>
           </Stack>
           <IconButton
             onClick={handleClose}
             size="small"
-            sx={{ color: 'rgba(255,255,255,0.75)', '&:hover': { bgcolor: 'rgba(255,255,255,0.15)' } }}>
+            sx={{
+              color: (t) => alpha(t.palette.primary.contrastText, 0.75),
+              '&:hover': { bgcolor: (t) => alpha(t.palette.primary.contrastText, 0.15) },
+            }}>
             <CloseIcon fontSize="small" />
           </IconButton>
         </Box>

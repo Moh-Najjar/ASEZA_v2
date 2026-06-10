@@ -178,7 +178,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
                             color: "primary.contrastText",
                             "& .MuiChip-deleteIcon": {
                               color: "primary.contrastText",
-                              "&:hover": { color: "grey.300" },
+                              "&:hover": { color: "text.secondary" },
                             },
                           }}
                         />

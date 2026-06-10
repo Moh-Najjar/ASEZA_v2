@@ -132,13 +132,17 @@
   line-height: 1.5;
   font-weight: 400;
 
-  /*
-    Force LIGHT theme at the browser/UA level.
-    This prevents devices in Dark Mode from automatically changing built-in UI
-    (form controls, scrollbars, etc.) based on `prefers-color-scheme`.
-  */
+  /* Theme-aware tokens — updated by html[data-theme] below. */
+  --app-bg: #ffffff;
+  --app-text: #111827;
+  --scrollbar-track: #ffffff;
+  --scrollbar-thumb: #3698BF;
+  --scrollbar-thumb-hover: #0367A6;
+  --scrollbar-thumb-active: #024a78;
+  --scrollbar-border: #ffffff;
+
   color-scheme: light;
-  color: #111827;
+  color: var(--app-text);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -163,11 +167,25 @@ body,
   min-height: 100%;
 }
 
+/* Dark theme overrides — synced from ThemeContext via html[data-theme]. */
+html[data-theme='dark'] {
+  --app-bg: #0a1520;
+  --app-text: #c8daf5;
+  --scrollbar-track: #111e30;
+  --scrollbar-thumb: #3698BF;
+  --scrollbar-thumb-hover: #5db0d1;
+  --scrollbar-thumb-active: #0367A6;
+  --scrollbar-border: #111e30;
+
+  color-scheme: dark;
+  color: var(--app-text);
+}
+
 /* Remove default spacing that can make layouts look "boxed in". */
 body {
   margin: 0;
-  background: #ffffff;
-  color: #111827;
+  background: var(--app-bg);
+  color: var(--app-text);
 }
 
 /* Language-specific font family overrides update --font-base */
@@ -189,26 +207,26 @@ html[lang='ar'] {
 }
 
 ::-webkit-scrollbar-track {
-  background: #ffffff; /* Updated track background to white */
+  background: var(--scrollbar-track);
   border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #3698BF; /* Updated to palette light blue */
+  background: var(--scrollbar-thumb);
   border-radius: 6px;
-  border: 2px solid #ffffff; /* Add border to create spacing effect from track */
+  border: 2px solid var(--scrollbar-border);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #0367A6; /* Updated to palette dark blue for hover */
+  background: var(--scrollbar-thumb-hover);
 }
 
 ::-webkit-scrollbar-thumb:active {
-  background: #024a78; /* Even darker blue when clicked */
+  background: var(--scrollbar-thumb-active);
 }
 
 /* Firefox scrollbar styling */
 * {
-  scrollbar-width: thin; /* thin, auto, or none */
-  scrollbar-color: #0367A6 #ffffff; /* Updated thumb color to palette dark blue */
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }

@@ -6,7 +6,7 @@ import type { SvgIconProps } from '@mui/material/SvgIcon';
 
 /**
  * NoData Component
- * 
+ *
  * A shared component to display a "No Data" or "Empty State" message with an optional icon.
  */
 interface NoDataProps {
@@ -32,12 +32,12 @@ const NoData: React.FC<NoDataProps> = ({ message, icon }) => {
       }}>
       {icon ? (
         React.cloneElement(icon, {
-          sx: { fontSize: '50px', color: '#008FDE', mb: 2, opacity: 0.5, ...icon.props.sx },
+          sx: { fontSize: '50px', color: 'primary.main', mb: 2, opacity: 0.5, ...icon.props.sx },
         })
       ) : (
-        <InfoOutlinedIcon sx={{ fontSize: '50px', color: '#008FDE', mb: 2, opacity: 0.5 }} />
+        <InfoOutlinedIcon sx={{ fontSize: '50px', color: 'primary.main', mb: 2, opacity: 0.5 }} />
       )}
-      <Typography variant="body1" sx={{ fontWeight: 600, color: '#1A237E', mb: 1 }}>
+      <Typography variant="body1" sx={{ fontWeight: 600, color: 'text.primary', mb: 1 }}>
         {message}
       </Typography>
     </Box>
@@ -45,4 +45,3 @@ const NoData: React.FC<NoDataProps> = ({ message, icon }) => {
 };
 
 export default NoData;
-

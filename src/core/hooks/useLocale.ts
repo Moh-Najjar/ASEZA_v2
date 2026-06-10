@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { isRtl } from "../../i18n/languages";
 
@@ -20,8 +21,10 @@ export const useLocale = (): UseLocaleReturn => {
   const { t, i18n } = useTranslation();
   const isAr = isRtl(i18n.language);
 
-  const loc = (enVal: string, arVal: string): string =>
-    isAr ? arVal : enVal;
+  const loc = useCallback(
+    (enVal: string, arVal: string): string => (isAr ? arVal : enVal),
+    [isAr]
+  );
 
   return { isAr, t, loc };
 };

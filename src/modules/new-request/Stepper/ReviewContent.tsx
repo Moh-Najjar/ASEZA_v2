@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -8,6 +8,7 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { UseFormReturn } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 import { getControlKey, getControlType } from "../../../core/utils/control.utils";
 import { groupAttributesByPage } from "../../../core/utils/groupAttributesByPage";
@@ -128,6 +129,22 @@ interface ReviewContentProps {
   onValidationChange: (issues: ValidationIssue[]) => void;
 }
 
+/** Avoids redundant state updates when validation output is unchanged */
+const areValidationIssuesEqual = (
+  prev: ValidationIssue[],
+  next: ValidationIssue[]
+): boolean => {
+  if (prev.length !== next.length) {
+    return false;
+  }
+
+  return prev.every(
+    (issue, index) =>
+      issue.rhfPath === next[index]?.rhfPath &&
+      issue.message === next[index]?.message
+  );
+};
+
 const ReviewContent: React.FC<ReviewContentProps> = ({
   formFieldsData,
   formMethods,
@@ -137,8 +154,11 @@ const ReviewContent: React.FC<ReviewContentProps> = ({
   onValidationChange,
 }) => {
   const { t, loc } = useLocale();
+  const { i18n } = useTranslation();
   const { watch, getValues } = formMethods;
   const [validationIssues, setValidationIssues] = useState<ValidationIssue[]>([]);
+  const onValidationChangeRef = useRef(onValidationChange);
+  onValidationChangeRef.current = onValidationChange;
 
   const groupedFields = useMemo((): Record<number, FormField[]> => {
     if (formFieldsData.length === 0) {
@@ -149,22 +169,27 @@ const ReviewContent: React.FC<ReviewContentProps> = ({
 
   const sectionCount = Object.keys(groupedFields).length;
 
-  /** Re-run full-form validation whenever form values change */
+  /** Re-run full-form validation whenever form values or language change */
   useEffect(() => {
     const runValidation = (): void => {
       const issues = validateAllFormFields(formFieldsData, getValues(), loc, t);
-      setValidationIssues(issues);
-      onValidationChange(issues);
+
+      setValidationIssues((prev) => {
+        if (areValidationIssuesEqual(prev, issues)) {
+          return prev;
+        }
+
+        onValidationChangeRef.current(issues);
+        return issues;
+      });
     };
 
     runValidation();
 
-    const subscription = watch(() => {
-      runValidation();
-    });
+    const subscription = watch(runValidation);
 
     return () => subscription.unsubscribe();
-  }, [formFieldsData, getValues, watch, loc, t, onValidationChange]);
+  }, [formFieldsData, getValues, watch, i18n.language, loc, t]);
 
   return (
     <Box className={styles.stepperContent} data-tour="review-content">

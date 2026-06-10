@@ -486,7 +486,7 @@ const Navbar: React.FC<NavbarProps> = ({
                     minHeight: 0,
                     lineHeight: 1.2,
                     '&:hover': {
-                      bgcolor: 'grey.200',
+                      bgcolor: 'action.hover',
                       color: isRamadanCampaign
                         ? theme.palette.error.main
                         : active
@@ -595,7 +595,7 @@ const Navbar: React.FC<NavbarProps> = ({
                   '&:focus-within': {
                     borderColor: 'primary.main',
                     bgcolor: 'background.paper',
-                    boxShadow: `0 0 0 2px ${alpha('#0367A6', 0.1)}`,
+                    boxShadow: (t) => `0 0 0 2px ${alpha(t.palette.primary.main, 0.1)}`,
                   },
                 }}>
                 <InputBase
@@ -737,7 +737,7 @@ const Navbar: React.FC<NavbarProps> = ({
                           }}
                           sx={{
                             ...rowSx,
-                            ...(isChildActive ? { bgcolor: 'grey.200' } : {}),
+                            ...(isChildActive ? { bgcolor: 'action.selected' } : {}),
                           }}>
                           <ListItemText
                             primary={child.label}
@@ -823,7 +823,7 @@ const Navbar: React.FC<NavbarProps> = ({
                                       py: '0px',
                                       '&:last-of-type': { mb: 0 },
                                       '&:hover': { bgcolor: 'action.hover' },
-                                      ...(isChildActive ? { bgcolor: 'grey.200' } : {}),
+                                      ...(isChildActive ? { bgcolor: 'action.selected' } : {}),
                                     }}>
                                     <ListItemText
                                       primary={grandChild.label}

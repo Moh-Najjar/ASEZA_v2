@@ -238,7 +238,7 @@ const RawTable: React.FC<RawTableProps> = ({
         <Table size="small">
           {/* ── Header ── */}
           <TableHead>
-            <TableRow sx={{ backgroundColor: "#fafafa" }}>
+            <TableRow sx={{ bgcolor: 'action.hover' }}>
               {/* Row-label column header (e.g. "Record Type") — hidden when null */}
               {hasRowLabelColumn && (
                 <TableCell sx={{ fontWeight: "bold", minWidth: 220 }}>

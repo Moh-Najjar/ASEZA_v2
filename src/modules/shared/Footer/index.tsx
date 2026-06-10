@@ -182,7 +182,7 @@ const Footer: React.FC<FooterProps> = ({ sx }) => {
             </Typography>
             <Box
               sx={{
-                bgcolor: 'white',
+                bgcolor: 'background.paper',
                 p: '10px 20px',
                 borderRadius: '8px',
                 display: 'inline-flex',

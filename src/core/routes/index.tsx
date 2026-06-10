@@ -17,7 +17,7 @@ const AppRoutes = () => {
       ...route,
       element: (
         <PublicRoute isAuthenticated={isAuthenticated} isLoading={isLoading}>
-          <PageTransition key={location.pathname}>{route.element}</PageTransition>
+          {route.element}
         </PublicRoute>
       ),
     })),
@@ -25,7 +25,7 @@ const AppRoutes = () => {
       ...route,
       element: (
         <ProtectedRoute isAuthenticated={isAuthenticated} isLoading={isLoading}>
-          <PageTransition key={location.pathname}>{route.element}</PageTransition>
+          {route.element}
         </ProtectedRoute>
       ),
     })),
@@ -35,10 +35,9 @@ const AppRoutes = () => {
 
   return (
     <SuspenseWrapper>
-      <AnimatePresence mode="wait">
-        {/* The key on the motion.div (inside PageTransition) handles the exit/enter cycle */}
-        {element}
-      </AnimatePresence>
+        {element !== null ? (
+          <PageTransition key={location.pathname}>{element}</PageTransition>
+        ) : null}
     </SuspenseWrapper>
   );
 };

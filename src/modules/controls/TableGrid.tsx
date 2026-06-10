@@ -169,7 +169,7 @@ const TableGrid: React.FC<TableGridProps> = ({ formField, formMethods, hideHelpe
         <Table size="small">
           {/* ── Header ── */}
           <TableHead>
-            <TableRow sx={{ backgroundColor: "#fafafa" }}>
+            <TableRow sx={{ bgcolor: 'action.hover' }}>
               {columns.map((col) => (
                 <TableCell
                   key={col.columnKey}

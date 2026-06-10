@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, type ReactNode, useCallback, useMemo } from 'react';
 import { Box, LinearProgress } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import i18n from '../../i18n';
@@ -36,6 +37,8 @@ const FetchingContext = createContext<FetchingContextType | undefined>(undefined
  * FetchingContextProvider component to wrap the application and provide loading/error/success states.
  */
 export const FetchingContextProvider = ({ children }: { children: ReactNode }) => {
+  const theme = useTheme();
+
   // Manual loading counter — for non-react-query async work
   const [loadingCount, setLoadingCount] = useState(0);
 
@@ -126,7 +129,7 @@ export const FetchingContextProvider = ({ children }: { children: ReactNode }) =
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme={'light'}
+        theme={theme.palette.mode}
       />
     </FetchingContext.Provider>
   );

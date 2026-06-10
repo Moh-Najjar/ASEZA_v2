@@ -206,7 +206,7 @@ export const UserProfile = () => {
         <Divider />
 
         {/* Footer Section - Logout */}
-        <Box sx={{ p: 1, bgcolor: 'grey.50' }}>
+        <Box sx={{ p: 1, bgcolor: 'action.hover' }}>
           <MenuItem
             onClick={handleLogoutClick}
             sx={{
@@ -215,7 +215,6 @@ export const UserProfile = () => {
               py: 1,
               color: 'error.main',
               '&:hover': {
-                bgcolor: 'error.lighter', // If error.lighter doesn't exist, it will fallback
                 backgroundColor: (t) => alpha(t.palette.error.main, 0.08),
               },
             }}>

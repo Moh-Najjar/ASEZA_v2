@@ -62,6 +62,11 @@ export const ThemeContextProvider: React.FC<React.PropsWithChildren> = ({
     }
   }, [mode]);
 
+  // Keep the document root in sync so global CSS (scrollbars, color-scheme) follows the theme.
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", mode);
+  }, [mode]);
+
   const toggleTheme = useCallback((): void => {
     setModeState((prev) => (prev === "light" ? "dark" : "light"));
   }, []);

@@ -38,7 +38,7 @@ import Breadcrumbs from '../shared/Breadcrumbs';
 import HeroBanner from '../shared/HeroBanner';
 
 import type { RequestStatus } from './types';
-import { mapApiStatus } from './utils/statusHelpers';
+import { getStatusBadgeStyles, mapApiStatus } from './utils/statusHelpers';
 import { exportSubmissionToDocx } from './utils/exportToDocx';
 import { SUBMISSION_DETAILS_QUERY_KEY, DROPDOWN_LIST_VALUES_QUERY_KEY, useGetMySubmissions } from '../../core/hooks/useFormApi';
 import { getSubmissionDetails, getDropdownListValues } from '../../core/api/form';
@@ -59,15 +59,6 @@ const formatDate = (iso: string | null, locale: string): string => {
   const date = new Date(iso);
   if (isNaN(date.getTime())) return '—';
   return date.toLocaleDateString(locale, { hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'long', year: 'numeric', hour12: true });
-};
-
-/** Soft-colored pill for the status badge */
-const STATUS_STYLES: Record<RequestStatus, { bg: string; color: string }> = {
-  DRAFT: { bg: '#F7FAFC', color: '#718096' },
-  SUBMITTED: { bg: '#EBF5F9', color: '#3698BF' },
-  APPROVED: { bg: '#E6F6F4', color: '#14A697' },
-  REJECTED: { bg: '#FFF5F5', color: '#C53030' },
-  RETURNED: { bg: '#FFFAF0', color: '#C05621' },
 };
 
 /** Column header definitions */
@@ -545,7 +536,7 @@ const MyRequests: React.FC = () => {
                       const formName = isAr ? item.formNameAr : item.formNameEn;
                       // List API only returns the EN directorate name
                       const status = mapApiStatus(item.status);
-                      const statusStyle = STATUS_STYLES[status];
+                      const statusStyle = getStatusBadgeStyles(status, theme);
 
                       // Translation key for the status pill
                       const statusLabelKey = `myRequests.status.${status.toLowerCase()}`;
@@ -668,11 +659,14 @@ const MyRequests: React.FC = () => {
                                   sx={{
                                     width: 30, height: 30,
                                     border: '1px solid',
-                                    borderColor: alpha('#3182CE', 0.45),
+                                    borderColor: alpha(theme.palette.info.main, 0.45),
                                     borderRadius: 1.5,
-                                    color: '#3182CE',
-                                    bgcolor: alpha('#3182CE', 0.05),
-                                    '&:hover': { bgcolor: alpha('#3182CE', 0.12), borderColor: '#3182CE' },
+                                    color: 'info.main',
+                                    bgcolor: alpha(theme.palette.info.main, 0.05),
+                                    '&:hover': {
+                                      bgcolor: alpha(theme.palette.info.main, 0.12),
+                                      borderColor: 'info.main',
+                                    },
                                   }}>
                                   <VisibilityOutlinedIcon sx={{ fontSize: 15 }} />
                                 </IconButton>
@@ -689,16 +683,19 @@ const MyRequests: React.FC = () => {
                                       width: 30, height: 30,
                                       border: '1px solid',
                                       borderColor: exportingId === item.submissionId
-                                        ? alpha('#14A697', 0.25)
-                                        : alpha('#14A697', 0.45),
+                                        ? alpha(theme.palette.secondary.main, 0.25)
+                                        : alpha(theme.palette.secondary.main, 0.45),
                                       borderRadius: 1.5,
-                                      color: '#14A697',
-                                      bgcolor: alpha('#14A697', 0.05),
-                                      '&:hover': { bgcolor: alpha('#14A697', 0.12), borderColor: '#14A697' },
+                                      color: 'secondary.main',
+                                      bgcolor: alpha(theme.palette.secondary.main, 0.05),
+                                      '&:hover': {
+                                        bgcolor: alpha(theme.palette.secondary.main, 0.12),
+                                        borderColor: 'secondary.main',
+                                      },
                                       '&.Mui-disabled': { opacity: 0.45 },
                                     }}>
                                     {exportingId === item.submissionId ? (
-                                      <CircularProgress size={13} sx={{ color: '#14A697' }} />
+                                      <CircularProgress size={13} sx={{ color: 'secondary.main' }} />
                                     ) : (
                                       <FileDownloadOutlinedIcon sx={{ fontSize: 15 }} />
                                     )}
