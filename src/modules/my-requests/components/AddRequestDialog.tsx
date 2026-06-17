@@ -76,6 +76,8 @@ const AddRequestDialog: React.FC<AddRequestDialogProps> = ({ open, onClose, onSu
   const theme = useTheme();
   const isAr = i18n.language === 'ar';
 
+  const { alpha } = theme;
+
   const [form, setForm] = useState<FormState>(INITIAL_STATE);
 
   // Validation: all required fields must be filled

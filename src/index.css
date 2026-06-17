@@ -1,53 +1,5 @@
 /* Register the bundled font so it can be used by name in font-family stacks. */
 @font-face {
-  font-family: 'LyonArabicText';
-  src: url('./assets/fonts/LyonArabicText-Regular.otf') format('opentype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'LyonArabicText';
-  src: url('./assets/fonts/LyonArabicText-SemiBold.otf') format('opentype');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'LyonArabicText';
-  src: url('./assets/fonts/LyonArabicText-Bold.otf') format('opentype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'LyonArabicText';
-  src: url('./assets/fonts/LyonArabicText-Bold.otf') format('opentype');
-  font-weight: 800;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'LyonArabicDisplay';
-  src: url('./assets/fonts/LyonArabicDisplay-Regular.otf') format('opentype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'LyonArabicDisplay';
-  src: url('./assets/fonts/LyonArabicDisplay-Medium.otf') format('opentype');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
   font-family: 'LamaSans';
   src: url('./assets/fonts/LamaSans-SemiBold.otf') format('opentype');
   font-weight: 600;
@@ -72,59 +24,72 @@
 }
 
 @font-face {
-  font-family: 'Dubai';
-  src: url('./assets/fonts/Dubai-Regular.ttf') format('truetype');
+  font-family: 'Cairo';
+  src: url('./assets/fonts/Cairo/static/Cairo-ExtraLight.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cairo';
+  src: url('./assets/fonts/Cairo/static/Cairo-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cairo';
+  src: url('./assets/fonts/Cairo/static/Cairo-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Dubai';
-  src: url('./assets/fonts/Dubai-Medium.ttf') format('truetype');
+  font-family: 'Cairo';
+  src: url('./assets/fonts/Cairo/static/Cairo-Medium.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Dubai';
-  src: url('./assets/fonts/Dubai-Bold.ttf') format('truetype');
+  font-family: 'Cairo';
+  src: url('./assets/fonts/Cairo/static/Cairo-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cairo';
+  src: url('./assets/fonts/Cairo/static/Cairo-Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'PlayfairDisplay';
-  src: url('./assets/fonts/PlayfairDisplay-SemiBold.ttf') format('truetype');
-  font-weight: 700;
+  font-family: 'Cairo';
+  src: url('./assets/fonts/Cairo/static/Cairo-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'PragatiNarrow';
-  src: url('./assets/fonts/PragatiNarrow-Regular.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'PragatiNarrow';
-  src: url('./assets/fonts/PragatiNarrow-Bold.ttf') format('truetype');
-  font-weight: 700;
+  font-family: 'Cairo';
+  src: url('./assets/fonts/Cairo/static/Cairo-Black.ttf') format('truetype');
+  font-weight: 900;
   font-style: normal;
   font-display: swap;
 }
 
 :root {
-  /* --font-en: 'PragatiNarrow', 'Roboto', 'Helvetica', 'Arial', sans-serif;
-  --font-ar: 'LyonArabicText', 'Cairo', 'Tajawal', 'Arial', sans-serif; */
-
-  --font-en: 'LamaSans', 'Roboto', 'Helvetica', 'Arial', sans-serif;
-  --font-ar: 'LamaSans', 'Cairo', 'Tajawal', 'Arial', sans-serif;
+  --font-en: 'Cairo', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  --font-ar: 'Cairo', 'Tajawal', 'Arial', sans-serif;
 
   --font-base: var(--font-ar);
 

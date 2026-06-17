@@ -209,44 +209,44 @@ export const THEME_CONFIG = {
 
       h1: {
         // Page title / main screen heading
-        // Min: 28px (desktop readable)
+        // Min: 30px (desktop readable)
         // Fluid scaling for large screens
-        fontSize: 'clamp(28px, 2.2vw, 40px)',
+        fontSize: 'clamp(30px, 2.3vw, 42px)',
         fontWeight: 700,
         lineHeight: 1.2,
       },
 
       h2: {
         // Section titles
-        fontSize: 'clamp(24px, 1.9vw, 32px)',
+        fontSize: 'clamp(26px, 2vw, 34px)',
         fontWeight: 600,
         lineHeight: 1.25,
       },
 
       h3: {
         // Sub-section titles
-        fontSize: 'clamp(20px, 1.6vw, 28px)',
+        fontSize: 'clamp(21px, 1.7vw, 30px)',
         fontWeight: 600,
         lineHeight: 1.3,
       },
 
       h4: {
         // Card titles / dialog titles
-        fontSize: 'clamp(18px, 1.4vw, 24px)',
+        fontSize: 'clamp(19px, 1.5vw, 26px)',
         fontWeight: 600,
         lineHeight: 1.35,
       },
 
       h5: {
         // Small headings / labels
-        fontSize: 'clamp(16px, 1.2vw, 20px)',
+        fontSize: 'clamp(17px, 1.3vw, 21px)',
         fontWeight: 500,
         lineHeight: 1.4,
       },
 
       h6: {
         // Micro headings
-        fontSize: 'clamp(14px, 1.1vw, 18px)',
+        fontSize: 'clamp(15px, 1.2vw, 19px)',
         fontWeight: 500,
         lineHeight: 1.4,
       },
@@ -258,21 +258,21 @@ export const THEME_CONFIG = {
 
       body1: {
         // Primary body text
-        fontSize: 'clamp(14px, 1vw, 16px)',
+        fontSize: 'clamp(15px, 1.05vw, 17px)',
         fontWeight: 400,
         lineHeight: 1.6,
       },
 
       body2: {
         // Secondary text / helper text
-        fontSize: 'clamp(13px, 0.95vw, 14px)',
+        fontSize: 'clamp(14px, 1vw, 15px)',
         fontWeight: 400,
         lineHeight: 1.6,
       },
 
       body3: {
         // Metadata, captions, timestamps
-        fontSize: 'clamp(12px, 0.9vw, 13px)',
+        fontSize: 'clamp(13px, 1vw, 14px)',
         fontWeight: 400,
         lineHeight: 1.5,
       },
