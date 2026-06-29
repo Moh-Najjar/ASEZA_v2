@@ -15,6 +15,7 @@ import {
   collectPageFieldKeys,
   validateAllFormFields,
 } from "../utils/validateAllFormFields";
+import { useAuth } from "../context/AuthContext";
 
 interface StepperPage {
   Key: number;
@@ -37,6 +38,7 @@ export const useStepper = (
   const queryClient = useQueryClient();
   const { mutate: submitForm, isPending: isSubmitting } = useSubmitForm();
   const { t, loc } = useLocale();
+  const { authSession } = useAuth();
 
   /** Number of data-entry pages (excludes the review step) */
   const dataStepCount = pages.length - 1;
@@ -126,8 +128,8 @@ export const useStepper = (
    */
   const handleSubmit = async (formData: Record<string, unknown>): Promise<void> => {
     const request: SubmitFormRequest = {
-      formId: 14,
-      directorateId: 14,
+      formId: authSession?.kpiFormId ?? 0,
+      directorateId: authSession?.directorateId ?? 0,
       reportingDate: new Date().toISOString().split("T")[0],
       periodYear: new Date().getFullYear(),
       periodMonth: new Date().getMonth() + 1,

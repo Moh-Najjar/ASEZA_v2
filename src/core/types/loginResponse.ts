@@ -1,4 +1,5 @@
 export interface LoginResponse {
+  kpiFormId: number;
   accessToken: string;
   refreshToken: string;
   userId: number;
