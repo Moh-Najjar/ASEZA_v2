@@ -1,4 +1,5 @@
 import { FieldValue, RawTableValueRow, TableValueRow } from "../types/submitFormRequest";
+import { FormField } from "../types/FormField";
 
 /** ISO date strings from `<input type="date">` (YYYY-MM-DD) */
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
@@ -52,6 +53,25 @@ function isRawTableObject(
 }
 
 /**
+ * Returns true when the value is a plain object whose every own value is a
+ * primitive (string or number) — i.e. a CALCULATED_FIELD stored as
+ * { [inputColumnKey]: "42", ..., [resultColumnKey]: "3.50" }.
+ * This is intentionally checked after isRawTableObject so there is no overlap.
+ */
+function isCalculatedFieldObject(
+  val: unknown
+): val is Record<string, string | number> {
+  if (typeof val !== "object" || val === null || Array.isArray(val)) {
+    return false;
+  }
+  const values = Object.values(val as Record<string, unknown>);
+  return (
+    values.length > 0 &&
+    values.every((v) => typeof v === "string" || typeof v === "number")
+  );
+}
+
+/**
  * Converts a single raw React Hook Form field value to the typed `FieldValue`
  * discriminated structure expected by the API.
  *
@@ -60,8 +80,14 @@ function isRawTableObject(
  *  - Array of primitives                             → `multiSelectValues`
  *  - Array of objects                                → `tableValues`   (dynamic TABLE)
  *  - Plain object whose values are also plain objects → `rawTableValues` (fixed RAW_TABLE)
+ *  - CALCULATED_FIELD flat object + resultColumnKey  → `simpleValue`   (result only)
  */
-export function buildFieldValue(fieldKey: string, rawValue: unknown): FieldValue {
+export function buildFieldValue(
+  fieldKey: string,
+  rawValue: unknown,
+  /** The column key of the computed result inside a CALCULATED_FIELD nested object */
+  resultColumnKey?: string,
+): FieldValue {
   if (Array.isArray(rawValue)) {
     if (isTableRowArray(rawValue)) {
       // Dynamic TABLE field: each array object becomes a TableValueRow with a positional index.
@@ -106,6 +132,23 @@ export function buildFieldValue(fieldKey: string, rawValue: unknown): FieldValue
     return { fieldKey, simpleValue: null, multiSelectValues: null, tableValues: null, rawTableValues };
   }
 
+  /**
+   * CALCULATED_FIELD: flat object whose values are all primitives, e.g.
+   *   { NUMBER_OF_OVERNIGHT_VISITORS: "100", CAPACITY: "50", RESULT: "2.00" }
+   * Only the computed result column is sent — as simpleValue — because that is
+   * the value the API cares about for a calculated KPI field.
+   */
+  if (isCalculatedFieldObject(rawValue) && resultColumnKey !== undefined) {
+    const resultVal = rawValue[resultColumnKey];
+    return {
+      fieldKey,
+      simpleValue: resultVal !== undefined && resultVal !== null ? String(resultVal) : null,
+      multiSelectValues: null,
+      tableValues: null,
+      rawTableValues: null,
+    };
+  }
+
   // Simple scalar field.
   return {
     fieldKey,
@@ -119,13 +162,21 @@ export function buildFieldValue(fieldKey: string, rawValue: unknown): FieldValue
 /**
  * Maps the raw `Record<string, unknown>` that React Hook Form provides on
  * submit into the `Record<string, FieldValue>` shape the API expects.
+ *
+ * Pass `formFields` so the mapper can identify CALCULATED_FIELD entries and
+ * extract their result column key for the `simpleValue` mapping.
  */
 export function mapFormDataToFieldValues(
-  formData: Record<string, unknown>
+  formData: Record<string, unknown>,
+  formFields: FormField[] = [],
 ): Record<string, FieldValue> {
+  /** Quick O(1) lookup: fieldKey → FormField */
+  const fieldDefMap = new Map(formFields.map((f) => [f.fieldKey, f]));
+
   return Object.entries(formData).reduce<Record<string, FieldValue>>(
     (acc, [fieldKey, rawValue]) => {
-      acc[fieldKey] = buildFieldValue(fieldKey, rawValue);
+      const resultColumnKey = fieldDefMap.get(fieldKey)?.calculation?.resultColumnKey;
+      acc[fieldKey] = buildFieldValue(fieldKey, rawValue, resultColumnKey);
       return acc;
     },
     {}

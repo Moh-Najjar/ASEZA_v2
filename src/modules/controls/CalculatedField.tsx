@@ -4,6 +4,7 @@ import { Box, TextField, Button, Typography, Paper } from "@mui/material";
 import CalculateIcon from "@mui/icons-material/Calculate";
 import { FormField, CalculationInput, CalculationDef } from "../../core/types/FormField";
 import { useLocale } from "../../core/hooks/useLocale";
+import { getValidationRules } from "../../core/utils/validationUtils";
 import TextFieldLabel from "./InputFieldLabel";
 
 interface CalculatedFieldProps {
@@ -58,22 +59,56 @@ const CalculationInputField: React.FC<{
   t: (key: string, opts?: Record<string, unknown>) => string;
   loc: (en: string, ar: string) => string;
   size: "small" | "medium";
+  /** When true the field is locked — mirrors the KPI / isReadOnly flag on the parent FormField */
+  isReadOnly: boolean;
   /** Called whenever the user edits this input so the stale result can be cleared */
   onClearResult: () => void;
-}> = ({ parentKey, input, formMethods, t, loc, size, onClearResult }) => {
+}> = ({ parentKey, input, formMethods, t, loc, size, isReadOnly, onClearResult }) => {
   const { control } = formMethods;
   const fieldName = `${parentKey}.${input.columnKey}`;
+
+  /**
+   * Construct a full FormField from CalculationInput so getValidationRules can
+   * be reused as-is.  Fields that have no equivalent on CalculationInput receive
+   * safe null / empty-string defaults; they are never read by getValidationRules.
+   */
+  const inputAsFormField: FormField = {
+    fieldId: 0,
+    formId: 0,
+    fieldKey: input.columnKey,
+    labelEn: input.labelEn,
+    labelAr: input.labelAr,
+    dataType: input.dataType,
+    controlType: input.controlType,
+    /** Suppress required validation when the whole widget is locked (isReadOnly or hasNextSubmissionDate) */
+    isRequired: !isReadOnly && input.isRequired,
+    displayOrder: input.displayOrder,
+    isReadOnly,
+    isVisible: true,
+    lookupType: null,
+    placeholderEn: input.placeholderEn,
+    placeholderAr: input.placeholderAr,
+    helpTextEn: "",
+    helpTextAr: "",
+    columns: null,
+    rows: null,
+    grid: null,
+    rowLabelEn: null,
+    rowLabelAr: null,
+    regexPattern: null,
+    validationMessageEn: null,
+    validationMessageAr: null,
+    kpiNextSubmissionDateEn: null,
+    kpiNextSubmissionDateAr: null,
+    calculation: null,
+  };
 
   return (
     <Controller
       name={fieldName}
       control={control}
       defaultValue=""
-      rules={{
-        required: input.isRequired
-          ? t("validation.required", { field: loc(input.labelEn, input.labelAr) })
-          : undefined,
-      }}
+      rules={getValidationRules(inputAsFormField, loc, t)}
       render={({ field, fieldState }) => (
         <TextField
           {...field}
@@ -86,6 +121,7 @@ const CalculationInputField: React.FC<{
           fullWidth
           /** Floating label rendered inside the outlined border notch */
           label={loc(input.labelEn, input.labelAr)}
+          InputProps={{ readOnly: isReadOnly }}
           onChange={(e) => {
             field.onChange(e.target.value);
             /** Clear the stale result whenever an input value changes */
@@ -98,6 +134,9 @@ const CalculationInputField: React.FC<{
               "&:hover .MuiOutlinedInput-notchedOutline": {
                 borderColor: "primary.light",
               },
+              ...(isReadOnly && {
+                backgroundColor: "action.hover",
+              }),
             },
             "& .MuiFormHelperText-root": {
               mx: 0,
@@ -189,6 +228,15 @@ const CalculatedField: React.FC<CalculatedFieldProps> = ({
   const { loc, t } = useLocale();
   const { getValues, trigger } = formMethods;
 
+  /** True when a next-submission date is provided for this KPI field */
+  const kpiDateEn = formField.kpiNextSubmissionDateEn ?? "";
+  const kpiDateAr = formField.kpiNextSubmissionDateAr ?? "";
+  const kpiNextSubmissionDate = loc(kpiDateEn, kpiDateAr);
+  const hasNextSubmissionDate = kpiNextSubmissionDate !== null && kpiNextSubmissionDate !== "";
+
+  /** The entire calculated widget is read-only either by its own flag or when a next-submission date is set */
+  const isReadOnly = hasNextSubmissionDate;
+
   /**
    * RHF cannot infer deep path value types from Record<string, unknown>,
    * so the nested setValue call would produce a 'never' type error.
@@ -226,9 +274,16 @@ const CalculatedField: React.FC<CalculatedFieldProps> = ({
   );
 
   const formulaDisplay = loc(calculation.displayFormulaEn, calculation.displayFormulaAr);
+
+  /**
+   * Helper text priority mirrors InputField:
+   *   validation error > next-submission date > regular helpText > none
+   */
   const helpText = hideHelperText
     ? undefined
-    : loc(formField.helpTextEn, formField.helpTextAr) ?? undefined;
+    : hasNextSubmissionDate
+      ? (kpiNextSubmissionDate ?? undefined)
+      : loc(formField.helpTextEn, formField.helpTextAr) ?? undefined;
 
   /**
    * Triggers RHF validation on all inputs first.
@@ -297,16 +352,18 @@ const CalculatedField: React.FC<CalculatedFieldProps> = ({
                 t={t}
                 loc={loc}
                 size={size}
+                isReadOnly={isReadOnly}
                 onClearResult={clearResult}
               />
             </Box>
           ))}
 
-          {/* Calculate button — vertically aligned with input boxes */}
+          {/* Calculate button — disabled while the field is locked */}
           <Button
             variant="contained"
             onClick={() => void handleCalculate()}
             startIcon={<CalculateIcon />}
+            disabled={isReadOnly}
             sx={{
               borderRadius: "8px",
               textTransform: "none",

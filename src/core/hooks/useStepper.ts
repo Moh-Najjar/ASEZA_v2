@@ -135,8 +135,10 @@ export const useStepper = (
       periodMonth: new Date().getMonth() + 1,
       kpiId: null,
       notes: "",
-      fieldValues: mapFormDataToFieldValues(formData),
+      fieldValues: mapFormDataToFieldValues(formData, formFieldsData),
     };
+
+    console.log(request);
 
     const allFieldsHaveNextSubmissionDate =
       await checkIfAllFieldsHaveNextSubmissionDate();
