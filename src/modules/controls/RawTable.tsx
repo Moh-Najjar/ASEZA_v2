@@ -61,7 +61,7 @@ const gridCellToFormField = (
   grid: null,
   rowLabelEn: null,
   rowLabelAr: null,
-  regexPattern: null,
+  regexPattern: parentField.regexPattern,
   validationMessageEn: cell.validationMessageEn,
   validationMessageAr: cell.validationMessageAr,
   // Inherit next-submission date from the parent RAW_TABLE field so cell
