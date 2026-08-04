@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useAdminAuth } from '../context/AdminAuthContext';
 import type { UserRole } from '../types/roles';
 
 interface ProtectedRouteProps {
@@ -76,6 +77,40 @@ export const PublicRoute = ({ isAuthenticated, isLoading, children }: PublicRout
 
   if (isAuthenticated) {
     return <Navigate to="/home" replace />;
+  }
+
+  return children;
+};
+
+// ─── Admin route guards ───────────────────────────────────────────────────────
+
+interface AdminRouteProps {
+  children: React.ReactNode;
+}
+
+/**
+ * Protects admin pages — redirects to /admin/login when no valid admin session
+ * is present in localStorage.
+ */
+export const AdminProtectedRoute = ({ children }: AdminRouteProps) => {
+  const { isAdminAuthenticated } = useAdminAuth();
+
+  if (!isAdminAuthenticated) {
+    return <Navigate to="/admin/login" replace />;
+  }
+
+  return children;
+};
+
+/**
+ * Wraps admin-only public pages (e.g. /admin/login) — redirects to /admin when
+ * an admin session already exists so the user does not see the login form again.
+ */
+export const AdminPublicRoute = ({ children }: AdminRouteProps) => {
+  const { isAdminAuthenticated } = useAdminAuth();
+
+  if (isAdminAuthenticated) {
+    return <Navigate to="/admin" replace />;
   }
 
   return children;

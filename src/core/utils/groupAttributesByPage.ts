@@ -10,7 +10,9 @@ export const FIELDS_PER_PAGE = 10;
 export const groupAttributesByPage = (
   fields: FormField[]
 ): Record<number, FormField[]> => {
-  return fields.reduce((acc, field, index) => {
+  return [...fields]
+    .sort((a, b) => a.displayOrder - b.displayOrder)
+    .reduce((acc, field, index) => {
     const page = Math.floor(index / FIELDS_PER_PAGE) + 1;
     if (!acc[page]) {
       acc[page] = [];

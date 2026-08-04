@@ -1,12 +1,16 @@
 /** Control key identifiers that match the controlType.controlKey values in formData-v1.json */
 export const ControlKeys = {
+  Text: 'TEXT',
   Number: 'NUMBER',
-  Percentage: 'PERCENTAGE',
+  Textarea: 'TEXTAREA',
   Datepicker: 'DATEPICKER',
   Dropdown: 'DROPDOWN',
+  Checkbox: 'CHECKBOX',
+  Radio: 'RADIO',
+  FileUpload: 'FILEUPLOAD',
   Multiselect: 'MULTISELECT',
   Table: 'TABLE',
-  Text: 'TEXT',
+  Percentage: 'PERCENTAGE',
   RawTable: 'RAW_TABLE',
   Label: 'LABEL',
   CalculatedField: 'CALCULATED_FIELD',

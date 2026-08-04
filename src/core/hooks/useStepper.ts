@@ -138,8 +138,6 @@ export const useStepper = (
       fieldValues: mapFormDataToFieldValues(formData, formFieldsData),
     };
 
-    console.log(request);
-
     const allFieldsHaveNextSubmissionDate =
       await checkIfAllFieldsHaveNextSubmissionDate();
 

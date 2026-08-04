@@ -1,18 +1,18 @@
 import { type RouteObject, useRoutes, useLocation } from 'react-router-dom';
-import { AnimatePresence } from 'framer-motion';
 import { publicRoutes } from './publicLayout';
 import { authorizedRoutes } from './authorizedLayout';
-import { ProtectedRoute, PublicRoute } from './routeConfig';
+import { adminAuthRoutes, adminProtectedRoutes } from './adminRoutes';
+import { ProtectedRoute, PublicRoute, AdminProtectedRoute, AdminPublicRoute } from './routeConfig';
 import SuspenseWrapper from '../../modules/shared/SuspenseWrapper';
 import PageTransition from '../../modules/shared/PageTransition';
 import { useAuth } from '../context/AuthContext';
-import Footer from '../../modules/shared/Footer';
 
 const AppRoutes = () => {
   const { isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
 
   const routes = [
+    // ── Regular public routes (login, root) ──────────────────────────────────
     ...publicRoutes.map((route: RouteObject) => ({
       ...route,
       element: (
@@ -21,6 +21,7 @@ const AppRoutes = () => {
         </PublicRoute>
       ),
     })),
+    // ── Regular protected routes (home, profile, requests …) ─────────────────
     ...authorizedRoutes.map((route: RouteObject) => ({
       ...route,
       element: (
@@ -29,15 +30,33 @@ const AppRoutes = () => {
         </ProtectedRoute>
       ),
     })),
+    // ── Admin public routes (/admin/login) ───────────────────────────────────
+    ...adminAuthRoutes.map((route: RouteObject) => ({
+      ...route,
+      element: (
+        <AdminPublicRoute>
+          {route.element}
+        </AdminPublicRoute>
+      ),
+    })),
+    // ── Admin protected routes (/admin, /admin/users …) ───────────────────────
+    ...adminProtectedRoutes.map((route: RouteObject) => ({
+      ...route,
+      element: (
+        <AdminProtectedRoute>
+          {route.element}
+        </AdminProtectedRoute>
+      ),
+    })),
   ];
 
   const element = useRoutes(routes);
 
   return (
     <SuspenseWrapper>
-        {element !== null ? (
-          <PageTransition key={location.pathname}>{element}</PageTransition>
-        ) : null}
+      {element !== null ? (
+        <PageTransition key={location.pathname}>{element}</PageTransition>
+      ) : null}
     </SuspenseWrapper>
   );
 };

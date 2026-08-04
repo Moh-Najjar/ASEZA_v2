@@ -5,6 +5,7 @@ import { MsalProvider } from '@azure/msal-react';
 import { DirectionProvider } from './DirectionContext';
 import { ThemeContextProvider } from './ThemeContext';
 import { AuthProvider } from './AuthContext';
+import { AdminAuthProvider } from './AdminAuthContext';
 import { FetchingContextProvider } from './FetchingContext';
 import { TourProvider } from './TourContext';
 import ErrorBoundary from './ErrorBoundary';
@@ -23,9 +24,13 @@ const AppProviders: React.FC<React.PropsWithChildren> = ({ children }) => {
           <FetchingContextProvider>
             <DirectionProvider>
               <AuthProvider>
-                {/* TourProvider is placed inside BrowserRouter (in App.tsx)
-                    so AppTour can use react-router hooks for navigation. */}
-                <TourProvider>{children}</TourProvider>
+                {/* AdminAuthProvider is sibling to AuthProvider so admin sessions
+                    are fully decoupled from the MSAL-backed regular user session. */}
+                <AdminAuthProvider>
+                  {/* TourProvider is placed inside BrowserRouter (in App.tsx)
+                      so AppTour can use react-router hooks for navigation. */}
+                  <TourProvider>{children}</TourProvider>
+                </AdminAuthProvider>
               </AuthProvider>
             </DirectionProvider>
           </FetchingContextProvider>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMsal } from '@azure/msal-react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -11,7 +12,7 @@ import {
   useTheme,
   alpha,
 } from '@mui/material';
-import { Security as SecurityIcon } from '@mui/icons-material';
+import { Security as SecurityIcon, AdminPanelSettings as AdminIcon } from '@mui/icons-material';
 import { loginRequest } from '../../../core/config/authConfig';
 import logoAr from '../../../assets/aseza-logo-ar.png';
 import logoEn from '../../../assets/aseza-logo-en.png';
@@ -82,6 +83,7 @@ const Logo: React.FC<LogoProps> = ({ variant = 'dark', size = 'md' }) => {
 const Login: React.FC = () => {
   const { t } = useTranslation();
   const { instance } = useMsal();
+  const navigate = useNavigate();
   // Use MUI theme so colours respond to light / dark mode
   const muiTheme = useTheme();
   const palette = muiTheme.palette;
@@ -93,6 +95,10 @@ const Login: React.FC = () => {
     instance.loginRedirect(loginRequest).catch((e: unknown) => {
       console.error('Login failed:', e);
     });
+  };
+
+  const handleAdminLogin = (): void => {
+    navigate('/admin/login');
   };
 
   const trustBadges = [
@@ -320,6 +326,30 @@ const Login: React.FC = () => {
               }}
             >
               {t('login.signInButton')}
+            </Button>
+
+            {/* Admin portal access */}
+            <Button
+              variant="text"
+              fullWidth
+              size="medium"
+              onClick={handleAdminLogin}
+              startIcon={<AdminIcon sx={{ fontSize: 18 }} />}
+              sx={{
+                py: isMobile ? 2 : 1,
+                borderRadius: 2.5,
+                color: 'text.secondary',
+                fontWeight: 600,
+                fontSize: '0.85rem',
+                textTransform: 'none',
+                transition: 'all 0.2s ease',
+                '&:hover': {
+                  color: palette.primary.main,
+                  bgcolor: alpha(palette.primary.main, 0.04),
+                },
+              }}
+            >
+              {t('login.loginAsAdmin', 'Login as Admin')}
             </Button>
           </Stack>
 

@@ -91,4 +91,66 @@ export const http = {
       throw normalizeAxiosError(error);
     }
   },
+
+  // PATCH: T is the partial request body type; R is the response body type
+  patch: async <T, R>(url: string, data: T, headers?: ApiHeaders): Promise<R> => {
+    try {
+      const response = await axios.patch<R>(`${url}`, data, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          'Accept-Language': getAcceptLanguage(),
+          ...(headers ?? {}),
+        },
+        timeout: 20000,
+        validateStatus: (status: number): boolean => status >= 200 && status < 300,
+        responseType: 'json',
+      });
+      return response.data;
+    } catch (error) {
+      throw normalizeAxiosError(error);
+    }
+  },
+
+  // PUT: T is the full request body type; R is the response body type
+  put: async <T, R>(url: string, data: T, headers?: ApiHeaders): Promise<R> => {
+    try {
+      const response = await axios.put<R>(`${url}`, data, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          'Accept-Language': getAcceptLanguage(),
+          ...(headers ?? {}),
+        },
+        timeout: 20000,
+        validateStatus: (status: number): boolean => status >= 200 && status < 300,
+        responseType: 'json',
+      });
+      return response.data;
+    } catch (error) {
+      throw normalizeAxiosError(error);
+    }
+  },
+
+  // DELETE: R is the response body type (often void / 204 No Content)
+  delete: async <R>(url: string, headers?: ApiHeaders): Promise<R> => {
+    try {
+      const response = await axios.delete<R>(`${url}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          'Accept-Language': getAcceptLanguage(),
+          ...(headers ?? {}),
+        },
+        timeout: 15000,
+        // 204 No Content is a valid success code for DELETE operations
+        validateStatus: (status: number): boolean =>
+          (status >= 200 && status < 300) || status === 204,
+        responseType: 'json',
+      });
+      return response.data;
+    } catch (error) {
+      throw normalizeAxiosError(error);
+    }
+  },
 };
