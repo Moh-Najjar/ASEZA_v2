@@ -65,63 +65,84 @@ const DropDown: React.FC<DropDownProps> = ({
       control={control}
       defaultValue=""
       rules={getValidationRules(formField, loc, t)}
-      render={({ field, fieldState }) => (
-        <Box sx={{ mb: 2.5 }}>
-          {!hideLabel && <TextFieldLabel field={formField} />}
-          <FormControl
-            fullWidth
-            size={size}
-            error={!!fieldState.error}
-            sx={{
-              minWidth: hideLabel ? "unset" : "200px",
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "8px",
-                backgroundColor: "background.paper",
-                "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "primary.light",
+      render={({ field, fieldState }) => {
+        /**
+         * Issue: TABLE / submission APIs often return the country label (or code)
+         * while MenuItem values are always lookupValueId — MUI Select stays blank
+         * when those do not match.
+         * Solution: resolve the stored value (id | code | nameEn | nameAr) to the
+         * matching option's lookupValueId before binding it to Select.
+         */
+        const raw = field.value == null ? "" : String(field.value);
+        
+        const matched = options.find(
+          (o) =>
+            String(o.lookupValueId) === raw ||
+            o.code === raw ||
+            o.nameEn === raw ||
+            o.nameAr === raw
+        );
+        const selectValue = matched !== undefined ? String(matched.lookupValueId) : raw;
+
+        return (
+          <Box sx={{ mb: 2.5 }}>
+            {!hideLabel && <TextFieldLabel field={formField} />}
+            <FormControl
+              fullWidth
+              size={size}
+              error={!!fieldState.error}
+              sx={{
+                minWidth: hideLabel ? "unset" : "200px",
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                  backgroundColor: "background.paper",
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "primary.light",
+                  },
+                  ...(isReadOnly && {
+                    backgroundColor: "action.hover",
+                  }),
                 },
-                ...(isReadOnly && {
-                  backgroundColor: "action.hover",
-                }),
-              },
-              "& .MuiFormHelperText-root": {
-                mx: 0,
-                mt: 0.75,
-                fontSize: "0.75rem",
-              },
-            }}
-          >
-            <Select
-              {...field}
-              id={formField.fieldKey}
-              displayEmpty
-              inputProps={{ readOnly: isReadOnly }}
-              onChange={(e) => field.onChange(e.target.value)}
+                "& .MuiFormHelperText-root": {
+                  mx: 0,
+                  mt: 0.75,
+                  fontSize: "0.75rem",
+                },
+              }}
             >
-              {/* Placeholder — disabled so the user cannot re-select it */}
-              <MenuItem value="" disabled>
-                <em>{placeholder || t("controls.selectValue", "Select value")}</em>
-              </MenuItem>
-              {options.map((item) => (
-                <MenuItem key={item.lookupValueId} value={String(item.lookupValueId)}>
-                  {loc(item.nameEn, item.nameAr)}
+              <Select
+                {...field}
+                value={selectValue}
+                id={formField.fieldKey}
+                displayEmpty
+                inputProps={{ readOnly: isReadOnly }}
+                onChange={(e) => field.onChange(e.target.value)}
+              >
+                {/* Placeholder — disabled so the user cannot re-select it */}
+                <MenuItem value="" disabled>
+                  <em>{placeholder || t("controls.selectValue", "Select value")}</em>
                 </MenuItem>
-              ))}
-            </Select>
-            {fieldState.error && (
-              <FormHelperText>
-                {getLocalizedErrorMessage(fieldState.error, formField, loc, t)}
-              </FormHelperText>
-            )}
-            {!fieldState.error && hasNextSubmissionDate && (
-              <FormHelperText>{kpiNextSubmissionDate}</FormHelperText>
-            )}
-            {!fieldState.error && !hasNextSubmissionDate && helpText && !hideLabel && !hideHelperText && (
-              <FormHelperText>{helpText}</FormHelperText>
-            )}
-          </FormControl>
-        </Box>
-      )}
+                {options.map((item) => (
+                  <MenuItem key={item.lookupValueId} value={String(item.lookupValueId)}>
+                    {loc(item.nameEn, item.nameAr)}
+                  </MenuItem>
+                ))}
+              </Select>
+              {fieldState.error && (
+                <FormHelperText>
+                  {getLocalizedErrorMessage(fieldState.error, formField, loc, t)}
+                </FormHelperText>
+              )}
+              {!fieldState.error && hasNextSubmissionDate && (
+                <FormHelperText>{kpiNextSubmissionDate}</FormHelperText>
+              )}
+              {!fieldState.error && !hasNextSubmissionDate && helpText && !hideLabel && !hideHelperText && (
+                <FormHelperText>{helpText}</FormHelperText>
+              )}
+            </FormControl>
+          </Box>
+        );
+      }}
     />
   );
 };

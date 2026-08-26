@@ -3,9 +3,11 @@ import { UseFormReturn, Controller } from "react-hook-form";
 import { Box, TextField, Button, Typography, Paper } from "@mui/material";
 import CalculateIcon from "@mui/icons-material/Calculate";
 import { FormField, CalculationInput, CalculationDef } from "../../core/types/FormField";
+import { ControlKeys } from "../../core/enums/control-keys.enum";
 import { useLocale } from "../../core/hooks/useLocale";
 import { getValidationRules } from "../../core/utils/validationUtils";
 import TextFieldLabel from "./InputFieldLabel";
+import InputField from "./InputField";
 
 interface CalculatedFieldProps {
   formField: FormField;
@@ -262,8 +264,30 @@ const CalculatedField: React.FC<CalculatedFieldProps> = ({
 
   const { calculation } = formField;
 
+  /**
+   * Submission-detail payloads store only the computed scalar (`value`) and
+   * never include formula/inputs. Without `calculation` the full widget cannot
+   * render, so fall back to a read-only number field bound to fieldKey.
+   */
   if (calculation === null || calculation === undefined) {
-    return null;
+    const fallbackField: FormField = {
+      ...formField,
+      controlType: {
+        ...formField.controlType,
+        controlKey: ControlKeys.Number,
+      },
+      isReadOnly: true,
+    };
+
+    return (
+      <InputField
+        formField={fallbackField}
+        formMethods={formMethods}
+        hideLabel={hideLabel}
+        hideHelperText={hideHelperText}
+        size={size}
+      />
+    );
   }
 
   /** Inputs sorted by their intended display order */

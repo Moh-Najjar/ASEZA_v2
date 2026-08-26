@@ -15,11 +15,25 @@ interface LabelProps {
 }
 
 /**
+ * Returns the first bilingual string that has visible (non-whitespace) text.
+ * Empty strings are skipped so a missing primary source can fall back cleanly.
+ */
+const firstNonEmpty = (...values: string[]): string => {
+  for (const value of values) {
+    if (value.trim() !== "") {
+      return value;
+    }
+  }
+  return "";
+};
+
+/**
  * Renders a read-only label control.
  *
  * Displays static, non-editable text in place of an input field.
- * The display text is taken from `placeholderEn/Ar` so the backend can
- * supply per-cell text without overloading the label fields.
+ * Grid cells (RAW_TABLE) show the row's label name (`labelEn`/`labelAr`).
+ * Standalone LABEL fields still prefer placeholder text, which the admin UI
+ * stores as the visible display string.
  *
  * A hidden <input> registered with React Hook Form ensures the text value
  * is included in the form submission payload at the field's RHF path.
@@ -35,8 +49,19 @@ const Label: React.FC<LabelProps> = ({
   const { control } = formMethods;
   const { loc } = useLocale();
 
-  /** The text shown inside the label chip — sourced from the field's placeholder */
-  const displayText = loc(formField.placeholderEn, formField.placeholderAr) ?? "";
+  const labelText = loc(formField.labelEn ?? "", formField.labelAr ?? "");
+  const placeholderText = loc(
+    formField.placeholderEn ?? "",
+    formField.placeholderAr ?? ""
+  );
+
+  /**
+   * Grid (RAW_TABLE) LABEL cells: prefer the row/field label name.
+   * Standalone LABEL fields: prefer placeholder (admin "display text").
+   */
+  const displayText = isGridField
+    ? firstNonEmpty(labelText, placeholderText)
+    : firstNonEmpty(placeholderText, labelText);
 
   return (
     <Controller

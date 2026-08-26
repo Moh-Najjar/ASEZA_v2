@@ -202,6 +202,10 @@ export const fieldValueToFormField = (fv: FieldValue): FormField => {
     validationMessageAr: fv.validationMessageAr,
     kpiNextSubmissionDateEn: null,
     kpiNextSubmissionDateAr: null,
+    /**
+     * The submission-detail API does not return formula/inputs. CalculatedField
+     * falls back to a read-only scalar display when this is null.
+     */
     calculation: null,
   };
 };

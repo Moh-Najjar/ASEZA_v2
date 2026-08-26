@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import TextFieldLabel from "./InputFieldLabel";
 import { FormField, GridCell } from "../../core/types/FormField";
+import { ControlKeys } from "../../core/enums/control-keys.enum";
 import { getControlKey, getControlType } from "../../core/utils/control.utils";
 import { useLocale } from "../../core/hooks/useLocale";
 import { useMultiDropdownOptions } from "../../core/hooks/useFormApi";
@@ -30,6 +31,30 @@ interface RenderRow {
   rowLabelAr: string;
 }
 
+/**
+ * Resolves the bilingual row label name for a LABEL cell.
+ * Prefers `formField.rows[].labelEn/Ar` (the row's label name), then the
+ * cell's `rowLabelEn/Ar`.
+ */
+const resolveLabelCellName = (
+  cell: GridCell,
+  parentField: FormField
+): { labelEn: string; labelAr: string } => {
+  const matchingRow = (parentField.rows ?? []).find(
+    (row) => row.rowKey === cell.rowKey
+  );
+
+  const rowLabelEn = matchingRow?.labelEn ?? "";
+  const rowLabelAr = matchingRow?.labelAr ?? "";
+  const hasRowDefLabel =
+    rowLabelEn.trim() !== "" || rowLabelAr.trim() !== "";
+
+  return {
+    labelEn: hasRowDefLabel ? rowLabelEn : cell.rowLabelEn,
+    labelAr: hasRowDefLabel ? rowLabelAr : cell.rowLabelAr,
+  };
+};
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Helper: build a synthetic FormField from a GridCell so existing control
 // components (InputField, DropDown, etc.) can render each cell unchanged.
@@ -39,37 +64,45 @@ const gridCellToFormField = (
   cell: GridCell,
   fieldName: string,
   parentField: FormField
-): FormField => ({
-  fieldId: 0,
-  formId: 0,
-  fieldKey: fieldName,
-  labelEn: cell.columnLabelEn,
-  labelAr: cell.columnLabelAr,
-  dataType: cell.dataType,
-  controlType: cell.controlType,
-  isRequired: parentField.isRequired,
-  displayOrder: cell.column,
-  isReadOnly: parentField.isReadOnly || cell.isReadOnly,
-  isVisible: cell.isVisible,
-  lookupType: cell.lookupType,
-  placeholderEn: cell.placeholderEn,
-  placeholderAr: cell.placeholderAr,
-  helpTextEn: cell.helpTextEn ?? "",
-  helpTextAr: cell.helpTextAr ?? "",
-  columns: null,
-  rows: null,
-  grid: null,
-  rowLabelEn: null,
-  rowLabelAr: null,
-  regexPattern: parentField.regexPattern,
-  validationMessageEn: cell.validationMessageEn,
-  validationMessageAr: cell.validationMessageAr,
-  // Inherit next-submission date from the parent RAW_TABLE field so cell
-  // controls apply the same read-only + helper-text behaviour as InputField.
-  kpiNextSubmissionDateEn: parentField.kpiNextSubmissionDateEn,
-  kpiNextSubmissionDateAr: parentField.kpiNextSubmissionDateAr,
-  calculation: null,
-});
+): FormField => {
+  const isLabelCell = cell.controlType.controlKey === ControlKeys.Label;
+  const labelCellName = isLabelCell
+    ? resolveLabelCellName(cell, parentField)
+    : null;
+
+  return {
+    fieldId: 0,
+    formId: 0,
+    fieldKey: fieldName,
+    // LABEL cells show the row's label name, not the column header (e.g. "DESCRIPTION")
+    labelEn: labelCellName !== null ? labelCellName.labelEn : cell.columnLabelEn,
+    labelAr: labelCellName !== null ? labelCellName.labelAr : cell.columnLabelAr,
+    dataType: cell.dataType,
+    controlType: cell.controlType,
+    isRequired: parentField.isRequired,
+    displayOrder: cell.column,
+    isReadOnly: parentField.isReadOnly || cell.isReadOnly,
+    isVisible: cell.isVisible,
+    lookupType: cell.lookupType,
+    placeholderEn: cell.placeholderEn,
+    placeholderAr: cell.placeholderAr,
+    helpTextEn: cell.helpTextEn ?? "",
+    helpTextAr: cell.helpTextAr ?? "",
+    columns: null,
+    rows: null,
+    grid: null,
+    rowLabelEn: cell.rowLabelEn,
+    rowLabelAr: cell.rowLabelAr,
+    regexPattern: parentField.regexPattern,
+    validationMessageEn: cell.validationMessageEn,
+    validationMessageAr: cell.validationMessageAr,
+    // Inherit next-submission date from the parent RAW_TABLE field so cell
+    // controls apply the same read-only + helper-text behaviour as InputField.
+    kpiNextSubmissionDateEn: parentField.kpiNextSubmissionDateEn,
+    kpiNextSubmissionDateAr: parentField.kpiNextSubmissionDateAr,
+    calculation: null,
+  };
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Component
