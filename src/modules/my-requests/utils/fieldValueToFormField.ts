@@ -113,8 +113,12 @@ const buildRawTableGrid = (fv: FieldValue): GridDef | null => {
           ? (labelText?.placeholderAr ?? '')
           : (fv.placeholderAr ?? ''),
         defaultValue: isLabelCell ? (labelText?.placeholderEn ?? null) : null,
-        helpTextEn: fv.helpTextEn,
-        helpTextAr: fv.helpTextAr,
+        /**
+         * Do not copy the parent RAW_TABLE help text onto cells. That text
+         * belongs on the field, not repeated under every description/value.
+         */
+        helpTextEn: null,
+        helpTextAr: null,
         validationMessageEn: fv.validationMessageEn,
         validationMessageAr: fv.validationMessageAr,
       });

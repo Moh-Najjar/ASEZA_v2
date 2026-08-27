@@ -29,7 +29,9 @@ export const getControlKey = (field: FormField): ControlKeys => {
 export const getControlType = (
   controlKey: ControlKeys
 ): React.ComponentType<ControlComponentProps> | undefined => {
-  const controlTypes: Record<ControlKeys, React.ComponentType<ControlComponentProps>> = {
+  const controlTypes: Partial<
+    Record<ControlKeys, React.ComponentType<ControlComponentProps>>
+  > = {
     [ControlKeys.Text]: InputField,
     [ControlKeys.Number]: InputField,
     [ControlKeys.Percentage]: PercentageField,

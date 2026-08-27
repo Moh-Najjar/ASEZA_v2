@@ -333,6 +333,12 @@ const RawTable: React.FC<RawTableProps> = ({
                           formField={cellField}
                           formMethods={formMethods}
                           hideLabel={true}
+                          /**
+                           * Field-level help belongs below the table, not under
+                           * every cell. Inner controls still surface validation
+                           * errors via fieldState.
+                           */
+                          hideHelperText={true}
                           size="small"
                           isGridField={true}
                         />
