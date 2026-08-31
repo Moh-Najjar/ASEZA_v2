@@ -32,6 +32,8 @@ import {
   getControlRequirements,
   isLookupRequired,
 } from './controlFieldRequirements';
+import RegexPatternSelect from './RegexPatternSelect';
+import type { RegexPatternPreset } from './regexPatterns';
 
 interface EditFieldDialogProps {
   formId: number;
@@ -278,7 +280,7 @@ const EditFieldDialog: React.FC<EditFieldDialogProps> = ({ formId, field, onClos
       }
     }
 
-    if (controlReq?.showContentHelpSection) {
+    if (controlReq?.showContentHelpSection || controlReq?.showHelpTextInValidation) {
       const parsedHelpTextEn = parseOptionalString(helpTextEn);
       if (parsedHelpTextEn !== undefined) {
         data.helpTextEn = parsedHelpTextEn;
@@ -541,41 +543,71 @@ const EditFieldDialog: React.FC<EditFieldDialogProps> = ({ formId, field, onClos
                     </Stack>
                   )}
                   {controlReq.showRegexValidation && (
-                    <TextField
-                      label="Regex Pattern"
+                    <RegexPatternSelect
                       value={regexPattern}
-                      onChange={(e) => setRegexPattern(e.target.value)}
-                      helperText="Optional — e.g. ^[A-Z0-9]+$"
-                      fullWidth
-                      size="small"
-                      InputProps={{ sx: textFieldSx }}
+                      onChange={(pattern: string, preset: RegexPatternPreset | null) => {
+                        setRegexPattern(pattern);
+                        if (preset !== null) {
+                          setValidationMessageEn(preset.validationMessageEn);
+                          setValidationMessageAr(preset.validationMessageAr);
+                        }
+                      }}
                     />
                   )}
-                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                    <TextField
-                      label="Validation Message (EN)"
-                      value={validationMessageEn}
-                      onChange={(e) => setValidationMessageEn(e.target.value)}
-                      helperText="Optional — custom error shown when validation fails"
-                      fullWidth
-                      size="small"
-                      multiline
-                      rows={2}
-                      InputProps={{ sx: { borderRadius: '12px' } }}
-                    />
-                    <TextField
-                      label="Validation Message (AR)"
-                      value={validationMessageAr}
-                      onChange={(e) => setValidationMessageAr(e.target.value)}
-                      helperText="Optional"
-                      fullWidth
-                      size="small"
-                      multiline
-                      rows={2}
-                      inputProps={{ dir: 'rtl' }}
-                      InputProps={{ sx: { borderRadius: '12px' } }}
-                    />
-                  </Stack>
+                  {controlReq.showHelpTextInValidation && (
+                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                      <TextField
+                        label="Help Text (EN)"
+                        value={helpTextEn}
+                        onChange={(e) => setHelpTextEn(e.target.value)}
+                        helperText="Optional — shown as help for this table"
+                        fullWidth
+                        size="small"
+                        multiline
+                        rows={2}
+                        InputProps={{ sx: { borderRadius: '12px' } }}
+                      />
+                      <TextField
+                        label="Help Text (AR)"
+                        value={helpTextAr}
+                        onChange={(e) => setHelpTextAr(e.target.value)}
+                        helperText="Optional"
+                        fullWidth
+                        size="small"
+                        multiline
+                        rows={2}
+                        inputProps={{ dir: 'rtl' }}
+                        InputProps={{ sx: { borderRadius: '12px' } }}
+                      />
+                    </Stack>
+                  )}
+                  {controlReq.showValidationMessages && (
+                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                      <TextField
+                        label="Validation Message (EN)"
+                        value={validationMessageEn}
+                        onChange={(e) => setValidationMessageEn(e.target.value)}
+                        helperText="Optional — custom error shown when validation fails"
+                        fullWidth
+                        size="small"
+                        multiline
+                        rows={2}
+                        InputProps={{ sx: { borderRadius: '12px' } }}
+                      />
+                      <TextField
+                        label="Validation Message (AR)"
+                        value={validationMessageAr}
+                        onChange={(e) => setValidationMessageAr(e.target.value)}
+                        helperText="Optional"
+                        fullWidth
+                        size="small"
+                        multiline
+                        rows={2}
+                        inputProps={{ dir: 'rtl' }}
+                        InputProps={{ sx: { borderRadius: '12px' } }}
+                      />
+                    </Stack>
+                  )}
                 </FieldSection>
               </>
             )}

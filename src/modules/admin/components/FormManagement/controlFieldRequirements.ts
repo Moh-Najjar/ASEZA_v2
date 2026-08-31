@@ -15,8 +15,12 @@ export interface ControlFieldRequirements {
   showNumericValidation: boolean;
   showLengthValidation: boolean;
   showRegexValidation: boolean;
+  /** When false, the validation-message EN/AR fields are hidden. */
+  showValidationMessages: boolean;
   showContentHelpSection: boolean;
   showPlaceholder: boolean;
+  /** Help text EN/AR shown inside the Validation section (used by table controls). */
+  showHelpTextInValidation: boolean;
   showDefaultValue: boolean;
   showKpiField: boolean;
   showAdvancedSection: boolean;
@@ -41,8 +45,10 @@ const baseRequirements = (
   showNumericValidation: false,
   showLengthValidation: true,
   showRegexValidation: true,
+  showValidationMessages: true,
   showContentHelpSection: true,
   showPlaceholder: true,
+  showHelpTextInValidation: false,
   showDefaultValue: true,
   showKpiField: true,
   showAdvancedSection: true,
@@ -60,10 +66,10 @@ export const CONTROL_FIELD_REQUIREMENTS: Record<string, ControlFieldRequirements
     suggestedDataTypeKey: 'TEXT',
   }),
   [ControlKeys.Number]: baseRequirements(ControlKeys.Number, {
-    hint: 'Numeric input. Use min/max value rules as needed.',
+    hint: 'Numeric input. Use min/max value rules and an input pattern as needed.',
     showNumericValidation: true,
     showLengthValidation: false,
-    showRegexValidation: false,
+    showRegexValidation: true,
     suggestedDataTypeKey: 'NUMBER',
   }),
   [ControlKeys.Textarea]: baseRequirements(ControlKeys.Textarea, {
@@ -110,27 +116,37 @@ export const CONTROL_FIELD_REQUIREMENTS: Record<string, ControlFieldRequirements
     suggestedDataTypeKey: 'TEXT',
   }),
   [ControlKeys.Table]: baseRequirements(ControlKeys.Table, {
-    hint: 'Dynamic table/grid. After creating the field, add columns (and optional rows) on the field card.',
+    hint: 'Dynamic table/grid. Set help text below, then add columns on the field card.',
     requiresTableColumns: true,
-    showValidationSection: false,
+    showValidationSection: true,
+    showLengthValidation: false,
+    showRegexValidation: false,
+    showValidationMessages: false,
     showContentHelpSection: false,
+    showPlaceholder: false,
+    showHelpTextInValidation: true,
     showAdvancedSection: false,
     suggestedDataTypeKey: 'TEXT',
   }),
   [ControlKeys.Percentage]: baseRequirements(ControlKeys.Percentage, {
-    hint: 'Percentage input (0–100). Use min/max value rules if needed.',
+    hint: 'Percentage input (0–100). Use min/max value rules and an input pattern as needed.',
     showNumericValidation: true,
     showLengthValidation: false,
-    showRegexValidation: false,
+    showRegexValidation: true,
     suggestedDataTypeKey: 'NUMBER',
   }),
   [ControlKeys.RawTable]: baseRequirements(ControlKeys.RawTable, {
-    hint: 'Fixed row/column grid. After creating the field, configure columns and rows on the field card.',
+    hint: 'Fixed row/column grid. Set help text below, then configure columns and rows on the field card.',
     requiresTableColumns: true,
     requiresTableRows: true,
     supportsRawTableRowLabels: true,
-    showValidationSection: false,
+    showValidationSection: true,
+    showLengthValidation: false,
+    showRegexValidation: false,
+    showValidationMessages: false,
     showContentHelpSection: false,
+    showPlaceholder: false,
+    showHelpTextInValidation: true,
     showAdvancedSection: false,
     suggestedDataTypeKey: 'TEXT',
   }),

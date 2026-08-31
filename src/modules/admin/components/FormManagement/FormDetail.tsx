@@ -71,6 +71,8 @@ import {
 } from './controlFieldRequirements';
 import ManageTableStructureDialog from './ManageTableStructureDialog';
 import EditFieldDialog from './EditFieldDialog';
+import RegexPatternSelect from './RegexPatternSelect';
+import type { RegexPatternPreset } from './regexPatterns';
 
 // ─── Add Field helpers ────────────────────────────────────────────────────────
 
@@ -316,9 +318,11 @@ const AddFieldDialog: React.FC<AddFieldDialogProps> = ({ formId, currentMaxOrder
       data.maxLength = parsedMaxLength;
     }
 
-    const parsedRegex = parseOptionalString(regexPattern);
-    if (parsedRegex !== undefined) {
-      data.regexPattern = parsedRegex;
+    if (controlReq?.showRegexValidation) {
+      const parsedRegex = parseOptionalString(regexPattern);
+      if (parsedRegex !== undefined) {
+        data.regexPattern = parsedRegex;
+      }
     }
     const parsedPlaceholderEn = parseOptionalString(placeholderEn);
     if (parsedPlaceholderEn !== undefined) {
@@ -703,16 +707,45 @@ const AddFieldDialog: React.FC<AddFieldDialogProps> = ({ formId, currentMaxOrder
               </Stack>
               )}
               {controlReq.showRegexValidation && (
-              <TextField
-                label="Regex Pattern"
+              <RegexPatternSelect
                 value={regexPattern}
-                onChange={(e) => setRegexPattern(e.target.value)}
-                helperText="Optional — e.g. ^[A-Z0-9]+$"
-                fullWidth
-                size="small"
-                InputProps={{ sx: textFieldSx }}
+                onChange={(pattern: string, preset: RegexPatternPreset | null) => {
+                  setRegexPattern(pattern);
+                  if (preset !== null) {
+                    setValidationMessageEn(preset.validationMessageEn);
+                    setValidationMessageAr(preset.validationMessageAr);
+                  }
+                }}
               />
               )}
+              {controlReq.showHelpTextInValidation && (
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                <TextField
+                  label="Help Text (EN)"
+                  value={helpTextEn}
+                  onChange={(e) => setHelpTextEn(e.target.value)}
+                  helperText="Optional — shown as help for this table"
+                  fullWidth
+                  size="small"
+                  multiline
+                  rows={2}
+                  InputProps={{ sx: { borderRadius: '12px' } }}
+                />
+                <TextField
+                  label="Help Text (AR)"
+                  value={helpTextAr}
+                  onChange={(e) => setHelpTextAr(e.target.value)}
+                  helperText="Optional"
+                  fullWidth
+                  size="small"
+                  multiline
+                  rows={2}
+                  inputProps={{ dir: 'rtl' }}
+                  InputProps={{ sx: { borderRadius: '12px' } }}
+                />
+              </Stack>
+              )}
+              {controlReq.showValidationMessages && (
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                 <TextField
                   label="Validation Message (EN)"
@@ -738,6 +771,7 @@ const AddFieldDialog: React.FC<AddFieldDialogProps> = ({ formId, currentMaxOrder
                   InputProps={{ sx: { borderRadius: '12px' } }}
                 />
               </Stack>
+              )}
             </FieldSection>
               </>
             )}
