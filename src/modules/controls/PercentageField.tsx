@@ -16,6 +16,38 @@ interface PercentageFieldProps {
   size?: "small" | "medium";
 }
 
+const PERCENTAGE_MIN = 0;
+const PERCENTAGE_MAX = 100;
+
+/**
+ * Forces a percentage input string into the 0–100 range.
+ * Empty input stays empty so the user can clear the field.
+ */
+const clampPercentageInput = (raw: string): string => {
+  if (raw.trim() === "") {
+    return "";
+  }
+  const parsed = Number(raw);
+  if (Number.isNaN(parsed)) {
+    return "";
+  }
+  if (parsed < PERCENTAGE_MIN) {
+    return String(PERCENTAGE_MIN);
+  }
+  if (parsed > PERCENTAGE_MAX) {
+    return String(PERCENTAGE_MAX);
+  }
+  return raw;
+};
+
+/** Normalises a form value (string or number) into a clamped percentage input. */
+const toPercentageInputValue = (value: unknown): string => {
+  if (value === null || value === undefined) {
+    return "";
+  }
+  return clampPercentageInput(String(value));
+};
+
 /** Renders a numeric input control with a "%" suffix for fields with controlKey "PERCENTAGE" */
 const PercentageField: React.FC<PercentageFieldProps> = ({
   formField,
@@ -63,6 +95,7 @@ const PercentageField: React.FC<PercentageFieldProps> = ({
               id={formField.fieldKey}
               type="number"
               size={size}
+              value={toPercentageInputValue(field.value)}
               error={!!fieldState.error}
               helperText={helperText}
               variant="outlined"
@@ -78,9 +111,14 @@ const PercentageField: React.FC<PercentageFieldProps> = ({
                   <InputAdornment position="end">%</InputAdornment>
                 ),
               }}
-              /** Clamp the native HTML input to 0–100 so keyboard arrows respect the range */
-              inputProps={{ min: 0, max: 100, step: 1 }}
-              onChange={(e) => field.onChange(e.target.value)}
+              inputProps={{ min: PERCENTAGE_MIN, max: PERCENTAGE_MAX, step: 1 }}
+              onChange={(e) => {
+                field.onChange(clampPercentageInput(e.target.value));
+              }}
+              onBlur={(e) => {
+                field.onChange(clampPercentageInput(e.target.value));
+                field.onBlur();
+              }}
               sx={{
                 "& .MuiOutlinedInput-root": {
                   borderRadius: "8px",
