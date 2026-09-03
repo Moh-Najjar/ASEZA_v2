@@ -49,11 +49,12 @@ import {
   useRemoveField,
   useSetCalculation,
 } from '../../../../core/hooks/admin/useAdminForms';
-import { useAdminControlTypes, useAdminDataTypes, useAdminLookupTypes } from '../../../../core/hooks/admin/useAdminLookups';
+import { useAdminControlTypes, useAdminDataTypes, useAdminFrequencies, useAdminLookupTypes } from '../../../../core/hooks/admin/useAdminLookups';
 import { BRAND_NAVY, BRAND_ACCENT } from '../../../../core/constants/theme';
 import { ControlKeys } from '../../../../core/enums/control-keys.enum';
 import type { AdminFormField, AddFieldRequest } from '../../../../core/types/admin/adminForms';
 import type { ControlType, DataType, LookupType } from '../../../../core/types/admin/adminLookups';
+import { frequencySupportsCustomPeriodStart, toDateInputValue } from '../../../../core/utils/frequencyPeriods';
 import CalculationConfigFields from './CalculationConfigFields';
 import {
   buildSetCalculationRequest,
@@ -70,6 +71,7 @@ import {
   resolveSuggestedDataTypeId,
 } from './controlFieldRequirements';
 import ManageTableStructureDialog from './ManageTableStructureDialog';
+import ManageFieldFrequencyDialog from './ManageFieldFrequencyDialog';
 import EditFieldDialog from './EditFieldDialog';
 import RegexPatternSelect from './RegexPatternSelect';
 import type { RegexPatternPreset } from './regexPatterns';
@@ -143,16 +145,19 @@ const formatLookupTypeLabel = (
 interface AddFieldDialogProps {
   formId: number;
   currentMaxOrder: number;
+  inheritedFrequencyName: string | null;
   onClose: () => void;
 }
 
-const AddFieldDialog: React.FC<AddFieldDialogProps> = ({ formId, currentMaxOrder, onClose }) => {
+const AddFieldDialog: React.FC<AddFieldDialogProps> = ({ formId, currentMaxOrder, inheritedFrequencyName, onClose }) => {
   const { data: rawControlTypes } = useAdminControlTypes();
   const { data: rawDataTypes } = useAdminDataTypes();
   const { data: rawLookupTypes } = useAdminLookupTypes();
+  const { data: rawFrequencies } = useAdminFrequencies();
   const controlTypes = Array.isArray(rawControlTypes) ? rawControlTypes : [];
   const dataTypes = Array.isArray(rawDataTypes) ? rawDataTypes : [];
   const lookupTypes = Array.isArray(rawLookupTypes) ? rawLookupTypes : [];
+  const frequencies = Array.isArray(rawFrequencies) ? rawFrequencies : [];
   const addField = useAddField();
   const setCalculation = useSetCalculation();
 
@@ -179,6 +184,8 @@ const AddFieldDialog: React.FC<AddFieldDialogProps> = ({ formId, currentMaxOrder
   const [validationMessageAr, setValidationMessageAr] = useState('');
   const [lookupTypeId, setLookupTypeId] = useState<number | ''>('');
   const [kpiId, setKpiId] = useState('');
+  const [frequencyId, setFrequencyId] = useState<number | ''>('');
+  const [periodStartDate, setPeriodStartDate] = useState('');
   const [calculationConfig, setCalculationConfig] = useState<CalculationConfigDraft>(() =>
     createDefaultCalculationConfig(dataTypes, controlTypes),
   );
@@ -359,6 +366,13 @@ const AddFieldDialog: React.FC<AddFieldDialogProps> = ({ formId, currentMaxOrder
     }
     if (parsedKpiId !== undefined) {
       data.kpiId = parsedKpiId;
+    }
+    if (frequencyId !== '') {
+      data.frequencyId = Number(frequencyId);
+      const selectedFrequency = frequencies.find((item) => item.frequencyId === Number(frequencyId));
+      if (frequencySupportsCustomPeriodStart(selectedFrequency)) {
+        data.periodStartDate = periodStartDate.trim().length > 0 ? periodStartDate : null;
+      }
     }
 
     try {
@@ -871,6 +885,60 @@ const AddFieldDialog: React.FC<AddFieldDialogProps> = ({ formId, currentMaxOrder
               </>
             )}
 
+            {controlReq !== null && controlReq.showKpiField && (
+              <>
+                <Divider sx={{ borderStyle: 'dashed' }} />
+                <FieldSection title="Reporting Frequency (Optional)">
+                  <FormControl size="small" fullWidth>
+                    <InputLabel>Frequency</InputLabel>
+                    <Select
+                      value={frequencyId}
+                      label="Frequency"
+                      onChange={(e) => {
+                        const val = e.target.value as string | number;
+                        if (val === '' || val === undefined) {
+                          setFrequencyId('');
+                        } else {
+                          setFrequencyId(Number(val));
+                        }
+                      }}
+                      sx={{ borderRadius: '12px' }}
+                    >
+                      <MenuItem value="" sx={{ fontWeight: 600 }}>
+                        Inherit form frequency
+                      </MenuItem>
+                      {frequencies.map((item) => (
+                        <MenuItem key={item.frequencyId} value={item.frequencyId} sx={{ fontWeight: 600 }}>
+                          {item.nameEn}
+                          {item.hasDiscretePeriods ? ' · discrete periods' : ''}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, ml: 1.75, display: 'block' }}>
+                      {inheritedFrequencyName !== null
+                        ? `Leave empty to inherit “${inheritedFrequencyName}”. Override only when this KPI uses a different cadence.`
+                        : 'Leave empty to inherit the form frequency (default).'}
+                    </Typography>
+                  </FormControl>
+                  {frequencySupportsCustomPeriodStart(
+                    frequencies.find((item) => item.frequencyId === frequencyId),
+                  ) && (
+                    <TextField
+                      label="Period start date"
+                      type="date"
+                      value={periodStartDate}
+                      onChange={(e) => setPeriodStartDate(e.target.value)}
+                      helperText="Only month + day repeat each year (e.g. 1 February). Leave empty for 1 January."
+                      fullWidth
+                      size="small"
+                      InputLabelProps={{ shrink: true }}
+                      InputProps={{ sx: textFieldSx }}
+                    />
+                  )}
+                </FieldSection>
+              </>
+            )}
+
             {submitError !== '' && (
               <Typography variant="body2" color="error" fontWeight={600}>
                 {submitError}
@@ -1080,6 +1148,7 @@ const FieldCard: React.FC<FieldCardProps> = ({ formId, field }) => {
   const [editFieldOpen, setEditFieldOpen] = useState(false);
   const [calculationDialogOpen, setCalculationDialogOpen] = useState(false);
   const [tableDialogOpen, setTableDialogOpen] = useState(false);
+  const [frequencyDialogOpen, setFrequencyDialogOpen] = useState(false);
 
   const handleRemoveField = (): void => {
     removeField.mutate({ formId, fieldId: field.fieldId }, {
@@ -1182,6 +1251,21 @@ const FieldCard: React.FC<FieldCardProps> = ({ formId, field }) => {
               {formatControlTypeLabel(field.controlTypeId, controlTypes)}
             </Typography>
           </Box>
+          {fieldRequirements?.showKpiField === true && (
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 1, px: 1.5, borderRadius: '8px', bgcolor: 'action.hover' }}>
+              <Typography variant="caption" fontWeight={700}>Frequency:</Typography>
+              <Typography
+                variant="caption"
+                fontWeight={800}
+                color={field.frequency !== null ? 'text.primary' : 'text.disabled'}
+              >
+                {field.frequency !== null ? field.frequency.nameEn : 'Not assigned'}
+                {field.periodStartDate !== null && field.periodStartDate.length > 0
+                  ? ` · start ${toDateInputValue(field.periodStartDate)}`
+                  : ''}
+              </Typography>
+            </Box>
+          )}
           {fieldRequirements?.requiresLookup && (
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 1, px: 1.5, borderRadius: '8px', bgcolor: 'action.hover' }}>
               <Typography variant="caption" fontWeight={700}>Lookup:</Typography>
@@ -1275,6 +1359,16 @@ const FieldCard: React.FC<FieldCardProps> = ({ formId, field }) => {
           >
             Edit Field
           </Button>
+          {fieldRequirements?.showKpiField === true && (
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={() => setFrequencyDialogOpen(true)}
+              sx={{ borderRadius: '10px', fontWeight: 700, textTransform: 'none' }}
+            >
+              {field.frequency !== null ? 'Manage Frequency' : 'Assign Frequency'}
+            </Button>
+          )}
         </Stack>
       </Box>
 
@@ -1291,6 +1385,14 @@ const FieldCard: React.FC<FieldCardProps> = ({ formId, field }) => {
           formId={formId}
           field={field}
           onClose={() => setTableDialogOpen(false)}
+        />
+      )}
+
+      {frequencyDialogOpen && (
+        <ManageFieldFrequencyDialog
+          formId={formId}
+          field={field}
+          onClose={() => setFrequencyDialogOpen(false)}
         />
       )}
 
@@ -1607,6 +1709,7 @@ const FormDetail: React.FC = () => {
         <AddFieldDialog
           formId={form.formId}
           currentMaxOrder={maxFieldOrder}
+          inheritedFrequencyName={form.frequency?.nameEn ?? null}
           onClose={() => setAddFieldOpen(false)}
         />
       )}

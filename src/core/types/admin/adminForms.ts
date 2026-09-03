@@ -1,3 +1,5 @@
+import type { Frequency, FrequencyPeriodWindow } from './adminLookups';
+
 // ─── Nested helper shapes ─────────────────────────────────────────────────────
 
 /**
@@ -14,16 +16,14 @@ export interface FormDirectorate {
   createdAt: string;
 }
 
+/**
+ * Nested frequency returned on forms and fields.
+ * Same shape as GET /admin/lookups/frequencies.
+ */
+export type FrequencySummary = Frequency;
+
 /** Frequency object nested inside AdminForm. */
-export interface AdminFormFrequency {
-  frequencyId: number;
-  code: string;
-  nameEn: string;
-  nameAr: string;
-  description: string | null;
-  isActive: boolean;
-  createdAt: string;
-}
+export type AdminFormFrequency = FrequencySummary;
 
 // ─── Calculation ───────────────────────────────────────────────────────────────
 
@@ -166,6 +166,19 @@ export interface AdminFormField {
   controlTypeId: number;
   lookupTypeId: number | null;
   kpiId: number | null;
+  /**
+   * Field-level frequency. Null when the field has no KPI, or the KPI has no frequency.
+   */
+  frequencyId: number | null;
+  /**
+   * Nested frequency summary. Null when `frequencyId` is null.
+   */
+  frequency: FrequencySummary | null;
+  /**
+   * Custom period start stored on the KPI (KpiDefinitions.ReferenceDate).
+   * Only month + day repeat every year. Null when unset (defaults to 1 January).
+   */
+  periodStartDate: string | null;
   isActive: boolean;
   /** Empty array when no options are defined. */
   fieldOptions: FieldOption[];
@@ -268,6 +281,12 @@ export interface AddFieldRequest {
   isVisible: boolean;
   lookupTypeId?: number;
   kpiId?: number;
+  /**
+   * Optional field-level frequency. Omit to inherit the form frequency (default).
+   */
+  frequencyId?: number;
+  /** Optional custom period start (YYYY-MM-DD). Only month + day are stored. */
+  periodStartDate?: string | null;
 }
 
 /** Body for PATCH /admin/forms/:formId/fields/:fieldId. */
@@ -292,6 +311,50 @@ export interface UpdateFieldRequest {
   isVisible?: boolean;
   isActive?: boolean;
   lookupTypeId?: number;
+  /**
+   * Optional field-level frequency. Omit to leave the current value unchanged.
+   */
+  frequencyId?: number;
+  /** Optional custom period start (YYYY-MM-DD). Send null to reset to 1 January. */
+  periodStartDate?: string | null;
+}
+
+/** Body for PUT /admin/forms/:formId/fields/:fieldId/frequency. */
+export interface AssignFieldFrequencyRequest {
+  frequencyId: number;
+  /** Custom period start (YYYY-MM-DD). Send null to reset to 1 January. */
+  periodStartDate?: string | null;
+}
+
+/**
+ * A persisted row from KpiSubmissionPeriods.
+ * Empty on the field-frequency endpoint until someone actually submits that window.
+ */
+export interface KpiSubmissionPeriod {
+  kpiSubmissionPeriodId: number;
+  kpiId: number;
+  frequencyId: number;
+  periodKey: string;
+  labelEn: string;
+  labelAr: string;
+  year: number;
+  month: number | null;
+  periodStartDate: string;
+  periodEndDate: string;
+  status: string | null;
+  createdAt: string;
+}
+
+/**
+ * GET /admin/forms/:formId/fields/:fieldId/frequency?year=
+ * Combines the KPI's assigned frequency with computed and submitted period windows.
+ */
+export interface FieldFrequencyResponse {
+  frequencyId: number | null;
+  periodStartDate: string | null;
+  frequency: FrequencySummary | null;
+  expectedPeriods: FrequencyPeriodWindow[];
+  submittedPeriods: KpiSubmissionPeriod[];
 }
 
 /** Body for POST /admin/forms/:formId/fields/:fieldId/options. */

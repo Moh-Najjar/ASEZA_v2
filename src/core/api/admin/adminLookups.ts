@@ -5,7 +5,10 @@ import type {
   LookupType,
   LookupValue,
   Frequency,
+  FrequencyPeriodQuery,
+  FrequencyPeriodWindow,
 } from '../../types/admin/adminLookups';
+import { buildFrequencyPeriodQuery, unwrapPeriodWindows } from '../../utils/frequencyPeriods';
 
 const BASE_URL = import.meta.env.VITE_ADMIN_API_BASE_URL ?? import.meta.env.VITE_API_BASE_URL ?? '';
 
@@ -28,3 +31,18 @@ export const getLookupValuesApi = async (lookupTypeId: number): Promise<LookupVa
 /** GET /admin/lookups/frequencies — e.g. DAILY, WEEKLY, MONTHLY. */
 export const getFrequenciesApi = async (): Promise<Frequency[]> =>
   adminHttp.get<Frequency[]>(`${BASE_URL}/admin/lookups/frequencies`);
+
+/**
+ * GET /admin/lookups/frequencies/:frequencyId/periods?year=&month=
+ * Preview calendar windows before assigning a frequency to a field.
+ */
+export const getFrequencyPeriodsApi = async (
+  frequencyId: number,
+  params: FrequencyPeriodQuery,
+): Promise<FrequencyPeriodWindow[]> => {
+  const query = buildFrequencyPeriodQuery(params);
+  const payload = await adminHttp.get<unknown>(
+    `${BASE_URL}/admin/lookups/frequencies/${frequencyId}/periods?${query}`,
+  );
+  return unwrapPeriodWindows(payload);
+};

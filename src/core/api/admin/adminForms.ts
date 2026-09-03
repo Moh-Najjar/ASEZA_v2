@@ -18,7 +18,17 @@ import type {
   AddRowRequest,
   SetCalculationRequest,
   AddCalculationInputRequest,
+  AssignFieldFrequencyRequest,
+  FieldFrequencyResponse,
 } from '../../types/admin/adminForms';
+import type { FrequencyPeriodQuery } from '../../types/admin/adminLookups';
+import {
+  buildFrequencyPeriodQuery,
+  unwrapPeriodWindows,
+  unwrapSubmittedPeriods,
+  readNullableIsoDate,
+  readNullableNumber,
+} from '../../utils/frequencyPeriods';
 
 const BASE_URL = import.meta.env.VITE_ADMIN_API_BASE_URL ?? import.meta.env.VITE_API_BASE_URL ?? '';
 
@@ -71,6 +81,56 @@ export const updateFieldApi = async (
 /** DELETE /admin/forms/:formId/fields/:fieldId — removes a field (204). */
 export const removeFieldApi = async (formId: number, fieldId: number): Promise<void> =>
   adminHttp.delete<void>(`${BASE_URL}/admin/forms/${formId}/fields/${fieldId}`);
+
+/**
+ * PUT /admin/forms/:formId/fields/:fieldId/frequency
+ * Assigns a frequency on the field's KPI definition (KpiDefinitions.FrequencyId).
+ */
+export const assignFieldFrequencyApi = async (
+  formId: number,
+  fieldId: number,
+  data: AssignFieldFrequencyRequest,
+): Promise<void> => {
+  await adminHttp.put<AssignFieldFrequencyRequest, unknown>(
+    `${BASE_URL}/admin/forms/${formId}/fields/${fieldId}/frequency`,
+    data,
+  );
+};
+
+/**
+ * GET /admin/forms/:formId/fields/:fieldId/frequency?year=&month=
+ * Returns the assigned frequency plus expected and submitted period windows.
+ */
+export const getFieldFrequencyApi = async (
+  formId: number,
+  fieldId: number,
+  params: FrequencyPeriodQuery,
+): Promise<FieldFrequencyResponse> => {
+  const query = buildFrequencyPeriodQuery(params);
+  const payload = await adminHttp.get<unknown>(
+    `${BASE_URL}/admin/forms/${formId}/fields/${fieldId}/frequency?${query}`,
+  );
+
+  if (typeof payload !== 'object' || payload === null) {
+    return {
+      frequencyId: null,
+      periodStartDate: null,
+      frequency: null,
+      expectedPeriods: [],
+      submittedPeriods: [],
+    };
+  }
+
+  const record = payload as Record<string, unknown>;
+
+  return {
+    frequencyId: readNullableNumber(record.frequencyId),
+    periodStartDate: readNullableIsoDate(record.periodStartDate),
+    frequency: (record.frequency as FieldFrequencyResponse['frequency']) ?? null,
+    expectedPeriods: unwrapPeriodWindows(record.expectedPeriods ?? payload),
+    submittedPeriods: unwrapSubmittedPeriods(record.submittedPeriods),
+  };
+};
 
 // ─── Options ──────────────────────────────────────────────────────────────────
 

@@ -23,7 +23,7 @@ import {
 } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
 import { useUpdateField } from '../../../../core/hooks/admin/useAdminForms';
-import { useAdminControlTypes, useAdminDataTypes, useAdminLookupTypes } from '../../../../core/hooks/admin/useAdminLookups';
+import { useAdminControlTypes, useAdminDataTypes, useAdminFrequencies, useAdminLookupTypes } from '../../../../core/hooks/admin/useAdminLookups';
 import { BRAND_ACCENT } from '../../../../core/constants/theme';
 import { ControlKeys } from '../../../../core/enums/control-keys.enum';
 import type { AdminFormField, UpdateFieldRequest } from '../../../../core/types/admin/adminForms';
@@ -34,6 +34,7 @@ import {
 } from './controlFieldRequirements';
 import RegexPatternSelect from './RegexPatternSelect';
 import type { RegexPatternPreset } from './regexPatterns';
+import { frequencySupportsCustomPeriodStart, toDateInputValue } from '../../../../core/utils/frequencyPeriods';
 
 interface EditFieldDialogProps {
   formId: number;
@@ -94,9 +95,11 @@ const EditFieldDialog: React.FC<EditFieldDialogProps> = ({ formId, field, onClos
   const { data: rawControlTypes } = useAdminControlTypes();
   const { data: rawDataTypes } = useAdminDataTypes();
   const { data: rawLookupTypes } = useAdminLookupTypes();
+  const { data: rawFrequencies } = useAdminFrequencies();
   const controlTypes = Array.isArray(rawControlTypes) ? rawControlTypes : [];
   const dataTypes = Array.isArray(rawDataTypes) ? rawDataTypes : [];
   const lookupTypes = Array.isArray(rawLookupTypes) ? rawLookupTypes : [];
+  const frequencies = Array.isArray(rawFrequencies) ? rawFrequencies : [];
   const updateField = useUpdateField();
 
   const [labelEn, setLabelEn] = useState(field.labelEn);
@@ -119,6 +122,8 @@ const EditFieldDialog: React.FC<EditFieldDialogProps> = ({ formId, field, onClos
   const [validationMessageEn, setValidationMessageEn] = useState(nullableStringToString(field.validationMessageEn));
   const [validationMessageAr, setValidationMessageAr] = useState(nullableStringToString(field.validationMessageAr));
   const [lookupTypeId, setLookupTypeId] = useState<number | ''>(field.lookupTypeId ?? '');
+  const [frequencyId, setFrequencyId] = useState<number | ''>(field.frequencyId ?? '');
+  const [periodStartDate, setPeriodStartDate] = useState(toDateInputValue(field.periodStartDate));
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState('');
 
@@ -293,6 +298,13 @@ const EditFieldDialog: React.FC<EditFieldDialogProps> = ({ formId, field, onClos
 
     if (controlReq?.requiresLookup && lookupTypeId !== '') {
       data.lookupTypeId = Number(lookupTypeId);
+    }
+    if (frequencyId !== '') {
+      data.frequencyId = Number(frequencyId);
+      const selectedFrequency = frequencies.find((item) => item.frequencyId === Number(frequencyId));
+      if (frequencySupportsCustomPeriodStart(selectedFrequency)) {
+        data.periodStartDate = periodStartDate.trim().length > 0 ? periodStartDate : null;
+      }
     }
 
     try {
@@ -679,6 +691,60 @@ const EditFieldDialog: React.FC<EditFieldDialogProps> = ({ formId, field, onClos
                       InputProps={{ sx: { borderRadius: '12px' } }}
                     />
                   </Stack>
+                </FieldSection>
+              </>
+            )}
+
+            {controlReq !== null && controlReq.showKpiField && (
+              <>
+                <Divider sx={{ borderStyle: 'dashed' }} />
+                <FieldSection title="Reporting Frequency (Optional)">
+                  <FormControl size="small" fullWidth>
+                    <InputLabel>Frequency</InputLabel>
+                    <Select
+                      value={frequencyId}
+                      label="Frequency"
+                      onChange={(e) => {
+                        const val = e.target.value as string | number;
+                        if (val === '' || val === undefined) {
+                          setFrequencyId('');
+                        } else {
+                          setFrequencyId(Number(val));
+                        }
+                      }}
+                      sx={{ borderRadius: '12px' }}
+                    >
+                      <MenuItem value="" sx={{ fontWeight: 600 }}>
+                        Leave unchanged
+                      </MenuItem>
+                      {frequencies.map((item) => (
+                        <MenuItem key={item.frequencyId} value={item.frequencyId} sx={{ fontWeight: 600 }}>
+                          {item.nameEn}
+                          {item.hasDiscretePeriods ? ' · discrete periods' : ''}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, ml: 1.75, display: 'block' }}>
+                      {field.frequency !== null
+                        ? `Current: ${field.frequency.nameEn}. Changing this updates the field KPI frequency.`
+                        : 'Optional — send a frequency to override the form default on this field.'}
+                    </Typography>
+                  </FormControl>
+                  {frequencySupportsCustomPeriodStart(
+                    frequencies.find((item) => item.frequencyId === frequencyId),
+                  ) && (
+                    <TextField
+                      label="Period start date"
+                      type="date"
+                      value={periodStartDate}
+                      onChange={(e) => setPeriodStartDate(e.target.value)}
+                      helperText="Only month + day repeat each year (e.g. 1 February). Leave empty to reset to 1 January."
+                      fullWidth
+                      size="small"
+                      InputLabelProps={{ shrink: true }}
+                      InputProps={{ sx: textFieldSx }}
+                    />
+                  )}
                 </FieldSection>
               </>
             )}

@@ -5,7 +5,9 @@ import {
   getLookupTypesApi,
   getLookupValuesApi,
   getFrequenciesApi,
+  getFrequencyPeriodsApi,
 } from '../../api/admin/adminLookups';
+import type { FrequencyPeriodQuery } from '../../types/admin/adminLookups';
 
 // ─── Query keys ───────────────────────────────────────────────────────────────
 
@@ -14,6 +16,7 @@ export const ADMIN_DATA_TYPES_QUERY_KEY = 'admin-data-types';
 export const ADMIN_LOOKUP_TYPES_QUERY_KEY = 'admin-lookup-types';
 export const ADMIN_LOOKUP_VALUES_QUERY_KEY = 'admin-lookup-values';
 export const ADMIN_FREQUENCIES_QUERY_KEY = 'admin-frequencies';
+export const ADMIN_FREQUENCY_PERIODS_QUERY_KEY = 'admin-frequency-periods';
 
 // ─── Lookup queries ───────────────────────────────────────────────────────────
 
@@ -56,4 +59,30 @@ export const useAdminFrequencies = () =>
     queryKey: [ADMIN_FREQUENCIES_QUERY_KEY],
     queryFn: getFrequenciesApi,
     staleTime: 1000 * 60 * 30,
+  });
+
+/**
+ * Preview period windows for a frequency (GET /admin/lookups/frequencies/:id/periods).
+ * Pass `month` for DAILY / WEEKLY and `periodStartDate` when the frequency supports a custom start.
+ */
+export const useAdminFrequencyPeriods = (
+  frequencyId: number,
+  year: number,
+  month: number | undefined,
+  periodStartDate: string | undefined,
+) =>
+  useQuery({
+    queryKey: [ADMIN_FREQUENCY_PERIODS_QUERY_KEY, frequencyId, year, month ?? null, periodStartDate ?? null],
+    queryFn: () => {
+      const params: FrequencyPeriodQuery = { year };
+      if (month !== undefined) {
+        params.month = month;
+      }
+      if (periodStartDate !== undefined && periodStartDate.length > 0) {
+        params.periodStartDate = periodStartDate;
+      }
+      return getFrequencyPeriodsApi(frequencyId, params);
+    },
+    enabled: frequencyId > 0 && year >= 1900,
+    staleTime: 1000 * 60 * 10,
   });

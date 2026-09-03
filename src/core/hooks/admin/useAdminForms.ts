@@ -20,6 +20,8 @@ import {
   removeCalculationApi,
   addCalculationInputApi,
   removeCalculationInputApi,
+  assignFieldFrequencyApi,
+  getFieldFrequencyApi,
 } from '../../api/admin/adminForms';
 import type {
   CreateFormRequest,
@@ -32,12 +34,15 @@ import type {
   AddRowRequest,
   SetCalculationRequest,
   AddCalculationInputRequest,
+  AssignFieldFrequencyRequest,
 } from '../../types/admin/adminForms';
+import type { FrequencyPeriodQuery } from '../../types/admin/adminLookups';
 
 // ─── Query keys ───────────────────────────────────────────────────────────────
 
 export const ADMIN_FORMS_QUERY_KEY = 'admin-forms';
 export const ADMIN_FORM_DETAIL_QUERY_KEY = 'admin-form-detail';
+export const ADMIN_FIELD_FREQUENCY_QUERY_KEY = 'admin-field-frequency';
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
 
@@ -135,6 +140,49 @@ export const useRemoveField = () => {
     onSuccess: (_result, variables) => {
       void queryClient.invalidateQueries({
         queryKey: [ADMIN_FORM_DETAIL_QUERY_KEY, variables.formId],
+      });
+    },
+  });
+};
+
+/** Assigned frequency + expected/submitted periods for one field. */
+export const useAdminFieldFrequency = (
+  formId: number,
+  fieldId: number,
+  year: number,
+  month: number | undefined,
+) =>
+  useQuery({
+    queryKey: [ADMIN_FIELD_FREQUENCY_QUERY_KEY, formId, fieldId, year, month ?? null],
+    queryFn: () => {
+      const params: FrequencyPeriodQuery = { year };
+      if (month !== undefined) {
+        params.month = month;
+      }
+      return getFieldFrequencyApi(formId, fieldId, params);
+    },
+    enabled: formId > 0 && fieldId > 0 && year >= 1900,
+  });
+
+/** PUT /admin/forms/:formId/fields/:fieldId/frequency — sets KpiDefinitions.FrequencyId. */
+export const useAssignFieldFrequency = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      formId,
+      fieldId,
+      data,
+    }: {
+      formId: number;
+      fieldId: number;
+      data: AssignFieldFrequencyRequest;
+    }) => assignFieldFrequencyApi(formId, fieldId, data),
+    onSuccess: (_result, variables) => {
+      void queryClient.invalidateQueries({
+        queryKey: [ADMIN_FORM_DETAIL_QUERY_KEY, variables.formId],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: [ADMIN_FIELD_FREQUENCY_QUERY_KEY, variables.formId, variables.fieldId],
       });
     },
   });
