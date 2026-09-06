@@ -4,6 +4,7 @@
  */
 
 export * from "./control.utils";
+export * from "./countryLookup";
 export * from "./formDataMapper";
 export * from "./groupAttributesByGroup";
 export * from "./groupAttributesByPage";

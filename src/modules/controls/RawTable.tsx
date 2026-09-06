@@ -17,6 +17,7 @@ import { ControlKeys } from "../../core/enums/control-keys.enum";
 import { getControlKey, getControlType } from "../../core/utils/control.utils";
 import { useLocale } from "../../core/hooks/useLocale";
 import { useMultiDropdownOptions } from "../../core/hooks/useFormApi";
+import { findJordanLookupValueId, isCountriesLookupType } from "../../core/utils/countryLookup";
 
 interface RawTableProps {
   formField: FormField;
@@ -211,8 +212,8 @@ const RawTable: React.FC<RawTableProps> = ({
   const hasSeeded = React.useRef(false);
 
   /**
-   * Once options arrive, set the first option as the default value for every
-   * DROPDOWN cell that the user has not yet touched.
+   * Once options arrive, set a default value for every DROPDOWN cell the user
+   * has not yet touched: Jordan for COUNTRIES lookups, otherwise the first option.
    */
   useEffect(() => {
     if (!optionsReady || hasSeeded.current || grid === null) return;
@@ -233,7 +234,12 @@ const RawTable: React.FC<RawTableProps> = ({
       if (current === undefined || current === "") {
         const options =
           dropdownOptionsMap[String(cell.lookupType.lookupTypeId)] ?? [];
-        if (options.length > 0) {
+        if (isCountriesLookupType(cell.lookupType)) {
+          const jordanId = findJordanLookupValueId(options);
+          if (jordanId !== undefined) {
+            setValue(path as never, jordanId as never);
+          }
+        } else if (options.length > 0) {
           setValue(path as never, String(options[0].lookupValueId) as never);
         }
       }

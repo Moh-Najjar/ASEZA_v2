@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { UseFormReturn, Controller } from "react-hook-form";
 import {
   Box,
@@ -12,6 +12,7 @@ import { FormField } from "../../core/types/FormField";
 import { useLocale } from "../../core/hooks/useLocale";
 import { useDropdownOptions } from "../../core/hooks/useFormApi";
 import { getValidationRules, getLocalizedErrorMessage } from "../../core/utils/validationUtils";
+import { findJordanLookupValueId, isCountriesLookupType } from "../../core/utils/countryLookup";
 
 interface DropDownProps {
   formField: FormField;
@@ -58,6 +59,31 @@ const DropDown: React.FC<DropDownProps> = ({
   const options = lookupTypeId !== undefined
     ? (dropdownListValues?.[String(lookupTypeId)] ?? [])
     : [];
+
+  /** Jordan's lookupValueId when this field is a COUNTRIES dropdown; otherwise undefined */
+  const jordanDefaultId = isCountriesLookupType(formField.lookupType)
+    ? findJordanLookupValueId(options)
+    : undefined;
+
+  /**
+   * COUNTRIES lookup only: once options load, pre-select Jordan when the field
+   * is still empty. Existing submission values and other lookup types are left alone.
+   */
+  useEffect(() => {
+    if (jordanDefaultId === undefined || isReadOnly) {
+      return;
+    }
+
+    const current = formMethods.getValues(formField.fieldKey);
+    if (current !== undefined && current !== null && String(current) !== "") {
+      return;
+    }
+
+    formMethods.setValue(formField.fieldKey, jordanDefaultId, {
+      shouldDirty: false,
+      shouldValidate: true,
+    });
+  }, [formField.fieldKey, formMethods, isReadOnly, jordanDefaultId]);
 
   return (
     <Controller

@@ -20,6 +20,7 @@ import { getControlKey, getControlType } from "../../core/utils/control.utils";
 import { useLocale } from "../../core/hooks/useLocale";
 import { useMultiDropdownOptions } from "../../core/hooks/useFormApi";
 import { GetDropdownListValuesResponse } from "../../core/types/getDropdownListValuesResponse";
+import { findJordanLookupValueId, isCountriesLookupType } from "../../core/utils/countryLookup";
 
 interface TableGridProps {
   formField: FormField;
@@ -29,8 +30,9 @@ interface TableGridProps {
 
 /**
  * Builds a default row for the table:
- * - DROPDOWN columns → first available option's lookupValueId (as string) so
- *   the value matches what the server receives on submit even without user interaction.
+ * - COUNTRIES dropdown columns → Jordan's lookupValueId when present.
+ * - Other DROPDOWN columns → first available option's lookupValueId so the
+ *   value matches what the server receives on submit even without user interaction.
  * - All other columns → empty string.
  */
 const buildDefaultRow = (
@@ -40,8 +42,11 @@ const buildDefaultRow = (
   columns.reduce<Record<string, string>>((acc, col) => {
     if (col.controlType.controlKey === "DROPDOWN" && col.lookupType !== null) {
       const options = optionsMap[String(col.lookupType.lookupTypeId)] ?? [];
-      /** Pre-select the first option so the server always receives a valid value */
-      acc[col.columnKey] = options.length > 0 ? String(options[0].lookupValueId) : "";
+      if (isCountriesLookupType(col.lookupType)) {
+        acc[col.columnKey] = findJordanLookupValueId(options) ?? "";
+      } else {
+        acc[col.columnKey] = options.length > 0 ? String(options[0].lookupValueId) : "";
+      }
     } else {
       acc[col.columnKey] = "";
     }
