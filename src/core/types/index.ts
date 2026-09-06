@@ -4,7 +4,6 @@ export * from "./loginResponse";
 export * from "./getDropdownListValuesRequest";
 export * from "./getDropdownListValuesResponse";
 export * from "./countryItem";
-export * from "./graphUserProfile";
 
 // Export form field types
 export * from "./FormField";
