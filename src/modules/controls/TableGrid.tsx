@@ -21,6 +21,12 @@ import { useLocale } from "../../core/hooks/useLocale";
 import { useMultiDropdownOptions } from "../../core/hooks/useFormApi";
 import { GetDropdownListValuesResponse } from "../../core/types/getDropdownListValuesResponse";
 import { findJordanLookupValueId, isCountriesLookupType } from "../../core/utils/countryLookup";
+import DropDown from "./DropDown";
+import {
+  getDropdownColumnKeys,
+  isDuplicateDropdownRow,
+  pickUnusedDropdownValues,
+} from "../../core/utils/tableDropdownUniqueness";
 
 interface TableGridProps {
   formField: FormField;
@@ -128,6 +134,9 @@ const TableGrid: React.FC<TableGridProps> = ({ formField, formMethods, hideHelpe
     )
     .map((col) => col.lookupType.lookupTypeId);
 
+  /** DROPDOWN columnKeys used as the uniqueness tuple for this table */
+  const dropdownColumnKeys = getDropdownColumnKeys(columns);
+
   const { data: dropdownOptionsMap = {} } = useMultiDropdownOptions(dropdownLookupIds);
 
   /**
@@ -159,7 +168,14 @@ const TableGrid: React.FC<TableGridProps> = ({ formField, formMethods, hideHelpe
   }, [optionsReady]);
 
   const handleAddRow = () => {
-    append(buildDefaultRow(columns, dropdownOptionsMap));
+    const existingRows = formMethods.getValues(formField.fieldKey);
+    const nextRow = buildDefaultRow(columns, dropdownOptionsMap);
+    const unusedDropdowns = pickUnusedDropdownValues(
+      columns,
+      dropdownOptionsMap,
+      existingRows
+    );
+    append({ ...nextRow, ...unusedDropdowns });
   };
 
   return (
@@ -218,12 +234,39 @@ const TableGrid: React.FC<TableGridProps> = ({ formField, formMethods, hideHelpe
                   const controlKey = getControlKey(cellField);
                   const Component = getControlType(controlKey);
 
+                  /**
+                   * Live uniqueness for DROPDOWN cells only (no watch / no trigger).
+                   * Change the rule in tableDropdownUniqueness.ts if needed.
+                   */
+                  const extraValidate = (value: unknown): true | string => {
+                    const rows = formMethods.getValues(formField.fieldKey);
+                    const isDuplicate = isDuplicateDropdownRow(
+                      rows,
+                      rowIndex,
+                      dropdownColumnKeys,
+                      { columnKey: col.columnKey, value }
+                    );
+                    return isDuplicate
+                      ? t("validation.duplicateRow", {
+                          field: loc(col.labelEn, col.labelAr),
+                        })
+                      : true;
+                  };
+
                   return (
                     <TableCell
                       key={col.columnKey}
                       sx={{ verticalAlign: "top", py: 1 }}
                     >
-                      {Component ? (
+                      {col.controlType.controlKey === "DROPDOWN" ? (
+                        <DropDown
+                          formField={cellField}
+                          formMethods={formMethods}
+                          hideLabel={true}
+                          size="small"
+                          extraValidate={extraValidate}
+                        />
+                      ) : Component ? (
                         <Component
                           formField={cellField}
                           formMethods={formMethods}

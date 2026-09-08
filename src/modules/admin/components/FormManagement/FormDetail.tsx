@@ -1496,9 +1496,12 @@ const FormDetail: React.FC = () => {
             borderRadius: '24px',
             border: '1px solid',
             borderColor: alpha(theme.palette.divider, 0.08),
-            bgcolor: '#fff',
-            position: 'relative',
-            overflow: 'hidden'
+            bgcolor: alpha('#fff', 0.95),
+            backdropFilter: 'blur(12px)',
+            position: 'sticky',
+            top: -40,
+            zIndex: 11,
+            boxShadow: '0 8px 24px rgba(15, 23, 42, 0.06)',
           }}
         >
           <Stack direction="row" alignItems="center" gap={3}>

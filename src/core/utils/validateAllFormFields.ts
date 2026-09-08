@@ -2,6 +2,10 @@ import { UseFormReturn } from "react-hook-form";
 import { ControlKeys } from "../enums/control-keys.enum";
 import { FormField, GridCell } from "../types/FormField";
 import { FIELDS_PER_PAGE } from "./groupAttributesByPage";
+import {
+  getDropdownColumnKeys,
+  getDuplicateDropdownRowIndexes,
+} from "./tableDropdownUniqueness";
 
 /** Options bag accepted by the translation function */
 type TranslationOptions = Record<string, unknown>;
@@ -187,6 +191,49 @@ const collectTableEntries = (
   return entries;
 };
 
+/**
+ * Submit/review half of TABLE dropdown uniqueness.
+ * See tableDropdownUniqueness.ts — DropDown extraValidate covers the live case.
+ */
+const collectTableDuplicateIssues = (
+  field: FormField,
+  formValues: Record<string, unknown>,
+  sectionIndex: number,
+  loc: (en: string, ar: string) => string,
+  t: (key: string, options?: TranslationOptions) => string
+): ValidationIssue[] => {
+  if (!field.isVisible || field.isReadOnly || hasKpiNextSubmissionDate(field)) {
+    return [];
+  }
+
+  const dropdownKeys = getDropdownColumnKeys(field.columns ?? []);
+  if (dropdownKeys.length === 0) {
+    return [];
+  }
+
+  const duplicateIndexes = getDuplicateDropdownRowIndexes(
+    formValues[field.fieldKey],
+    dropdownKeys
+  );
+  const issues: ValidationIssue[] = [];
+
+  duplicateIndexes.forEach((rowIndex) => {
+    dropdownKeys.forEach((columnKey) => {
+      const col = (field.columns ?? []).find((c) => c.columnKey === columnKey);
+      const fieldLabel =
+        col !== undefined ? loc(col.labelEn, col.labelAr) : columnKey;
+      issues.push({
+        rhfPath: `${field.fieldKey}.${rowIndex}.${columnKey}`,
+        fieldLabel,
+        message: t("validation.duplicateRow", { field: fieldLabel }),
+        sectionIndex,
+      });
+    });
+  });
+
+  return issues;
+};
+
 /** Collects RAW_TABLE cell paths from the grid definition */
 const collectRawTableEntries = (
   field: FormField,
@@ -358,6 +405,12 @@ export const validateAllFormFields = (
         });
       }
     });
+
+    if (field.controlType.controlKey === ControlKeys.Table) {
+      issues.push(
+        ...collectTableDuplicateIssues(field, formValues, sectionIndex, loc, t)
+      );
+    }
   });
 
   return issues;

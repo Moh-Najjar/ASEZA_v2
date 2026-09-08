@@ -77,6 +77,11 @@ export const getLocalizedErrorMessage = (
       );
     }
 
+    case "duplicate":
+      return t("validation.duplicateRow", {
+        field: loc(field.labelEn, field.labelAr),
+      });
+
     default:
       /** For any custom validator key, fall back to the cached message. */
       return error.message ?? "";

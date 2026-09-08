@@ -165,6 +165,7 @@
   "validation.pattern": "{{field}} has an invalid format",
   "validation.waitNextSubmissionDate": "You cannot submit the form, you should wait for the next submission date.",
   "validation.minSelection": "Please select at least {{min}} options",
+  "validation.duplicateRow": "{{field}} is already used in another row",
   
   "home.greeting": "Welcome back, {{name}}",
   "home.greetingGeneric": "Welcome to ASEZA Portal",

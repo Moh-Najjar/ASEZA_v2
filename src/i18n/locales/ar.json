@@ -151,6 +151,7 @@
   "validation.pattern": "{{field}} يحتوي على تنسيق غير صالح",
   "validation.waitNextSubmissionDate": "لا يمكنك تقديم النموذج الآن، يجب الانتظار حتى تاريخ التقديم القادم.",
   "validation.minSelection": "يجب إختيار {{min}} خيارات على الأقل",
+  "validation.duplicateRow": "{{field}} مستخدم بالفعل في صف آخر",
 
   "home.greeting": "مرحباً بعودتك، {{name}}",
   "home.greetingGeneric": "مرحباً بك في بوابة ASEZA",

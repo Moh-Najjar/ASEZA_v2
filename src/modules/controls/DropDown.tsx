@@ -20,6 +20,8 @@ interface DropDownProps {
   hideLabel?: boolean;
   hideHelperText?: boolean;
   size?: "small" | "medium";
+  /** TABLE grids only: reject this cell when the row's dropdown combo already exists */
+  extraValidate?: (value: unknown) => true | string;
 }
 
 /** Renders a dropdown select control for fields with controlKey "DROPDOWN" */
@@ -29,6 +31,7 @@ const DropDown: React.FC<DropDownProps> = ({
   hideLabel = false,
   hideHelperText = false,
   size = "medium",
+  extraValidate,
 }) => {
   const { control } = formMethods;
   const { loc, t } = useLocale();
@@ -90,7 +93,12 @@ const DropDown: React.FC<DropDownProps> = ({
       name={formField.fieldKey}
       control={control}
       defaultValue=""
-      rules={getValidationRules(formField, loc, t)}
+      rules={{
+        ...getValidationRules(formField, loc, t),
+        ...(extraValidate !== undefined
+          ? { validate: { duplicate: extraValidate } }
+          : {}),
+      }}
       render={({ field, fieldState }) => {
         /**
          * Issue: TABLE / submission APIs often return the country label (or code)

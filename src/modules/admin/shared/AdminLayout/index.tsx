@@ -91,7 +91,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
   };
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#f8fafc' }}>
+    <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden', bgcolor: '#f8fafc' }}>
 
       {/* ── Sidebar ── */}
       <Drawer
@@ -246,7 +246,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
       </Drawer>
 
       {/* ── Main content area ── */}
-      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, minHeight: 0 }}>
 
         {/* Top header bar */}
         <Box
@@ -395,12 +395,13 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
         <Box
           sx={{
             flex: 1,
+            minHeight: 0,
             p: 4,
             overflow: 'auto',
             animation: 'fadeIn 0.4s ease-out',
             '@keyframes fadeIn': {
-              '0%': { opacity: 0, transform: 'translateY(10px)' },
-              '100%': { opacity: 1, transform: 'translateY(0)' }
+              '0%': { opacity: 0 },
+              '100%': { opacity: 1 }
             }
           }}
         >
