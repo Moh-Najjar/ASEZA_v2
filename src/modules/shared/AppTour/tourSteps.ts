@@ -23,139 +23,145 @@ interface BilingualStep {
 
 // ─── Raw bilingual data ───────────────────────────────────────────────────────
 
+/**
+ * Guided walkthrough of the current KPI portal:
+ * Home dashboard → My Requests → new submission form.
+ * Copy stays factual to the live UI (no unused filters or dialogs).
+ */
 const BILINGUAL_STEPS: BilingualStep[] = [
-  // ── 0: Welcome splash ──────────────────────────────────────────────────────
+  // ── 1: Welcome ─────────────────────────────────────────────────────────────
   {
     routePath: '/home',
     target: 'body',
     placement: 'center',
     ar: {
-      title: '👋 مرحباً بك في بوابة ASEZA',
-      content: 'ستأخذك هذه الجولة خطوة بخطوة من تسجيل الدخول حتى رفع الطلب. اضغط "التالي" للبدء.',
+      title: 'مرحباً بك في بوابة ASEZA',
+      content:
+        'هذه لوحة مؤشرات الأداء الخاصة بك. توضّح هذه الجولة المختصرة كيف تتابع تقديماتك وتُنشئ طلباً جديداً وتُرسله للمراجعة.',
     },
     en: {
-      title: '👋 Welcome to the ASEZA Portal',
-      content: 'This tour will guide you step by step from login to submitting a request. Press "Next" to begin.',
+      title: 'Welcome to the ASEZA Portal',
+      content:
+        'This is your KPI workspace. The tour walks through how you track submissions, start a new request, and send it for review.',
     },
   },
 
-  // ── 1: Stats cards ─────────────────────────────────────────────────────────
+  // ── 2: Top navigation ──────────────────────────────────────────────────────
+  {
+    routePath: '/home',
+    target: '[data-tour="navbar-nav"]',
+    placement: 'bottom',
+    ar: {
+      title: 'التنقل في البوابة',
+      content:
+        'من الشريط العلوي تنتقل بين الرئيسية وطلباتي ودليل المستخدم. يمكنك أيضاً تغيير اللغة أو المظهر، وإدارة حسابك من الأيقونات المجاورة.',
+    },
+    en: {
+      title: 'Portal Navigation',
+      content:
+        'Use the top bar to move between Home, My Requests, and the User Guide. Language, theme, and your account are in the icons beside it.',
+    },
+  },
+
+  // ── 3: Dashboard stats ─────────────────────────────────────────────────────
   {
     routePath: '/home',
     target: '[data-tour="home-stats"]',
     placement: 'bottom',
     ar: {
-      title: '📊 إحصائيات الطلبات',
-      content: 'تعرض هذه البطاقات ملخصاً سريعاً لجميع طلباتك: الإجمالي، قيد المراجعة، المعتمدة، والمرفوضة.',
+      title: 'ملخص التقديمات',
+      content:
+        'تعرض هذه البطاقات أرقامك الحالية: الإجمالي، قيد المراجعة، المعتمد، والمرفوض. تُحدَّث القيم تلقائياً عند كل زيارة.',
     },
     en: {
-      title: '📊 Request Statistics',
-      content: 'These cards show a quick summary of all your requests: total, under review, approved, and rejected.',
+      title: 'Submission Overview',
+      content:
+        'These cards show your current totals: all submissions, pending review, approved, and rejected. The counts refresh each time you open Home.',
     },
   },
 
-  // ── 2: Quick actions ───────────────────────────────────────────────────────
+  // ── 4: Quick actions ───────────────────────────────────────────────────────
   {
     routePath: '/home',
     target: '[data-tour="home-quick-actions"]',
-    placement: 'left',
+    placement: 'auto',
     ar: {
-      title: '⚡ الإجراءات السريعة',
-      content: 'من هنا يمكنك إنشاء طلب جديد أو الانتقال مباشرة إلى قائمة طلباتك بضغطة واحدة.',
+      title: 'الإجراءات السريعة',
+      content:
+        'ابدأ إدخال بيانات مؤشرات جديدة (لمستخدمي إدخال البيانات)، أو افتح قائمة تقديماتك كاملة من هنا.',
     },
     en: {
-      title: '⚡ Quick Actions',
-      content: 'From here you can create a new request or navigate directly to your request list with one click.',
+      title: 'Quick Actions',
+      content:
+        'Start a new KPI data entry if you have the Data Entry role, or open the full list of your submissions from here.',
     },
   },
 
-  // ── 3: Recent submissions ──────────────────────────────────────────────────
+  // ── 5: Recent submissions ──────────────────────────────────────────────────
   {
     routePath: '/home',
     target: '[data-tour="home-recent"]',
     placement: 'top',
     ar: {
-      title: '📋 آخر الطلبات',
-      content: 'تُعرض هنا أحدث 5 طلبات قمت بإرسالها مع حالة كل طلب. اضغط على أي صف للاطلاع على التفاصيل.',
+      title: 'آخر التقديمات',
+      content:
+        'تظهر هنا أحدث خمسة تقديمات مع رقم الطلب والنموذج والفترة والحالة. اضغط «عرض الكل» أو أي صف للانتقال إلى صفحة طلباتي.',
     },
     en: {
-      title: '📋 Recent Submissions',
-      content: 'Your 5 most recent submissions are shown here with their current status. Click any row to view details.',
+      title: 'Recent Submissions',
+      content:
+        'Your five latest submissions appear here with request number, form, period, and status. Use View All or any row to open My Requests.',
     },
   },
 
-  // ── 4: My Requests page intro ──────────────────────────────────────────────
-  {
-    routePath: '/my-requests',
-    target: 'body',
-    placement: 'center',
-    ar: {
-      title: '📁 صفحة طلباتي',
-      content: 'هذه الصفحة تحتوي على جميع طلباتك. يمكنك هنا إنشاء طلبات جديدة، متابعة حالتها، وتصدير التقارير.',
-    },
-    en: {
-      title: '📁 My Requests Page',
-      content: 'This page contains all your requests. You can create new ones, track their status, and export reports.',
-    },
-  },
-
-  // ── 5: New request button ──────────────────────────────────────────────────
-  {
-    routePath: '/my-requests',
-    target: '[data-tour="new-request-btn"]',
-    placement: 'bottom',
-    ar: {
-      title: '➕ إضافة طلب جديد',
-      content: 'اضغط هذا الزر لفتح نموذج إدخال بيانات مؤشرات الأداء (KPI) وبدء طلب جديد.',
-    },
-    en: {
-      title: '➕ Add New Request',
-      content: 'Click this button to open the KPI data entry form and start a new submission.',
-    },
-  },
-
-  // ── 6: Requests table ──────────────────────────────────────────────────────
+  // ── 6: My Requests table ───────────────────────────────────────────────────
   {
     routePath: '/my-requests',
     target: '[data-tour="requests-table"]',
     placement: 'top',
     ar: {
-      title: '📄 جدول الطلبات',
-      content: 'يُعرض هنا جميع طلباتك مع رقم الطلب، النموذج، المديرية، الحالة، وأزرار الإجراءات. يمكنك التصفية والبحث في أعلى الجدول.',
+      title: 'قائمة طلباتي',
+      content:
+        'تُعرض هنا جميع تقديماتك مع الرقم المرجعي والنموذج وعدد المؤشرات والتواريخ والحالة. اضغط الصف أو أيقونة العرض لفتح التفاصيل، أو صدّر نسخة Word. المعتمدون يمكنهم مراجعة الطلب من صفحة التفاصيل.',
     },
     en: {
-      title: '📄 Requests Table',
-      content: 'All your requests are listed here with the request number, form, directorate, status, and action buttons. You can filter and search at the top of the table.',
+      title: 'My Requests',
+      content:
+        'Every submission is listed here with its reference number, form, KPI count, dates, and status. Open a row or the view icon for details, or export a Word file. Approvers review a request from its detail page.',
     },
   },
 
-  // ── 7: New Request page intro ──────────────────────────────────────────────
+  // ── 7: New request button ──────────────────────────────────────────────────
   {
-    routePath: '/my-requests/new',
-    target: 'body',
-    placement: 'center',
+    routePath: '/my-requests',
+    target: '[data-tour="new-request-btn"]',
+    placement: 'bottom',
     ar: {
-      title: '📝 نموذج الطلب الجديد',
-      content: 'هذه صفحة إنشاء الطلب. النموذج مقسّم إلى خطوات واضحة — يجب إكمال كل خطوة قبل الانتقال للتالية.',
+      title: 'تقديم جديد',
+      content:
+        'يظهر هذا الزر لمستخدمي إدخال البيانات. يفتح مباشرة نموذج المؤشرات المرتبط بمديريتك والفترة النشطة — دون الحاجة لاختيار النموذج يدوياً.',
     },
     en: {
-      title: '📝 New Request Form',
-      content: 'This is the request creation page. The form is split into clear steps — each step must be completed before moving to the next.',
+      title: 'New Submission',
+      content:
+        'This button is shown to Data Entry users. It opens the KPI form assigned to your directorate and the active reporting period — you do not pick the form yourself.',
     },
   },
 
-  // ── 8: Stepper ─────────────────────────────────────────────────────────────
+  // ── 8: Form stepper ────────────────────────────────────────────────────────
   {
     routePath: '/my-requests/new',
-    target: '[data-tour="stepper-container"]',
-    placement: 'top',
+    target: '[data-tour="stepper-header"]',
+    placement: 'bottom',
     ar: {
-      title: '🔢 خطوات النموذج',
-      content: 'يوضح هذا الشريط عدد خطوات النموذج وأيها أنت فيه الآن. أكمل كل الحقول في كل خطوة قبل الضغط على "التالي".',
+      title: 'خطوات النموذج',
+      content:
+        'النموذج مقسّم إلى صفحات بيانات ثم خطوة «مراجعة وتأكيد». أكمل الحقول المطلوبة المعلَّمة بـ (*) قبل الضغط على «التالي». يمكنك الرجوع دون فقدان ما أدخلته.',
     },
     en: {
-      title: '🔢 Form Steps',
-      content: 'This bar shows the total number of steps and which one you are on now. Fill all fields in each step before pressing "Next".',
+      title: 'Form Steps',
+      content:
+        'The form is split into data pages, then a Review & Confirm step. Fill required fields marked with (*) before pressing Next. You can go back without losing what you entered.',
     },
   },
 
@@ -163,14 +169,16 @@ const BILINGUAL_STEPS: BilingualStep[] = [
   {
     routePath: '/my-requests/new',
     target: '[data-tour="progress-sidebar"]',
-    placement: 'left',
+    placement: 'auto',
     ar: {
-      title: '📈 نسبة الإنجاز',
-      content: 'يتابع هذا الشريط تقدمك في إكمال النموذج ويعرض معلومات طلبك (النموذج، المديرية، الفترة).',
+      title: 'معلومات الطلب والتقدم',
+      content:
+        'تعرض هذه اللوحة نسبة الإنجاز، واسم النموذج، والمديرية، وفترة التقرير، وحالة المسودة، إضافة إلى إرشادات التقديم.',
     },
     en: {
-      title: '📈 Completion Progress',
-      content: 'This sidebar tracks your form completion progress and displays your request details (form, directorate, period).',
+      title: 'Request Information',
+      content:
+        'This panel shows completion progress, the assigned form, directorate, reporting period, draft status, and the submission guidelines.',
     },
   },
 
@@ -180,12 +188,14 @@ const BILINGUAL_STEPS: BilingualStep[] = [
     target: '[data-tour="stepper-actions"]',
     placement: 'top',
     ar: {
-      title: '✅ الإرسال النهائي',
-      content: 'بعد إكمال جميع الخطوات، ستنتقل إلى خطوة "مراجعة وتأكيد" لمراجعة بياناتك. حدّد خانة التأكيد ثم اضغط "تقديم" لإرسال الطلب.',
+      title: 'المراجعة والإرسال',
+      content:
+        'بعد إكمال الصفحات ستصل إلى المراجعة. تحقق من القيم، حدّد خانة التأكيد، ثم اضغط «تقديم». بعد الإرسال يُقفل الطلب للمراجعة، ولا يُعدَّل إلا إذا أُعيد للتصحيح. ستُعاد إلى طلباتي بعد التأكيد.',
     },
     en: {
-      title: '✅ Final Submission',
-      content: 'After completing all steps, you will reach the "Review & Confirm" step to verify your data. Check the confirmation box, then press "Submit" to send your request.',
+      title: 'Review and Submit',
+      content:
+        'After the data pages you reach Review & Confirm. Check the values, tick the confirmation box, then press Submit. Once sent, the request is locked for review and can be edited only if it is returned. You are taken back to My Requests after confirmation.',
     },
   },
 ];

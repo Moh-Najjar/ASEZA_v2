@@ -53,6 +53,7 @@ const StyledStep = styled(Step)(({ theme }) => ({
 const Header: React.FC<ContentProps> = ({ activeStep, steps }) => {
   return (
     <Stepper
+      data-tour="stepper-header"
       activeStep={activeStep}
       alternativeLabel
       className={styles.stepperHeader}

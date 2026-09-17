@@ -324,7 +324,7 @@ const DirectorateManagement: React.FC = () => {
   };
 
   return (
-    <AdminLayout title="Directorates">
+    <AdminLayout>
       <Box sx={{ maxWidth: 1000 }}>
         {/* Header */}
         <Paper

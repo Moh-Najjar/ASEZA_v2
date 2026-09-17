@@ -1,5 +1,13 @@
 import { http } from '../helpers/http';
-import type { GraphUserProfile } from '../types';
+
+type GraphUserProfile = {
+  id: string;
+  displayName: string;
+  email: string;
+  jobTitle: string;
+  department: string;
+  companyName: string;
+};
 
 const GRAPH_API_BASE_URL = 'https://graph.microsoft.com/v1.0';
 

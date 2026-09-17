@@ -413,7 +413,7 @@ const FormManagement: React.FC = () => {
   };
 
   return (
-    <AdminLayout title="Forms">
+    <AdminLayout>
       <Box sx={{ maxWidth: 1200 }}>
         {/* Header */}
         <Paper

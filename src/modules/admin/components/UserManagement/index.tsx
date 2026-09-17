@@ -310,7 +310,7 @@ const UserManagement: React.FC = () => {
   };
 
   return (
-    <AdminLayout title="Users">
+    <AdminLayout>
       <Box sx={{ maxWidth: 1200 }}>
         {/* Header + filters */}
         <Paper

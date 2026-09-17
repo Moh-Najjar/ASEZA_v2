@@ -66,7 +66,7 @@ const AdminDashboard: React.FC = () => {
   const theme = useTheme();
 
   return (
-    <AdminLayout title="Dashboard">
+    <AdminLayout>
       <Box sx={{ maxWidth: 1000 }}>
         {/* Welcome header */}
         <Box sx={{ mb: 6 }}>

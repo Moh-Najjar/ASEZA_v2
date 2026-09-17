@@ -299,7 +299,12 @@ const Navbar: React.FC<NavbarProps> = ({
         <div className="container">
           {/* Mobile Layout: Combined single row matching the design */}
           <Stack direction="column" spacing={10} sx={{ width: '100%', mb: 3 }}>
-            <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ gap: 1 }}>
+            <Stack
+              data-tour="navbar-nav"
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+              sx={{ gap: 1 }}>
               {/* Logo area */}
               <Box
                 component={RouterLink}
@@ -341,7 +346,7 @@ const Navbar: React.FC<NavbarProps> = ({
               </Tooltip>
 
               {/* Tour launcher (mobile) */}
-              <Tooltip title="جولة تفاعلية">
+              <Tooltip title={t('nav.tour')}>
                 <IconButton
                   color="primary"
                   onClick={startTour}
@@ -451,6 +456,7 @@ const Navbar: React.FC<NavbarProps> = ({
 
               {/* Primary nav links */}
               <Stack
+                data-tour="navbar-nav"
                 direction="row"
                 spacing={0.5}
                 alignItems="center"
@@ -565,7 +571,7 @@ const Navbar: React.FC<NavbarProps> = ({
                 </Tooltip>
 
                 {/* Tour launcher — opens the interactive walkthrough */}
-                <Tooltip title="جولة تفاعلية">
+                <Tooltip title={t('nav.tour')}>
                   <IconButton
                     data-tour="tour-btn"
                     color="primary"

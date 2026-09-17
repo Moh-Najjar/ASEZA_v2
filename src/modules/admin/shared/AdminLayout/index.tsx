@@ -30,8 +30,10 @@ import {
   ChevronLeft as ChevronLeftIcon,
   NotificationsNone as NotificationsIcon,
 } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 import { useAdminAuth } from '../../../../core/context/AdminAuthContext';
 import { BRAND_NAVY, BRAND_NAVY_LIGHT, BRAND_ACCENT } from '../../../../core/constants/theme';
+import LanguageSwitcher from '../../../shared/LanguageSwitcher';
 
 // ─── Sidebar constants ────────────────────────────────────────────────────────
 
@@ -39,16 +41,17 @@ const SIDEBAR_EXPANDED_WIDTH = 260;
 const SIDEBAR_COLLAPSED_WIDTH = 80;
 
 interface NavItem {
-  label: string;
+  /** i18n key used for the sidebar label, tooltip, and default page title. */
+  labelKey: string;
   path: string;
   icon: React.ReactNode;
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: 'Dashboard', path: '/admin', icon: <DashboardIcon /> },
-  { label: 'Users', path: '/admin/users', icon: <UsersIcon /> },
-  { label: 'Directorates', path: '/admin/directorates', icon: <DirectoratesIcon /> },
-  { label: 'Forms', path: '/admin/forms', icon: <FormsIcon /> },
+  { labelKey: 'admin.nav.dashboard', path: '/admin', icon: <DashboardIcon /> },
+  { labelKey: 'admin.nav.users', path: '/admin/users', icon: <UsersIcon /> },
+  { labelKey: 'admin.nav.directorates', path: '/admin/directorates', icon: <DirectoratesIcon /> },
+  { labelKey: 'admin.nav.forms', path: '/admin/forms', icon: <FormsIcon /> },
 ];
 
 // ─── AdminLayout ──────────────────────────────────────────────────────────────
@@ -62,6 +65,7 @@ interface AdminLayoutProps {
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
   const { adminLogout } = useAdminAuth();
   const muiTheme = useTheme();
   const palette = muiTheme.palette;
@@ -148,13 +152,13 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
                 noWrap
                 sx={{ letterSpacing: -0.5, lineHeight: 1.1 }}
               >
-                ASEZA Admin
+                {t('admin.brand.title')}
               </Typography>
               <Typography
                 variant="caption"
                 sx={{ color: alpha('#fff', 0.5), fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, fontSize: 9 }}
               >
-                Management Portal
+                {t('admin.brand.subtitle')}
               </Typography>
             </Box>
           )}
@@ -166,10 +170,11 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
         <List sx={{ px: 2, py: 3, flex: 1 }}>
           {NAV_ITEMS.map((item) => {
             const active = isActive(item.path);
+            const label = t(item.labelKey);
             return (
               <Tooltip
                 key={item.path}
-                title={expanded ? '' : item.label}
+                title={expanded ? '' : label}
                 placement="right"
                 arrow
               >
@@ -220,7 +225,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
                   </ListItemIcon>
                   {expanded && (
                     <ListItemText
-                      primary={item.label}
+                      primary={label}
                       primaryTypographyProps={{
                         fontSize: 14,
                         fontWeight: active ? 700 : 600,
@@ -239,7 +244,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
         {expanded && (
           <Box sx={{ p: 3, textAlign: 'center' }}>
             <Typography variant="caption" sx={{ color: alpha('#fff', 0.3), fontWeight: 600, letterSpacing: 1 }}>
-              VERSION 2.0.4
+              {t('admin.version')}
             </Typography>
           </Box>
         )}
@@ -282,16 +287,20 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
             {NAV_ITEMS.filter((n) => isActive(n.path)).map((n) => (
               <Box key={n.path} sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                 <Typography variant="h5" fontWeight={800} color="text.primary" sx={{ letterSpacing: -0.5 }}>
-                  {title ?? n.label}
+                  {title ?? t(n.labelKey)}
                 </Typography>
               </Box>
             ))}
           </Stack>
 
           <Stack direction="row" alignItems="center" gap={2}>
-            <IconButton size="small" sx={{ color: 'text.secondary' }}>
-              <NotificationsIcon />
-            </IconButton>
+            {/* EN / AR toggle — persists via i18n localStorage and flips RTL layout. */}
+            <LanguageSwitcher />
+            <Tooltip title={t('admin.notifications')}>
+              <IconButton size="small" sx={{ color: 'text.secondary' }} aria-label={t('admin.notifications')}>
+                <NotificationsIcon />
+              </IconButton>
+            </Tooltip>
             <Divider orientation="vertical" flexItem sx={{ height: 24, alignSelf: 'center', mx: 1 }} />
             
             {/* User Profile Area */}
@@ -323,10 +332,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
               </Avatar>
               <Box sx={{ textAlign: 'left', display: { xs: 'none', sm: 'block' } }}>
                 <Typography variant="body2" fontWeight={700} color="text.primary" sx={{ lineHeight: 1.2 }}>
-                  Admin User
+                  {t('admin.user.name')}
                 </Typography>
                 <Typography variant="caption" fontWeight={600} color="text.secondary">
-                  Administrator
+                  {t('admin.user.role')}
                 </Typography>
               </Box>
             </Stack>
@@ -369,7 +378,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
               anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
               <Box sx={{ px: 2, py: 1.5 }}>
-                <Typography variant="subtitle2" fontWeight={700}>Admin User</Typography>
+                <Typography variant="subtitle2" fontWeight={700}>{t('admin.user.name')}</Typography>
                 <Typography variant="caption" color="text.secondary">admin@aseza.com</Typography>
               </Box>
               <Divider />
@@ -385,7 +394,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
                 <ListItemIcon sx={{ color: 'inherit', minWidth: '32px !important' }}>
                   <LogoutIcon fontSize="small" />
                 </ListItemIcon>
-                Logout
+                {t('admin.logout')}
               </MenuItem>
             </Menu>
           </Stack>
