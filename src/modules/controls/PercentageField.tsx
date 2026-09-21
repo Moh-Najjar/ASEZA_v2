@@ -16,6 +16,39 @@ interface PercentageFieldProps {
   size?: "small" | "medium";
 }
 
+const MIN_PERCENTAGE = 0;
+const MAX_PERCENTAGE = 100;
+
+/**
+ * Restricts input to a number in the 0–100 range.
+ * Returns null when the keystroke is invalid so the previous value is kept.
+ */
+const sanitizePercentageValue = (raw: string): string | null => {
+  if (raw === "") {
+    return "";
+  }
+
+  /** Reject scientific notation and sign characters that type="number" still allows. */
+  if (!/^\d*\.?\d*$/.test(raw)) {
+    return null;
+  }
+
+  const parsed = Number(raw);
+  if (Number.isNaN(parsed)) {
+    return null;
+  }
+
+  if (parsed < MIN_PERCENTAGE) {
+    return String(MIN_PERCENTAGE);
+  }
+
+  if (parsed > MAX_PERCENTAGE) {
+    return String(MAX_PERCENTAGE);
+  }
+
+  return raw;
+};
+
 /** Renders a numeric input control with a "%" suffix for fields with controlKey "PERCENTAGE" */
 const PercentageField: React.FC<PercentageFieldProps> = ({
   formField,
@@ -79,8 +112,25 @@ const PercentageField: React.FC<PercentageFieldProps> = ({
                 ),
               }}
               /** Clamp the native HTML input to 0–100 so keyboard arrows respect the range */
-              inputProps={{ min: 0, max: 100, step: 1 }}
-              onChange={(e) => field.onChange(e.target.value)}
+              inputProps={{
+                min: MIN_PERCENTAGE,
+                max: MAX_PERCENTAGE,
+                step: 1,
+                inputMode: "decimal",
+              }}
+              onKeyDown={(e) => {
+                /** Block characters that number inputs accept but are not valid percentages. */
+                if (["e", "E", "+", "-"].includes(e.key)) {
+                  e.preventDefault();
+                }
+              }}
+              onChange={(e) => {
+                const sanitized = sanitizePercentageValue(e.target.value);
+                if (sanitized === null) {
+                  return;
+                }
+                field.onChange(sanitized);
+              }}
               sx={{
                 "& .MuiOutlinedInput-root": {
                   borderRadius: "8px",

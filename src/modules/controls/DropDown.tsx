@@ -36,7 +36,13 @@ const DropDown: React.FC<DropDownProps> = ({
   const { control } = formMethods;
   const { loc, t } = useLocale();
 
-  const placeholder = loc(formField.placeholderEn, formField.placeholderAr);
+  /**
+   * Prefer the API placeholder; when it is empty, fall back to the field
+   * label so standalone lists match TABLE cells (which use the column label).
+   */
+  const placeholder =
+    loc(formField.placeholderEn, formField.placeholderAr) ||
+    loc(formField.labelEn, formField.labelAr);
   const helpText = loc(formField.helpTextEn, formField.helpTextAr);
 
   /** True when a next-submission date is provided for this KPI field */
@@ -63,17 +69,25 @@ const DropDown: React.FC<DropDownProps> = ({
     ? (dropdownListValues?.[String(lookupTypeId)] ?? [])
     : [];
 
-  /** Jordan's lookupValueId when this field is a COUNTRIES dropdown; otherwise undefined */
-  const jordanDefaultId = isCountriesLookupType(formField.lookupType)
+  /**
+   * Default lookupValueId when the field is still empty:
+   * - COUNTRIES → Jordan (same rule as TABLE / RAW_TABLE)
+   * - Standalone lists → first option, matching TABLE grid cells
+   * - Grid cells (`hideLabel`) → undefined; TableGrid / RawTable already seed values
+   */
+  const firstOption = options[0];
+  const defaultLookupValueId = isCountriesLookupType(formField.lookupType)
     ? findJordanLookupValueId(options)
-    : undefined;
+    : hideLabel || firstOption === undefined
+      ? undefined
+      : String(firstOption.lookupValueId);
 
   /**
-   * COUNTRIES lookup only: once options load, pre-select Jordan when the field
-   * is still empty. Existing submission values and other lookup types are left alone.
+   * Once options load, pre-select the default when the field is still empty.
+   * Existing submission values are never overwritten.
    */
   useEffect(() => {
-    if (jordanDefaultId === undefined || isReadOnly) {
+    if (defaultLookupValueId === undefined || isReadOnly) {
       return;
     }
 
@@ -82,11 +96,11 @@ const DropDown: React.FC<DropDownProps> = ({
       return;
     }
 
-    formMethods.setValue(formField.fieldKey, jordanDefaultId, {
+    formMethods.setValue(formField.fieldKey, defaultLookupValueId, {
       shouldDirty: false,
       shouldValidate: true,
     });
-  }, [formField.fieldKey, formMethods, isReadOnly, jordanDefaultId]);
+  }, [defaultLookupValueId, formField.fieldKey, formMethods, isReadOnly]);
 
   return (
     <Controller
