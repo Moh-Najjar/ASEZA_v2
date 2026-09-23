@@ -95,7 +95,8 @@ const InputField: React.FC<InputFieldProps> = ({
                   mt: 0.75,
                   fontSize: "0.75rem",
                 },
-                minWidth: hideLabel ? "unset" : "200px",
+                /** Grid cells hide the label, so keep the same floor as standalone fields. */
+                minWidth: isGridField || !hideLabel ? "150px" : "unset",
               }}
             />
           </Box>

@@ -99,6 +99,20 @@ const resolveDropdownLabel = (
 
 // ─── Helper: format a scalar/dropdown/multi field value as text ───────────────
 
+/**
+ * Turns an API scalar into text.
+ * Numeric KPIs are JSON numbers and checkboxes are booleans, so `.trim()`
+ * cannot be called on `value` directly.
+ */
+const readScalarText = (value: string | number | boolean | null): string => {
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number') {
+    return Number.isFinite(value) ? String(value) : '';
+  }
+  if (typeof value === 'boolean') return String(value);
+  return '';
+};
+
 const resolveFieldDisplayValue = (
   fv: FieldValue,
   dropdownData: GetDropdownListValuesResponse,
@@ -106,10 +120,11 @@ const resolveFieldDisplayValue = (
 ): string => {
   const controlKey = fv.controlType.controlKey;
   const lookupTypeId = fv.lookupType?.lookupTypeId;
+  const text = readScalarText(fv.value);
 
   if (controlKey === CONTROL_KEY_DROPDOWN) {
-    if (fv.value === null || fv.value.trim() === '') return '—';
-    return resolveDropdownLabel(fv.value, lookupTypeId, dropdownData, isAr);
+    if (text.trim() === '') return '—';
+    return resolveDropdownLabel(text, lookupTypeId, dropdownData, isAr);
   }
 
   if (controlKey === CONTROL_KEY_MULTISELECT) {
@@ -120,20 +135,20 @@ const resolveFieldDisplayValue = (
   }
 
   if (controlKey === CONTROL_KEY_DATEPICKER) {
-    if (fv.value === null || fv.value.trim() === '') return '—';
+    if (text.trim() === '') return '—';
     try {
-      return new Date(fv.value).toLocaleDateString(isAr ? 'ar-JO' : 'en-GB', {
+      return new Date(text).toLocaleDateString(isAr ? 'ar-JO' : 'en-GB', {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
       });
     } catch {
-      return fv.value;
+      return text;
     }
   }
 
-  if (fv.value === null || fv.value.trim() === '') return '—';
-  return fv.value;
+  if (text.trim() === '') return '—';
+  return text;
 };
 
 // ─── Helper: "| Section Title" paragraph (teal, bidirectional-aware) ──────────

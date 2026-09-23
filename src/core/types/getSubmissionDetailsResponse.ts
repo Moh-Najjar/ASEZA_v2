@@ -69,7 +69,12 @@ export interface FieldValue {
   validationMessageEn: string | null;
   validationMessageAr: string | null;
   columns: TableColumn[] | null;
-  value: string | null;
+  /**
+   * Scalar answer for this field.
+   * Text, dates, and dropdown codes arrive as strings. NUMBER, PERCENTAGE,
+   * and calculated KPIs often arrive as JSON numbers, and checkboxes as booleans.
+   */
+  value: string | number | boolean | null;
   multiSelectValues: string[] | null;
   tableValues: TableValueRow[] | null;
   rawTableValues: RawTableValueRow[] | null;
