@@ -78,7 +78,18 @@ const InputField: React.FC<InputFieldProps> = ({
                 formField.placeholderAr
               )}
               InputProps={{ readOnly: isReadOnly }}
-              onChange={(e) => field.onChange(e.target.value)}
+              inputProps={{
+                ...(controlKey === ControlKeys.Number && { min: 0 }),
+              }}
+              onKeyDown={(e) => {
+                if (controlKey === ControlKeys.Number && (e.key === '-' || e.key === 'Minus')) {
+                  e.preventDefault();
+                }
+              }}
+              onChange={(e) => {
+                const value = controlKey === ControlKeys.Number ? e.target.value.replace(/-/g, '') : e.target.value;
+                field.onChange(value);
+              }}
               sx={{
                 "& .MuiOutlinedInput-root": {
                   borderRadius: "8px",

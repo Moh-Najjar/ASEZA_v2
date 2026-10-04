@@ -77,8 +77,8 @@ const HeroBanner: React.FC<HeroBannerProps> = ({
           position: 'absolute',
           inset: 0,
           background: isRtl
-            ? 'linear-gradient(to left, rgba(10,25,50,0.82) 0%, rgba(10,25,50,0.45) 55%, rgba(10,25,50,0.1) 100%)'
-            : 'linear-gradient(to right, rgba(10,25,50,0.82) 0%, rgba(10,25,50,0.45) 55%, rgba(10,25,50,0.1) 100%)',
+            ? 'linear-gradient(to left, rgba(10,25,50,0.5) 0%, rgba(10,25,50,0.25) 55%, rgba(10,25,50,0.05) 100%)'
+            : 'linear-gradient(to right, rgba(10,25,50,0.5) 0%, rgba(10,25,50,0.25) 55%, rgba(10,25,50,0.05) 100%)',
         }}
       />
 
