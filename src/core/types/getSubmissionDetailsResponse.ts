@@ -28,6 +28,8 @@ export interface TableColumn {
   dataType: DataType;
   controlType: ControlType;
   lookupType: LookupType | null;
+  /** Present only when the backend supplies it; treated as false when absent */
+  isRequired?: boolean;
 }
 
 // A single row inside a dynamic TABLE control field value

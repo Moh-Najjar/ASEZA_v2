@@ -6,7 +6,6 @@ import {
   Language,
   Menu as MenuIcon,
   Remove,
-  Search,
   ShoppingCartOutlined,
 } from '@mui/icons-material';
 import TourIcon from '@mui/icons-material/EmojiObjects';
@@ -16,14 +15,12 @@ import {
   Button,
   Collapse,
   IconButton,
-  InputBase,
   List,
   ListItemButton,
   ListItemIcon,
   ListItemText,
   MenuItem,
   MenuList,
-  Paper,
   Popover,
   Stack,
   Tooltip,
@@ -47,6 +44,7 @@ import { useNavItems } from './useNavItems';
 import type { UserRole } from '../../../core/types/roles';
 import ThemeToggle from '../ThemeToggle';
 import { useTour } from '../../../core/context/TourContext';
+import NavbarSearch from './NavbarSearch';
 
 export interface NavbarProps {
   logoSrc?: string;
@@ -103,6 +101,16 @@ const useIsWindowScrolledPast = ({ thresholdPx, enabled }: UseIsWindowScrolledPa
   return isPastThreshold;
 };
 
+/**
+ * Dark mode has no separate logo file. The source PNG is navy ink on a solid
+ * white background, so these styles turn it into a light mark and drop the
+ * white box against the dark header.
+ */
+const darkModeLogoSx: SxProps<Theme> = {
+  filter: 'grayscale(1) invert(1)',
+  mixBlendMode: 'screen',
+};
+
 const Navbar: React.FC<NavbarProps> = ({
   logoAlt = 'Site logo',
   phoneNumber = '79 800',
@@ -126,8 +134,6 @@ const Navbar: React.FC<NavbarProps> = ({
 
   // Shrink the sticky desktop header only after the user starts scrolling.
   const isDesktopHeaderStuck = false;// useIsWindowScrolledPast({ thresholdPx: 8, enabled: !isMobile });
-
-  const [query, setQuery] = useState<string>('');
 
   // Mobile drawer state (shown only on mobile; nav pills are hidden there).
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState<boolean>(false);
@@ -200,23 +206,6 @@ const Navbar: React.FC<NavbarProps> = ({
       });
     }
     return false;
-  };
-
-  const handleSubmitSearch = (evt: React.FormEvent<HTMLFormElement>): void => {
-    evt.preventDefault();
-
-    const trimmed = query.trim();
-    if (trimmed.length === 0) {
-      return;
-    }
-
-    if (typeof onSearchSubmit === 'function') {
-      onSearchSubmit(trimmed);
-      return;
-    }
-
-    const encoded = encodeURIComponent(trimmed);
-    navigate(`/search?q=${encoded}`);
   };
 
   const openNavMenu = (id: string, evt: React.MouseEvent<HTMLElement>): void => {
@@ -319,7 +308,12 @@ const Navbar: React.FC<NavbarProps> = ({
                   component="img"
                   src={i18n.language === 'ar' ? logoUrlAr : logoUrlEn}
                   alt={logoAlt}
-                  sx={{ width: 200, height: 50, objectFit: 'fill' }}
+                  sx={{
+                    width: 200,
+                    height: 50,
+                    objectFit: 'fill',
+                    ...(theme.palette.mode === 'dark' ? darkModeLogoSx : {}),
+                  }}
                 />
               </Box>
 
@@ -440,6 +434,7 @@ const Navbar: React.FC<NavbarProps> = ({
                       height: isDesktopHeaderStuck ? 56 : '62px',
                       objectFit: 'contain',
                       transition: 'width 180ms ease, height 180ms ease',
+                      ...(theme.palette.mode === 'dark' ? darkModeLogoSx : {}),
                     }}
                   />
                   <Box
@@ -583,52 +578,8 @@ const Navbar: React.FC<NavbarProps> = ({
 
               </Stack>
 
-              {/* Search input - Styled to match the design reference */}
-              <Paper
-                component="form"
-                onSubmit={handleSubmitSearch}
-                elevation={0}
-                sx={{
-                  flex: '1 1 560px',
-                  maxWidth: '300px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  px: '8px',
-                  borderRadius: '3.6px',
-                  bgcolor: 'background.default',
-                  height: '40px',
-                  transition: 'all 0.2s ease-in-out',
-                  '&:focus-within': {
-                    borderColor: 'primary.main',
-                    bgcolor: 'background.paper',
-                    boxShadow: (t) => `0 0 0 2px ${alpha(t.palette.primary.main, 0.1)}`,
-                  },
-                }}>
-                <InputBase
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder={t('nav.search')}
-                  inputProps={{ 'aria-label': t('nav.search') }}
-                  sx={{
-                    flex: 1,
-                    fontSize: '15px',
-                    fontWeight: 500,
-                    textAlign: dir === 'rtl' ? 'right' : 'left',
-                  }}
-                />
-                <Box
-                  sx={{
-                    width: '0.5px',
-                    height: '28px',
-                    bgcolor: theme.palette.primary.main,
-                    flexShrink: 0,
-                    opacity: 0.6,
-                    mx: '11px'
-                  }}
-                />
-                <Search sx={{ color: theme.palette.primary.main, fontSize: '18px' }} />
-
-              </Paper>
+              {/* Finder for pages and the user's own requests. */}
+              <NavbarSearch onSearchSubmit={onSearchSubmit} />
             </Stack>
 
             {/* Blue divider line under header (like the reference). */}

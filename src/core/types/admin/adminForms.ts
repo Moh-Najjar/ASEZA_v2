@@ -112,6 +112,8 @@ export interface FieldColumn {
   dataTypeId: number;
   controlTypeId: number;
   lookupTypeId: number | null;
+  /** Whether cells in this column are required. Null when the API has no value (treated as false). */
+  isRequired: boolean | null;
 }
 
 /** A row definition on a TABLE / GRID field. */
@@ -384,6 +386,30 @@ export interface AddColumnRequest {
   dataTypeId: number;
   controlTypeId: number;
   lookupTypeId?: number;
+  /** Whether cells in this column are required. Omit to use the API default. */
+  isRequired?: boolean;
+}
+
+/**
+ * Body for PATCH /admin/forms/:formId/fields/:fieldId/columns/:columnId.
+ * Partial update: send at least one property (an empty body returns 400).
+ * Labels are trimmed, non-empty, max 200 chars. Null values are rejected.
+ */
+export interface UpdateColumnRequest {
+  labelEn?: string;
+  labelAr?: string;
+  isRequired?: boolean;
+}
+
+/**
+ * Body for PATCH /admin/forms/:formId/fields/:fieldId/rows/:rowId.
+ * Partial update: send at least one property (an empty body returns 400).
+ * Labels are trimmed, non-empty, max 300 chars. Null values are rejected.
+ */
+export interface UpdateRowRequest {
+  labelEn?: string;
+  labelAr?: string;
+  isRequired?: boolean;
 }
 
 /** Body for POST /admin/forms/:formId/fields/:fieldId/rows. */

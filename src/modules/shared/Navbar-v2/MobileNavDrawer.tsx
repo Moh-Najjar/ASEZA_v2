@@ -219,6 +219,13 @@ export const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({
               height: 60,
               objectFit: 'contain',
               cursor: 'pointer',
+              // Same light-logo file: drop the white box on a dark drawer.
+              ...(theme.palette.mode === 'dark'
+                ? {
+                    filter: 'grayscale(1) invert(1)',
+                    mixBlendMode: 'screen',
+                  }
+                : {}),
             }}
           />
         ) : null}

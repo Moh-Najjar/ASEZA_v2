@@ -59,7 +59,6 @@ const NewRequest: React.FC = () => {
 
         {/* Hero Banner */}
         <HeroBanner
-          imageUrl="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1400&q=80"
           title={t('newRequest.pageTitle')}
           subtitle={t('newRequest.subtitle')}
           badgeLabel={t('myRequests.addNewRequest')}

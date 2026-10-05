@@ -29,6 +29,8 @@ export interface ColumnDef {
   dataType: DataType;
   controlType: ControlTypeDef;
   lookupType: LookupType | null;
+  /** Whether cells in this column must be filled in (TABLE / RAW_TABLE) */
+  isRequired: boolean;
 }
 
 /**

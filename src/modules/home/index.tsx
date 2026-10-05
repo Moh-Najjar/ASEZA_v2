@@ -21,7 +21,6 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import HomeWorkIcon from '@mui/icons-material/HomeWork';
 import HeroBanner from '../shared/HeroBanner';
 import { useAuth } from '../../core/context/AuthContext';
-import aqabaImage from '../../assets/images/home/aqaba-1.jpg';
 import { useGetMySubmissions } from '../../core/hooks/useFormApi';
 import { useDeviceType } from '../../core/hooks/useDeviceType';
 
@@ -183,13 +182,10 @@ const Home: React.FC = () => {
         {/* Hero Banner                                                       */}
         {/* ---------------------------------------------------------------- */}
         <HeroBanner
-          imageUrl={aqabaImage}
           title={greeting}
           subtitle={t('home.subtitle')}
           badgeLabel={t('login.tagline')}
           BadgeIcon={HomeWorkIcon}
-          imagePosition="center 40%"
-          height={{ xs: 200, sm: 240, md: 500 }}
         />
 
         {/* ---------------------------------------------------------------- */}

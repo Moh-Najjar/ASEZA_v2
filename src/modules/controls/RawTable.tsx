@@ -18,6 +18,7 @@ import { getControlKey, getControlType } from "../../core/utils/control.utils";
 import { useLocale } from "../../core/hooks/useLocale";
 import { useMultiDropdownOptions } from "../../core/hooks/useFormApi";
 import { findJordanLookupValueId, isCountriesLookupType } from "../../core/utils/countryLookup";
+import { isRawTableCellRequired } from "../../core/utils/tableRequired";
 
 interface RawTableProps {
   formField: FormField;
@@ -80,7 +81,8 @@ const gridCellToFormField = (
     labelAr: labelCellName !== null ? labelCellName.labelAr : cell.columnLabelAr,
     dataType: cell.dataType,
     controlType: cell.controlType,
-    isRequired: parentField.isRequired,
+    // Required comes from the row's isRequired flag (not the parent field)
+    isRequired: isRawTableCellRequired(cell, parentField),
     displayOrder: cell.column,
     isReadOnly: parentField.isReadOnly || cell.isReadOnly,
     isVisible: cell.isVisible,
@@ -311,6 +313,15 @@ const RawTable: React.FC<RawTableProps> = ({
                     }}
                   >
                     {loc(row.rowLabelEn, row.rowLabelAr)}
+                    {/* Required marker driven by the row's isRequired flag */}
+                    {(formField.rows ?? []).some(
+                      (rowDef) =>
+                        rowDef.rowKey === row.rowKey && rowDef.isRequired
+                    ) && (
+                      <Box component="span" sx={{ color: "error.main", ml: 0.5 }}>
+                        *
+                      </Box>
+                    )}
                   </TableCell>
                 )}
 

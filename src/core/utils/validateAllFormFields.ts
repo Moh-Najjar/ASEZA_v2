@@ -2,6 +2,7 @@ import { UseFormReturn } from "react-hook-form";
 import { ControlKeys } from "../enums/control-keys.enum";
 import { FormField, GridCell } from "../types/FormField";
 import { FIELDS_PER_PAGE } from "./groupAttributesByPage";
+import { isRawTableCellRequired, isTableColumnRequired } from "./tableRequired";
 import {
   getDropdownColumnKeys,
   getDuplicateDropdownRowIndexes,
@@ -173,7 +174,8 @@ const collectTableEntries = (
 
     columns.forEach((col) => {
       const rhfPath = `${field.fieldKey}.${rowIndex}.${col.columnKey}`;
-      const isRequired = field.isRequired;
+      /** Required comes from the column's own isRequired flag */
+      const isRequired = isTableColumnRequired(col);
 
       entries.push({
         rhfPath,
@@ -255,7 +257,8 @@ const collectRawTableEntries = (
     }
 
     const rhfPath = `${field.fieldKey}.${cell.rowKey}.${cell.columnKey}`;
-    const isRequired = field.isRequired || cell.isRequired;
+    /** Required comes from the row's isRequired flag (falls back to the cell flag) */
+    const isRequired = isRawTableCellRequired(cell, field);
 
     entries.push({
       rhfPath,

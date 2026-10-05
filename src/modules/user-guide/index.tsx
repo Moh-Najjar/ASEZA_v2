@@ -133,7 +133,6 @@ const UserGuide: React.FC = () => {
 
         {/* ── Hero Banner ── */}
         <HeroBanner
-          imageUrl="https://images.unsplash.com/photo-1517842645767-c639042777db?w=1400&q=80"
           title={t('userGuide.hero.title')}
           subtitle={t('userGuide.hero.subtitle')}
           badgeLabel={t('userGuide.hero.badge')}

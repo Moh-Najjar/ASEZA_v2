@@ -15,7 +15,9 @@ import type {
   AddOptionRequest,
   AddDependencyRequest,
   AddColumnRequest,
+  UpdateColumnRequest,
   AddRowRequest,
+  UpdateRowRequest,
   SetCalculationRequest,
   AddCalculationInputRequest,
   AssignFieldFrequencyRequest,
@@ -191,6 +193,18 @@ export const addColumnApi = async (
     data,
   );
 
+/** PATCH /admin/forms/:formId/fields/:fieldId/columns/:columnId — partially updates a column. */
+export const updateColumnApi = async (
+  formId: number,
+  fieldId: number,
+  columnId: number,
+  data: UpdateColumnRequest,
+): Promise<FieldColumn> =>
+  adminHttp.patch<UpdateColumnRequest, FieldColumn>(
+    `${BASE_URL}/admin/forms/${formId}/fields/${fieldId}/columns/${columnId}`,
+    data,
+  );
+
 /** DELETE /admin/forms/:formId/fields/:fieldId/columns/:columnId — removes a column (204). */
 export const removeColumnApi = async (
   formId: number,
@@ -211,6 +225,18 @@ export const addRowApi = async (
 ): Promise<FieldRow> =>
   adminHttp.post<AddRowRequest, FieldRow>(
     `${BASE_URL}/admin/forms/${formId}/fields/${fieldId}/rows`,
+    data,
+  );
+
+/** PATCH /admin/forms/:formId/fields/:fieldId/rows/:rowId — partially updates a row. */
+export const updateRowApi = async (
+  formId: number,
+  fieldId: number,
+  rowId: number,
+  data: UpdateRowRequest,
+): Promise<FieldRow> =>
+  adminHttp.patch<UpdateRowRequest, FieldRow>(
+    `${BASE_URL}/admin/forms/${formId}/fields/${fieldId}/rows/${rowId}`,
     data,
   );
 

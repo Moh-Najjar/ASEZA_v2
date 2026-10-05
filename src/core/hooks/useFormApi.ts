@@ -85,15 +85,24 @@ export const useGetSubmissionDetails = (submissionId: number | undefined) => {
     });
 };
 
-export const useGetMySubmissions = (params: GetMySubmissionsRequest) => {
+interface UseGetMySubmissionsOptions {
+    /** When false, the request list is not fetched. Defaults to true. */
+    enabled?: boolean;
+}
+
+export const useGetMySubmissions = (
+    params: GetMySubmissionsRequest,
+    options?: UseGetMySubmissionsOptions,
+) => {
     const { authSession } = useAuth();
+    const extraEnabled = options?.enabled ?? true;
 
     return useQuery<GetMySubmissionsResponse, Error>({
         queryKey: [MY_SUBMISSIONS_QUERY_KEY, params.page, params.pageSize],
         queryFn: async (): Promise<GetMySubmissionsResponse> => {
             return await getMySubmissions(params);
         },
-        enabled: authSession !== null,
+        enabled: authSession !== null && extraEnabled,
         retry: 1,
         staleTime: 1000 * 60 * 2, // 2 minutes
     });

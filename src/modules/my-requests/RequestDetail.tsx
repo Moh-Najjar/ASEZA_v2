@@ -206,7 +206,6 @@ const RequestDetail: React.FC = () => {
 
         {/* ── Hero Banner ── */}
         <HeroBanner
-          imageUrl="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1400&q=80"
           title={t("requestDetail.pageTitle")}
           subtitle={t("requestDetail.pageSubtitle")}
           badgeLabel={t("requestDetail.badgeLabel")}

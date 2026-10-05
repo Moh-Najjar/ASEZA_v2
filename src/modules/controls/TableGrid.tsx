@@ -21,6 +21,7 @@ import { useLocale } from "../../core/hooks/useLocale";
 import { useMultiDropdownOptions } from "../../core/hooks/useFormApi";
 import { GetDropdownListValuesResponse } from "../../core/types/getDropdownListValuesResponse";
 import { findJordanLookupValueId, isCountriesLookupType } from "../../core/utils/countryLookup";
+import { isTableColumnRequired } from "../../core/utils/tableRequired";
 import DropDown from "./DropDown";
 import {
   getDropdownColumnKeys,
@@ -197,6 +198,12 @@ const TableGrid: React.FC<TableGridProps> = ({ formField, formMethods, hideHelpe
                   sx={{ fontWeight: "bold", whiteSpace: "nowrap" }}
                 >
                   {loc(col.labelEn, col.labelAr)}
+                  {/* Required marker driven by the column's isRequired flag */}
+                  {isTableColumnRequired(col) && (
+                    <Box component="span" sx={{ color: "error.main", ml: 0.5 }}>
+                      *
+                    </Box>
+                  )}
                 </TableCell>
               ))}
               {/* Add Row button lives in the header's action column */}
@@ -221,7 +228,8 @@ const TableGrid: React.FC<TableGridProps> = ({ formField, formMethods, hideHelpe
                 {columns.map((col) => {
                   /** Full RHF nested path: e.g. "KPI_0050.0.FOOD_TYPE" */
                   const fieldName = `${formField.fieldKey}.${rowIndex}.${col.columnKey}`;
-                  const isRequired = formField.isRequired;
+                  /** Required comes from the column's own isRequired flag */
+                  const isRequired = isTableColumnRequired(col);
 
                   /** Wrap the column as a FormField so existing controls work as-is */
                   const cellField = columnToFormField(

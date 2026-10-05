@@ -2,11 +2,14 @@ import React, { useState } from 'react';
 import {
   Box,
   Button,
+  Checkbox,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   FormControl,
+  FormControlLabel,
   IconButton,
   InputLabel,
   MenuItem,
@@ -19,11 +22,13 @@ import {
   useTheme,
   Fade,
 } from '@mui/material';
-import { Add as AddIcon, Close as CloseIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { Add as AddIcon, Close as CloseIcon, Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 import {
   useAddColumn,
+  useUpdateColumn,
   useRemoveColumn,
   useAddRow,
+  useUpdateRow,
   useRemoveRow,
 } from '../../../../core/hooks/admin/useAdminForms';
 import { useAdminControlTypes, useAdminDataTypes, useAdminLookupTypes } from '../../../../core/hooks/admin/useAdminLookups';
@@ -31,6 +36,7 @@ import { BRAND_ACCENT, BRAND_NAVY } from '../../../../core/constants/theme';
 import { ControlKeys } from '../../../../core/enums/control-keys.enum';
 import type { AdminFormField, FieldColumn, FieldRow } from '../../../../core/types/admin/adminForms';
 import { isLookupRequired, resolveControlType } from './controlFieldRequirements';
+import StructureItemEditor, { StructureItemChanges } from './StructureItemEditor';
 
 interface ManageTableStructureDialogProps {
   formId: number;
@@ -54,9 +60,51 @@ const ManageTableStructureDialog: React.FC<ManageTableStructureDialogProps> = ({
   const lookupTypes = Array.isArray(rawLookupTypes) ? rawLookupTypes : [];
 
   const addColumn = useAddColumn();
+  const updateColumn = useUpdateColumn();
   const removeColumn = useRemoveColumn();
   const addRow = useAddRow();
+  const updateRow = useUpdateRow();
   const removeRow = useRemoveRow();
+
+  /** Id of the column/row currently being edited inline (only one at a time) */
+  const [editingColumnId, setEditingColumnId] = useState<number | null>(null);
+  const [editingRowId, setEditingRowId] = useState<number | null>(null);
+
+  /** Opens the editor for a column and closes any other open editor */
+  const startEditingColumn = (columnId: number): void => {
+    setEditingRowId(null);
+    updateColumn.reset();
+    setEditingColumnId(columnId);
+  };
+
+  /** Opens the editor for a row and closes any other open editor */
+  const startEditingRow = (rowId: number): void => {
+    setEditingColumnId(null);
+    updateRow.reset();
+    setEditingRowId(rowId);
+  };
+
+  /** Closes whichever inline editor is open */
+  const cancelEditing = (): void => {
+    setEditingColumnId(null);
+    setEditingRowId(null);
+  };
+
+  /** Saves the changed column properties, then closes the editor on success */
+  const handleUpdateColumn = (columnId: number, changes: StructureItemChanges): void => {
+    updateColumn.mutate(
+      { formId, fieldId: field.fieldId, columnId, data: changes },
+      { onSuccess: () => setEditingColumnId(null) },
+    );
+  };
+
+  /** Saves the changed row properties, then closes the editor on success */
+  const handleUpdateRow = (rowId: number, changes: StructureItemChanges): void => {
+    updateRow.mutate(
+      { formId, fieldId: field.fieldId, rowId, data: changes },
+      { onSuccess: () => setEditingRowId(null) },
+    );
+  };
 
   const controlType = resolveControlType(field.controlTypeId, controlTypes);
   const isRawTable = controlType?.controlKey === ControlKeys.RawTable;
@@ -67,11 +115,15 @@ const ManageTableStructureDialog: React.FC<ManageTableStructureDialogProps> = ({
   const [columnDataTypeId, setColumnDataTypeId] = useState<number | ''>('');
   const [columnControlTypeId, setColumnControlTypeId] = useState<number | ''>('');
   const [columnLookupTypeId, setColumnLookupTypeId] = useState<number | ''>('');
+  /** Whether the new column's cells must be filled in (sent as isRequired); required by default */
+  const [columnIsRequired, setColumnIsRequired] = useState(true);
   const [columnErrors, setColumnErrors] = useState<Record<string, string>>({});
 
   const [rowKey, setRowKey] = useState('');
   const [rowLabelEn, setRowLabelEn] = useState('');
   const [rowLabelAr, setRowLabelAr] = useState('');
+  /** Whether the new row's cells must be filled in (RAW_TABLE only); required by default */
+  const [rowIsRequired, setRowIsRequired] = useState(true);
   const [rowErrors, setRowErrors] = useState<Record<string, string>>({});
 
   const columns = field.formFieldColumns;
@@ -105,6 +157,8 @@ const ManageTableStructureDialog: React.FC<ManageTableStructureDialogProps> = ({
           displayOrder: nextOrder,
           dataTypeId: Number(columnDataTypeId),
           controlTypeId: Number(columnControlTypeId),
+          // TABLE: required lives on the column. RAW_TABLE: required lives on the row, so omit it here.
+          ...(!isRawTable ? { isRequired: columnIsRequired } : {}),
           ...(columnLookupTypeId !== '' ? { lookupTypeId: Number(columnLookupTypeId) } : {}),
         },
       },
@@ -114,6 +168,8 @@ const ManageTableStructureDialog: React.FC<ManageTableStructureDialogProps> = ({
           setColumnLabelEn('');
           setColumnLabelAr('');
           setColumnLookupTypeId('');
+          // Reset to the default (required) for the next column
+          setColumnIsRequired(true);
           setColumnErrors({});
         },
       },
@@ -141,7 +197,7 @@ const ManageTableStructureDialog: React.FC<ManageTableStructureDialogProps> = ({
           labelEn: rowLabelEn.trim(),
           labelAr: rowLabelAr.trim(),
           displayOrder: nextOrder,
-          isRequired: false,
+          isRequired: rowIsRequired,
           isReadOnly: false,
           isVisible: true,
         },
@@ -151,6 +207,8 @@ const ManageTableStructureDialog: React.FC<ManageTableStructureDialogProps> = ({
           setRowKey('');
           setRowLabelEn('');
           setRowLabelAr('');
+          // Reset to the default (required) for the next row
+          setRowIsRequired(true);
           setRowErrors({});
         },
       },
@@ -205,17 +263,48 @@ const ManageTableStructureDialog: React.FC<ManageTableStructureDialogProps> = ({
                       gap: 2,
                     }}
                   >
-                    <Box>
-                      <Typography variant="body2" fontWeight={700}>{column.labelEn}</Typography>
-                      <Typography variant="caption" color="text.secondary" fontFamily="monospace">{column.columnKey}</Typography>
-                    </Box>
-                    <IconButton
-                      size="small"
-                      onClick={() => removeColumn.mutate({ formId, fieldId: field.fieldId, columnId: column.columnId })}
-                      sx={{ color: 'error.light' }}
-                    >
-                      <DeleteIcon fontSize="small" />
-                    </IconButton>
+                    {editingColumnId === column.columnId ? (
+                      /* Inline editor: labels + Required (Required only for TABLE columns) */
+                      <StructureItemEditor
+                        initialLabelEn={column.labelEn}
+                        initialLabelAr={column.labelAr}
+                        initialIsRequired={column.isRequired}
+                        showRequired={!isRawTable}
+                        maxLabelLength={200}
+                        isSaving={updateColumn.isPending}
+                        errorMessage={updateColumn.error instanceof Error ? updateColumn.error.message : null}
+                        onSave={(changes) => handleUpdateColumn(column.columnId, changes)}
+                        onCancel={cancelEditing}
+                      />
+                    ) : (
+                      <>
+                        <Box>
+                          <Typography variant="body2" fontWeight={700}>{column.labelEn}</Typography>
+                          <Typography variant="caption" color="text.secondary" fontFamily="monospace">{column.columnKey}</Typography>
+                        </Box>
+                        {/* Badge reflects the saved isRequired flag (null is treated as false) */}
+                        {!isRawTable && column.isRequired === true && (
+                          <Chip label="Required" size="small" color="error" variant="outlined" sx={{ ml: 'auto', fontWeight: 700 }} />
+                        )}
+                        <Box sx={{ display: 'flex', alignItems: 'center', ...(isRawTable || column.isRequired !== true ? { ml: 'auto' } : {}) }}>
+                          <IconButton
+                            size="small"
+                            aria-label="Edit column"
+                            onClick={() => startEditingColumn(column.columnId)}
+                            sx={{ color: 'primary.main' }}
+                          >
+                            <EditIcon fontSize="small" />
+                          </IconButton>
+                          <IconButton
+                            size="small"
+                            onClick={() => removeColumn.mutate({ formId, fieldId: field.fieldId, columnId: column.columnId })}
+                            sx={{ color: 'error.light' }}
+                          >
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </Box>
+                      </>
+                    )}
                   </Paper>
                 ))
               ) : (
@@ -256,6 +345,20 @@ const ManageTableStructureDialog: React.FC<ManageTableStructureDialogProps> = ({
                     </FormControl>
                   )}
                 </Stack>
+                {/* TABLE only: controls whether this column's cells are required on the user form */}
+                {!isRawTable && (
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        size="small"
+                        checked={columnIsRequired}
+                        onChange={(e) => setColumnIsRequired(e.target.checked)}
+                      />
+                    }
+                    label={<Typography variant="body2" fontWeight={600}>Required</Typography>}
+                    sx={{ alignSelf: 'flex-start', ml: 0 }}
+                  />
+                )}
                 <Button variant="outlined" startIcon={<AddIcon />} onClick={handleAddColumn} disabled={addColumn.isPending} sx={{ alignSelf: 'flex-start', borderRadius: '10px', fontWeight: 700, textTransform: 'none' }}>
                   Add Column
                 </Button>
@@ -273,13 +376,39 @@ const ManageTableStructureDialog: React.FC<ManageTableStructureDialogProps> = ({
                 {rows.length > 0 ? (
                   rows.map((row: FieldRow) => (
                     <Paper key={row.rowId} elevation={0} sx={{ p: 1.5, borderRadius: '12px', border: '1px solid', borderColor: alpha(theme.palette.divider, 0.12), display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <Box>
-                        <Typography variant="body2" fontWeight={700}>{row.labelEn}</Typography>
-                        <Typography variant="caption" color="text.secondary" fontFamily="monospace">{row.rowKey}</Typography>
-                      </Box>
-                      <IconButton size="small" onClick={() => removeRow.mutate({ formId, fieldId: field.fieldId, rowId: row.rowId })} sx={{ color: 'error.light' }}>
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
+                      {editingRowId === row.rowId ? (
+                        /* Inline editor: labels + Required (rows carry the flag in RAW_TABLE) */
+                        <StructureItemEditor
+                          initialLabelEn={row.labelEn}
+                          initialLabelAr={row.labelAr}
+                          initialIsRequired={row.isRequired}
+                          showRequired
+                          maxLabelLength={300}
+                          isSaving={updateRow.isPending}
+                          errorMessage={updateRow.error instanceof Error ? updateRow.error.message : null}
+                          onSave={(changes) => handleUpdateRow(row.rowId, changes)}
+                          onCancel={cancelEditing}
+                        />
+                      ) : (
+                        <>
+                          <Box>
+                            <Typography variant="body2" fontWeight={700}>{row.labelEn}</Typography>
+                            <Typography variant="caption" color="text.secondary" fontFamily="monospace">{row.rowKey}</Typography>
+                          </Box>
+                          {/* Badge reflects the saved row isRequired flag */}
+                          {row.isRequired && (
+                            <Chip label="Required" size="small" color="error" variant="outlined" sx={{ ml: 'auto', mr: 1, fontWeight: 700 }} />
+                          )}
+                          <Box sx={{ display: 'flex', alignItems: 'center', ...(row.isRequired ? {} : { ml: 'auto' }) }}>
+                            <IconButton size="small" aria-label="Edit row" onClick={() => startEditingRow(row.rowId)} sx={{ color: 'primary.main' }}>
+                              <EditIcon fontSize="small" />
+                            </IconButton>
+                            <IconButton size="small" onClick={() => removeRow.mutate({ formId, fieldId: field.fieldId, rowId: row.rowId })} sx={{ color: 'error.light' }}>
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                          </Box>
+                        </>
+                      )}
                     </Paper>
                   ))
                 ) : (
@@ -294,6 +423,18 @@ const ManageTableStructureDialog: React.FC<ManageTableStructureDialogProps> = ({
                     <TextField label="Label (EN)" value={rowLabelEn} onChange={(e) => { setRowLabelEn(e.target.value); setRowErrors((p) => ({ ...p, rowLabelEn: '' })); }} error={Boolean(rowErrors.rowLabelEn)} helperText={rowErrors.rowLabelEn} fullWidth size="small" required InputProps={{ sx: textFieldSx }} />
                     <TextField label="Label (AR)" value={rowLabelAr} onChange={(e) => { setRowLabelAr(e.target.value); setRowErrors((p) => ({ ...p, rowLabelAr: '' })); }} error={Boolean(rowErrors.rowLabelAr)} helperText={rowErrors.rowLabelAr} fullWidth size="small" required inputProps={{ dir: 'rtl' }} InputProps={{ sx: textFieldSx }} />
                   </Stack>
+                  {/* RAW_TABLE only: controls whether this row's cells are required on the user form */}
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        size="small"
+                        checked={rowIsRequired}
+                        onChange={(e) => setRowIsRequired(e.target.checked)}
+                      />
+                    }
+                    label={<Typography variant="body2" fontWeight={600}>Required</Typography>}
+                    sx={{ alignSelf: 'flex-start', ml: 0 }}
+                  />
                   <Button variant="outlined" startIcon={<AddIcon />} onClick={handleAddRow} disabled={addRow.isPending} sx={{ alignSelf: 'flex-start', borderRadius: '10px', fontWeight: 700, textTransform: 'none', color: BRAND_ACCENT, borderColor: alpha(BRAND_ACCENT, 0.4) }}>
                     Add Row
                   </Button>

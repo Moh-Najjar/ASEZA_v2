@@ -26,6 +26,8 @@ const mapTableColumn = (col: TableColumn): ColumnDef => ({
           nameAr: col.lookupType.nameAr,
         }
       : null,
+  /** Submission details may omit the flag; default to not required (view-only data) */
+  isRequired: col.isRequired ?? false,
 });
 
 /** Returns true when the RAW_TABLE uses a dedicated LABEL column for row text */

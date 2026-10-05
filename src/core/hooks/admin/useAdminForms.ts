@@ -13,8 +13,10 @@ import {
   addDependencyApi,
   removeDependencyApi,
   addColumnApi,
+  updateColumnApi,
   removeColumnApi,
   addRowApi,
+  updateRowApi,
   removeRowApi,
   setCalculationApi,
   removeCalculationApi,
@@ -31,7 +33,9 @@ import type {
   AddOptionRequest,
   AddDependencyRequest,
   AddColumnRequest,
+  UpdateColumnRequest,
   AddRowRequest,
+  UpdateRowRequest,
   SetCalculationRequest,
   AddCalculationInputRequest,
   AssignFieldFrequencyRequest,
@@ -294,6 +298,29 @@ export const useAddColumn = () => {
   });
 };
 
+/** PATCH a column's labels and/or isRequired, then refresh the form detail. */
+export const useUpdateColumn = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      formId,
+      fieldId,
+      columnId,
+      data,
+    }: {
+      formId: number;
+      fieldId: number;
+      columnId: number;
+      data: UpdateColumnRequest;
+    }) => updateColumnApi(formId, fieldId, columnId, data),
+    onSuccess: (_result, variables) => {
+      void queryClient.invalidateQueries({
+        queryKey: [ADMIN_FORM_DETAIL_QUERY_KEY, variables.formId],
+      });
+    },
+  });
+};
+
 export const useRemoveColumn = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -328,6 +355,29 @@ export const useAddRow = () => {
       fieldId: number;
       data: AddRowRequest;
     }) => addRowApi(formId, fieldId, data),
+    onSuccess: (_result, variables) => {
+      void queryClient.invalidateQueries({
+        queryKey: [ADMIN_FORM_DETAIL_QUERY_KEY, variables.formId],
+      });
+    },
+  });
+};
+
+/** PATCH a row's labels and/or isRequired, then refresh the form detail. */
+export const useUpdateRow = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      formId,
+      fieldId,
+      rowId,
+      data,
+    }: {
+      formId: number;
+      fieldId: number;
+      rowId: number;
+      data: UpdateRowRequest;
+    }) => updateRowApi(formId, fieldId, rowId, data),
     onSuccess: (_result, variables) => {
       void queryClient.invalidateQueries({
         queryKey: [ADMIN_FORM_DETAIL_QUERY_KEY, variables.formId],
