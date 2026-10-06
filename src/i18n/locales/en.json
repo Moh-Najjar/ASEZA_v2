@@ -286,6 +286,7 @@
   "admin.nav.users": "Users",
   "admin.nav.directorates": "Directorates",
   "admin.nav.forms": "Forms",
+  "admin.nav.documentation": "Documentation",
   "admin.user.name": "Admin User",
   "admin.user.role": "Administrator",
   "admin.logout": "Logout",

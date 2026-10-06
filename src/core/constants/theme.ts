@@ -1,3 +1,5 @@
+import { alpha, type Theme } from '@mui/material/styles';
+
 // Gray scale "degrees" used across the app (50 → lightest, 900 → darkest).
 // Typed to prevent missing shades and keep usage consistent.
 export type GrayShade = 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
@@ -51,6 +53,32 @@ export const BRAND_ACCENT_LIGHT = '#15BF8F';
 /** Darker teal for pressed / active accent states. */
 export const BRAND_ACCENT_DARK = '#0d7a6e';
 
+/** Deep navy used for brand panels (sidebars, hero banners) in dark mode,
+ *  where the bright brand gradient would glare. */
+export const BRAND_PANEL_DARK = '#0D2238';
+/** Lighter end of the dark-mode brand panel gradient. */
+export const BRAND_PANEL_DARK_LIGHT = '#143A5C';
+
+/** Category hues for colour-coded cards and sections. Each has a dark-mode
+ *  variant chosen to stay readable as text on dark surfaces. */
+export const CATEGORY_COLORS = {
+  navy: { light: BRAND_NAVY, dark: '#3A9BD5' },
+  purple: { light: '#7b1fa2', dark: '#C08CF0' },
+  teal: { light: BRAND_ACCENT, dark: BRAND_ACCENT },
+  amber: { light: '#ed6c02', dark: '#FFA940' },
+} as const;
+
+export type CategoryColor = keyof typeof CATEGORY_COLORS;
+
+/** Card / panel outline colour. Light mode keeps the requested faint tint;
+ *  dark mode uses the full divider, since a faint tint vanishes on navy. */
+export const subtleBorder = (theme: Theme, lightAlpha: number): string =>
+  theme.palette.mode === 'dark' ? theme.palette.divider : alpha(theme.palette.divider, lightAlpha);
+
+/** Returns the hex value of a category colour for the active theme mode. */
+export const resolveCategoryColor = (color: CategoryColor, mode: ThemeMode): string =>
+  CATEGORY_COLORS[color][mode];
+
 // Theme configuration constants
 export const THEME_CONFIG = {
   // ── Light theme ─────────────────────────────────────────────────────────────
@@ -84,6 +112,15 @@ export const THEME_CONFIG = {
       success: '#009245',
     },
     divider: '#c5d5e8',
+    // MUI's light defaults, listed explicitly so both modes share one shape.
+    action: {
+      active: 'rgba(0, 0, 0, 0.54)',
+      hover: 'rgba(0, 0, 0, 0.04)',
+      selected: 'rgba(0, 0, 0, 0.08)',
+      focus: 'rgba(0, 0, 0, 0.12)',
+      disabled: 'rgba(0, 0, 0, 0.26)',
+      disabledBackground: 'rgba(0, 0, 0, 0.12)',
+    },
     error: {
       main: '#d32f2f',
       light: '#ef5350',
@@ -110,53 +147,64 @@ export const THEME_CONFIG = {
   dark: {
     gray: GRAY_SCALE.dark,
     primary: {
-      // A palette blue that reads clearly on dark surfaces.
-      main: '#3698BF',
-      light: '#5db0d1',
-      dark: '#0367A6',
+      // Brand blue lifted so it passes contrast as text on dark surfaces
+      // while still carrying white text on contained buttons.
+      main: '#3A9BD5',
+      light: '#6CB8E4',
+      dark: '#1F78B0',
       contrastText: '#ffffff',
     },
     secondary: {
       // Teal accent from the palette.
       main: BRAND_ACCENT,
-      light: BRAND_ACCENT_LIGHT,
+      light: '#2FD1BF',
       dark: BRAND_ACCENT_DARK,
       contrastText: '#ffffff',
     },
     border: {
-      default: '#3698BF',
+      default: '#3A9BD5',
     },
     background: {
-      // Deep navy-tinted dark surfaces (not pure black) for brand consistency.
-      default: '#0a1520',
-      paper: '#111e30',
-      surface: '#172640',
+      // Layered navy surfaces: page < card < raised element.
+      default: '#0B1623',
+      paper: '#111F31',
+      surface: '#182A40',
     },
     text: {
-      primary: '#c8daf5',
-      secondary: '#8aaad0',
-      success: '#4caf50',
+      primary: '#E3ECF7',
+      secondary: '#9DB2CC',
+      success: '#4CC38A',
     },
-    divider: '#808080',
+    // Blue-tinted hairline instead of neutral grey so borders blend with navy surfaces.
+    divider: '#2A3E57',
+    action: {
+      active: '#9DB2CC',
+      hover: 'rgba(148, 184, 226, 0.08)',
+      selected: 'rgba(148, 184, 226, 0.16)',
+      focus: 'rgba(148, 184, 226, 0.16)',
+      disabled: 'rgba(227, 236, 247, 0.32)',
+      disabledBackground: 'rgba(227, 236, 247, 0.10)',
+    },
+    // Softer, slightly desaturated status colours avoid glare on dark backgrounds.
     error: {
-      main: '#f44336',
-      light: '#e57373',
-      dark: '#d32f2f',
+      main: '#F26D6D',
+      light: '#F59A9A',
+      dark: '#D64545',
     },
     warning: {
-      main: '#ff9800',
-      light: '#ffb74d',
-      dark: '#f57c00',
+      main: '#FFA940',
+      light: '#FFC069',
+      dark: '#D48806',
     },
     info: {
-      main: '#2196f3',
-      light: '#64b5f6',
-      dark: '#1976d2',
+      main: '#4FB0F0',
+      light: '#80C8F5',
+      dark: '#2A8FD4',
     },
     success: {
-      main: '#4caf50',
-      light: '#81c784',
-      dark: '#388e3c',
+      main: '#3EC27F',
+      light: '#6FD6A1',
+      dark: '#2A9A62',
     },
   },
 

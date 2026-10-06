@@ -18,6 +18,12 @@ import {
   Select,
   Stack,
   Switch,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   TextField,
   Tooltip,
   Typography,
@@ -25,22 +31,23 @@ import {
   useTheme,
   Fade,
   Divider,
-  Grid,
   Avatar,
 } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material/styles';
 import {
   Add as AddIcon,
   Delete as DeleteIcon,
   Close as CloseIcon,
   ArrowBack as BackIcon,
   Refresh as RefreshIcon,
-  DragIndicator as DragIcon,
-  Settings as SettingsIcon,
   Edit as EditIcon,
   Schema as DependenciesIcon,
   Description as FormIcon,
   History as VersionIcon,
   FilterList as FilterIcon,
+  Functions as FormulaIcon,
+  TableChart as ColumnsIcon,
+  EventRepeat as FrequencyIcon,
 } from '@mui/icons-material';
 import AdminLayout from '../../shared/AdminLayout';
 import {
@@ -50,7 +57,7 @@ import {
   useSetCalculation,
 } from '../../../../core/hooks/admin/useAdminForms';
 import { useAdminControlTypes, useAdminDataTypes, useAdminFrequencies, useAdminLookupTypes } from '../../../../core/hooks/admin/useAdminLookups';
-import { BRAND_NAVY, BRAND_ACCENT } from '../../../../core/constants/theme';
+import { BRAND_ACCENT, subtleBorder } from '../../../../core/constants/theme';
 import { ControlKeys } from '../../../../core/enums/control-keys.enum';
 import type { AdminFormField, AddFieldRequest } from '../../../../core/types/admin/adminForms';
 import type { ControlType, DataType, LookupType } from '../../../../core/types/admin/adminLookups';
@@ -1128,7 +1135,124 @@ const SetCalculationDialog: React.FC<SetCalculationDialogProps> = ({ formId, fie
   );
 };
 
-// ─── Field Card ───────────────────────────────────────────────────────────────
+// ─── Field table presentation (visual only) ───────────────────────────────────
+
+type ConfigTone = 'primary' | 'muted' | 'error' | 'warning';
+
+const configToneColor = (tone: ConfigTone): string => {
+  if (tone === 'error') {
+    return 'error.main';
+  }
+  if (tone === 'warning') {
+    return 'warning.main';
+  }
+  if (tone === 'muted') {
+    return 'text.disabled';
+  }
+  return 'text.primary';
+};
+
+interface ConfigLineProps {
+  label: string;
+  value: string;
+  tone: ConfigTone;
+  mono?: boolean;
+}
+
+/** One compact label/value pair inside the configuration cell. */
+const ConfigLine: React.FC<ConfigLineProps> = ({ label, value, tone, mono = false }) => (
+  <Stack direction="row" spacing={1} alignItems="baseline">
+    <Typography
+      variant="caption"
+      color="text.secondary"
+      fontWeight={700}
+      sx={{ minWidth: 72, flexShrink: 0 }}
+    >
+      {label}
+    </Typography>
+    <Typography
+      variant="caption"
+      fontWeight={700}
+      color={configToneColor(tone)}
+      sx={{
+        wordBreak: 'break-word',
+        fontFamily: mono ? 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace' : 'inherit',
+      }}
+    >
+      {value}
+    </Typography>
+  </Stack>
+);
+
+interface RowActionProps {
+  label: string;
+  onClick: () => void;
+  children: React.ReactNode;
+  tone?: 'default' | 'accent' | 'danger';
+}
+
+/** Icon action used in the table's actions column. */
+const RowAction: React.FC<RowActionProps> = ({ label, onClick, children, tone = 'default' }) => {
+  const theme = useTheme();
+  const color =
+    tone === 'danger' ? theme.palette.error.main : tone === 'accent' ? BRAND_ACCENT : theme.palette.primary.main;
+
+  return (
+    <Tooltip title={label}>
+      <IconButton
+        size="small"
+        aria-label={label}
+        onClick={onClick}
+        sx={{
+          width: 32,
+          height: 32,
+          borderRadius: '8px',
+          color,
+          bgcolor: alpha(color, 0.08),
+          '&:hover': { bgcolor: color, color: '#fff' },
+        }}
+      >
+        {children}
+      </IconButton>
+    </Tooltip>
+  );
+};
+
+interface SummaryCardProps {
+  label: string;
+  children: React.ReactNode;
+}
+
+/** Compact property card shown above the fields table. */
+const SummaryCard: React.FC<SummaryCardProps> = ({ label, children }) => {
+  const theme = useTheme();
+
+  return (
+    <Paper
+      elevation={0}
+      sx={{
+        p: 2,
+        height: '100%',
+        borderRadius: '16px',
+        border: '1px solid',
+        borderColor: subtleBorder(theme, 0.14),
+        bgcolor: 'background.paper',
+      }}
+    >
+      <Typography
+        variant="caption"
+        fontWeight={800}
+        color="text.secondary"
+        sx={{ display: 'block', mb: 1, letterSpacing: '0.08em' }}
+      >
+        {label}
+      </Typography>
+      {children}
+    </Paper>
+  );
+};
+
+// ─── Field row ────────────────────────────────────────────────────────────────
 
 interface FieldCardProps {
   formId: number;
@@ -1156,221 +1280,352 @@ const FieldCard: React.FC<FieldCardProps> = ({ formId, field }) => {
     });
   };
 
+  // Same configuration text the card used to show, compacted into one cell.
+  const frequencyLabel = `${field.frequency !== null ? field.frequency.nameEn : 'Not assigned'}${
+    field.periodStartDate !== null && field.periodStartDate.length > 0
+      ? ` · start ${toDateInputValue(field.periodStartDate)}`
+      : ''
+  }`;
+  const hasConfiguration =
+    fieldRequirements?.showKpiField === true ||
+    Boolean(fieldRequirements?.requiresLookup) ||
+    Boolean(fieldRequirements?.requiresCalculation) ||
+    Boolean(fieldRequirements?.requiresTableColumns) ||
+    fieldRequirements?.controlKey === ControlKeys.Label;
+
+  // Row tints are layered over the paper colour so the sticky actions cell stays opaque.
+  const tintLayer = (color: string): string => `linear-gradient(${color}, ${color})`;
+  const baseTint = field.isActive ? 'transparent' : alpha(theme.palette.grey[500], 0.08);
+  const stripeTint = field.isActive ? alpha(theme.palette.primary.main, 0.03) : alpha(theme.palette.grey[500], 0.11);
+  const hoverTint = alpha(BRAND_ACCENT, 0.08);
+
   return (
-    <Paper
-      elevation={0}
-      sx={{
-        border: '1px solid',
-        borderColor: alpha(theme.palette.divider, 0.08),
-        borderRadius: '20px',
-        overflow: 'hidden',
-        mb: 2.5,
-        bgcolor: '#fff',
-        transition: 'all 0.2s ease',
-        '&:hover': {
-          borderColor: alpha(BRAND_ACCENT, 0.3),
-          boxShadow: `0 8px 24px ${alpha(BRAND_NAVY, 0.05)}`,
-        }
-      }}
-    >
-      {/* Field header */}
-      <Box
+    <>
+      <TableRow
         sx={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 2,
-          px: 3,
-          py: 2,
-          bgcolor: alpha(theme.palette.divider, 0.02),
-          borderBottom: '1px solid',
-          borderColor: alpha(theme.palette.divider, 0.05),
+          '& td': {
+            bgcolor: 'background.paper',
+            backgroundImage: tintLayer(baseTint),
+            borderColor: subtleBorder(theme, 0.1),
+            py: 1.75,
+            verticalAlign: 'top',
+            transition: 'background-image 0.15s ease',
+          },
+          // Status accent bar on the leading edge of every row.
+          '& td:first-of-type': {
+            boxShadow: `inset 3px 0 0 ${field.isActive ? BRAND_ACCENT : theme.palette.text.disabled}`,
+          },
+          '&:nth-of-type(even) td': { backgroundImage: tintLayer(stripeTint) },
+          '&:hover td': { backgroundImage: tintLayer(hoverTint) },
+          '&:last-child td': { borderBottom: 0 },
+          // Inactive fields read as muted without hiding their content.
+          ...(field.isActive ? {} : { '& td:not(:last-of-type) > *': { opacity: 0.72 } }),
         }}
       >
-        <DragIcon sx={{ color: 'text.disabled', cursor: 'grab' }} />
+        {/* Display order */}
+        <TableCell sx={{ width: 72 }}>
+          <Box
+            sx={{
+              width: 32,
+              height: 32,
+              borderRadius: '8px',
+              display: 'grid',
+              placeItems: 'center',
+              fontWeight: 800,
+              fontSize: 12,
+              color: theme.palette.primary.main,
+              bgcolor: alpha(theme.palette.primary.main, 0.08),
+            }}
+          >
+            {field.displayOrder}
+          </Box>
+        </TableCell>
 
-        <Box sx={{ flex: 1 }}>
-          <Stack direction="row" alignItems="center" gap={1.5} flexWrap="wrap">
-            <Typography variant="subtitle2" fontWeight={800} color="text.primary">
-              {field.labelEn}
-            </Typography>
-            <Typography
-              variant="caption"
-              sx={{
-                fontFamily: 'monospace',
-                bgcolor: alpha(BRAND_NAVY, 0.05),
-                color: BRAND_NAVY,
-                px: 1,
-                py: 0.25,
-                borderRadius: '6px',
-                fontWeight: 700,
-                fontSize: 10,
-              }}
-            >
-              {field.fieldKey}
-            </Typography>
-            {field.isRequired && (
-              <Chip label="Required" size="small" sx={{ height: 18, fontSize: 9, fontWeight: 900, bgcolor: alpha(theme.palette.warning.main, 0.1), color: 'warning.dark', border: 'none' }} />
-            )}
-          </Stack>
-          <Typography variant="caption" color="text.secondary" sx={{ direction: 'rtl', display: 'block', fontWeight: 600 }}>
+        {/* Field identity */}
+        <TableCell>
+          <Typography variant="body2" fontWeight={800} color="text.primary">
+            {field.labelEn}
+          </Typography>
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            fontWeight={600}
+            sx={{ direction: 'rtl', display: 'block', mt: 0.25 }}
+          >
             {field.labelAr}
           </Typography>
-        </Box>
-
-        <Stack direction="row" gap={1} alignItems="center">
-          <Chip
-            label={`Order: ${field.displayOrder}`}
-            size="small"
-            variant="outlined"
-            sx={{ height: 22, fontSize: 10, fontWeight: 700, color: 'text.disabled', borderColor: 'divider' }}
-          />
-          <IconButton
-            size="small"
-            onClick={() => setEditFieldOpen(true)}
-            sx={{ color: BRAND_ACCENT, '&:hover': { bgcolor: alpha(BRAND_ACCENT, 0.1) } }}
+          <Typography
+            variant="caption"
+            sx={{
+              display: 'inline-block',
+              mt: 0.75,
+              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
+              bgcolor: alpha(theme.palette.primary.main, 0.06),
+              color: theme.palette.primary.main,
+              px: 0.75,
+              py: 0.25,
+              borderRadius: '6px',
+              fontWeight: 700,
+              fontSize: 11,
+            }}
           >
-            <EditIcon fontSize="small" />
-          </IconButton>
-          <IconButton size="small" onClick={() => setConfirmRemoveFieldOpen(true)} sx={{ color: 'error.light', '&:hover': { bgcolor: alpha(theme.palette.error.main, 0.1) } }}>
-            <DeleteIcon fontSize="small" />
-          </IconButton>
-        </Stack>
-      </Box>
+            {field.fieldKey}
+          </Typography>
+        </TableCell>
 
-      {/* Details section */}
-      <Box sx={{ p: 3 }}>
-        <Typography variant="caption" fontWeight={800} color="text.secondary" sx={{ textTransform: 'uppercase', letterSpacing: 1, display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-          <DependenciesIcon fontSize="inherit" />
-          Logic & Validation
-        </Typography>
+        {/* Control type */}
+        <TableCell sx={{ minWidth: 120 }}>
+          <Chip
+            label={formatControlTypeLabel(field.controlTypeId, controlTypes)}
+            size="small"
+            sx={{
+              height: 'auto',
+              maxWidth: '100%',
+              fontWeight: 700,
+              fontSize: 11,
+              borderRadius: '6px',
+              bgcolor: alpha(BRAND_ACCENT, 0.1),
+              color: BRAND_ACCENT,
+              border: 'none',
+              '& .MuiChip-label': { px: 1, whiteSpace: 'normal', textAlign: 'left' },
+            }}
+          />
+        </TableCell>
 
-        <Stack spacing={1}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 1, px: 1.5, borderRadius: '8px', bgcolor: 'action.hover' }}>
-            <Typography variant="caption" fontWeight={700}>Type:</Typography>
-            <Typography variant="caption" fontWeight={800} color="text.primary">
-              {formatControlTypeLabel(field.controlTypeId, controlTypes)}
-            </Typography>
-          </Box>
-          {fieldRequirements?.showKpiField === true && (
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 1, px: 1.5, borderRadius: '8px', bgcolor: 'action.hover' }}>
-              <Typography variant="caption" fontWeight={700}>Frequency:</Typography>
-              <Typography
-                variant="caption"
-                fontWeight={800}
-                color={field.frequency !== null ? 'text.primary' : 'text.disabled'}
-              >
-                {field.frequency !== null ? field.frequency.nameEn : 'Not assigned'}
-                {field.periodStartDate !== null && field.periodStartDate.length > 0
-                  ? ` · start ${toDateInputValue(field.periodStartDate)}`
-                  : ''}
-              </Typography>
-            </Box>
-          )}
-          {fieldRequirements?.requiresLookup && (
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 1, px: 1.5, borderRadius: '8px', bgcolor: 'action.hover' }}>
-              <Typography variant="caption" fontWeight={700}>Lookup:</Typography>
-              <Typography
-                variant="caption"
-                fontWeight={800}
-                color={field.lookupTypeId !== null ? 'text.primary' : 'error.main'}
-              >
-                {field.lookupTypeId !== null
-                  ? formatLookupTypeLabel(field.lookupTypeId, lookupTypes)
-                  : 'Not assigned'}
-              </Typography>
-            </Box>
-          )}
-          {fieldRequirements?.requiresCalculation && (
-            <>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 1, px: 1.5, borderRadius: '8px', bgcolor: 'action.hover' }}>
-                <Typography variant="caption" fontWeight={700}>Formula:</Typography>
-                <Typography variant="caption" fontWeight={800} color={calculation !== null ? 'text.primary' : 'error.main'}>
-                  {calculation !== null ? calculation.formulaExpression : 'Not configured'}
-                </Typography>
-              </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 1, px: 1.5, borderRadius: '8px', bgcolor: 'action.hover' }}>
-                <Typography variant="caption" fontWeight={700}>Result:</Typography>
-                <Typography variant="caption" fontWeight={800} color={calculation !== null ? 'text.primary' : 'text.disabled'}>
-                  {calculation !== null ? calculation.resultLabelEn : '—'}
-                </Typography>
-              </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 1, px: 1.5, borderRadius: '8px', bgcolor: 'action.hover' }}>
-                <Typography variant="caption" fontWeight={700}>Inputs:</Typography>
-                <Typography variant="caption" fontWeight={800} color={calculation !== null ? 'text.primary' : 'text.disabled'}>
-                  {calculation !== null ? calculation.formFieldCalculationInputs.length : 0}
-                </Typography>
-              </Box>
-              <Button
-                size="small"
-                variant="outlined"
-                onClick={() => setCalculationDialogOpen(true)}
-                sx={{ mt: 0.5, borderRadius: '10px', fontWeight: 700, textTransform: 'none' }}
-              >
-                {calculation !== null ? 'Edit Calculation' : 'Configure Calculation'}
-              </Button>
-            </>
-          )}
-          {fieldRequirements?.requiresTableColumns && (
-            <>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 1, px: 1.5, borderRadius: '8px', bgcolor: 'action.hover' }}>
-                <Typography variant="caption" fontWeight={700}>Columns:</Typography>
-                <Typography variant="caption" fontWeight={800} color={field.formFieldColumns.length > 0 ? 'text.primary' : 'warning.main'}>
-                  {field.formFieldColumns.length}
-                </Typography>
-              </Box>
-              {fieldRequirements.requiresTableRows && (
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 1, px: 1.5, borderRadius: '8px', bgcolor: 'action.hover' }}>
-                  <Typography variant="caption" fontWeight={700}>Rows:</Typography>
-                  <Typography variant="caption" fontWeight={800} color={field.formFieldRows.length > 0 ? 'text.primary' : 'warning.main'}>
-                    {field.formFieldRows.length}
-                  </Typography>
-                </Box>
+        {/* Type-specific configuration */}
+        <TableCell>
+          {hasConfiguration ? (
+            <Stack spacing={0.75} alignItems="flex-start">
+              {fieldRequirements?.showKpiField === true && (
+                <ConfigLine
+                  label="Frequency"
+                  value={frequencyLabel}
+                  tone={field.frequency !== null ? 'primary' : 'muted'}
+                />
               )}
-              <Button
-                size="small"
-                variant="outlined"
-                onClick={() => setTableDialogOpen(true)}
-                sx={{ mt: 0.5, borderRadius: '10px', fontWeight: 700, textTransform: 'none' }}
-              >
-                {fieldRequirements.requiresTableRows ? 'Configure Grid' : 'Configure Columns'}
-              </Button>
-            </>
+              {fieldRequirements?.requiresLookup && (
+                <ConfigLine
+                  label="Lookup"
+                  value={
+                    field.lookupTypeId !== null
+                      ? formatLookupTypeLabel(field.lookupTypeId, lookupTypes)
+                      : 'Not assigned'
+                  }
+                  tone={field.lookupTypeId !== null ? 'primary' : 'error'}
+                />
+              )}
+              {fieldRequirements?.requiresCalculation && (
+                <>
+                  <ConfigLine
+                    label="Formula"
+                    value={calculation !== null ? calculation.formulaExpression : 'Not configured'}
+                    tone={calculation !== null ? 'primary' : 'error'}
+                    mono
+                  />
+                  <ConfigLine
+                    label="Result"
+                    value={calculation !== null ? calculation.resultLabelEn : '—'}
+                    tone={calculation !== null ? 'primary' : 'muted'}
+                  />
+                  <ConfigLine
+                    label="Inputs"
+                    value={calculation !== null ? String(calculation.formFieldCalculationInputs.length) : '0'}
+                    tone={calculation !== null ? 'primary' : 'muted'}
+                  />
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    startIcon={<FormulaIcon />}
+                    onClick={() => setCalculationDialogOpen(true)}
+                    sx={{
+                      borderRadius: '8px',
+                      fontWeight: 700,
+                      textTransform: 'none',
+                      mt: 0.25,
+                      maxWidth: '100%',
+                      height: 'auto',
+                      py: 0.75,
+                      lineHeight: 1.3,
+                      whiteSpace: 'normal',
+                      textAlign: 'left',
+                    }}
+                  >
+                    {calculation !== null ? 'Edit Calculation' : 'Configure Calculation'}
+                  </Button>
+                </>
+              )}
+              {fieldRequirements?.requiresTableColumns && (
+                <>
+                  <ConfigLine
+                    label="Columns"
+                    value={String(field.formFieldColumns.length)}
+                    tone={field.formFieldColumns.length > 0 ? 'primary' : 'warning'}
+                  />
+                  {fieldRequirements.requiresTableRows && (
+                    <ConfigLine
+                      label="Rows"
+                      value={String(field.formFieldRows.length)}
+                      tone={field.formFieldRows.length > 0 ? 'primary' : 'warning'}
+                    />
+                  )}
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    startIcon={<ColumnsIcon />}
+                    onClick={() => setTableDialogOpen(true)}
+                    sx={{
+                      borderRadius: '8px',
+                      fontWeight: 700,
+                      textTransform: 'none',
+                      mt: 0.25,
+                      maxWidth: '100%',
+                      height: 'auto',
+                      py: 0.75,
+                      lineHeight: 1.3,
+                      whiteSpace: 'normal',
+                      textAlign: 'left',
+                    }}
+                  >
+                    {fieldRequirements.requiresTableRows ? 'Configure Grid' : 'Configure Columns'}
+                  </Button>
+                </>
+              )}
+              {fieldRequirements?.controlKey === ControlKeys.Label && (
+                <ConfigLine label="Display" value={field.placeholderEn ?? '—'} tone="primary" />
+              )}
+              {fieldRequirements?.showKpiField === true && (
+                <Button
+                  size="small"
+                  variant="outlined"
+                  startIcon={<FrequencyIcon />}
+                  onClick={() => setFrequencyDialogOpen(true)}
+                  sx={{
+                    borderRadius: '8px',
+                    fontWeight: 700,
+                    textTransform: 'none',
+                    maxWidth: '100%',
+                    height: 'auto',
+                    py: 0.75,
+                    lineHeight: 1.3,
+                    whiteSpace: 'normal',
+                    textAlign: 'left',
+                  }}
+                >
+                  {field.frequency !== null ? 'Manage Frequency' : 'Assign Frequency'}
+                </Button>
+              )}
+            </Stack>
+          ) : (
+            <Typography variant="caption" color="text.disabled" fontWeight={700}>
+              —
+            </Typography>
           )}
-          {fieldRequirements?.controlKey === ControlKeys.Label && (
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 1, px: 1.5, borderRadius: '8px', bgcolor: 'action.hover' }}>
-              <Typography variant="caption" fontWeight={700}>Display:</Typography>
-              <Typography variant="caption" fontWeight={800} color="text.primary">
-                {field.placeholderEn ?? '—'}
-              </Typography>
-            </Box>
-          )}
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 1, px: 1.5, borderRadius: '8px', bgcolor: 'action.hover' }}>
-            <Typography variant="caption" fontWeight={700}>Rules:</Typography>
-            <Typography variant="caption" fontWeight={800} color={field.fieldDependencies.length > 0 ? BRAND_ACCENT : 'text.disabled'}>
+        </TableCell>
+
+        {/* Dependency rules */}
+        <TableCell sx={{ minWidth: 148 }}>
+          <Stack direction="row" spacing={0.75} alignItems="center">
+            <DependenciesIcon
+              sx={{
+                fontSize: 16,
+                color: field.fieldDependencies.length > 0 ? BRAND_ACCENT : 'text.disabled',
+              }}
+            />
+            <Typography
+              variant="caption"
+              fontWeight={800}
+              color={field.fieldDependencies.length > 0 ? BRAND_ACCENT : 'text.disabled'}
+            >
               {field.fieldDependencies.length} Rules Active
             </Typography>
-          </Box>
-          <Button
-            size="small"
-            variant="outlined"
-            startIcon={<EditIcon />}
-            onClick={() => setEditFieldOpen(true)}
-            sx={{ mt: 0.5, borderRadius: '10px', fontWeight: 700, textTransform: 'none' }}
-          >
-            Edit Field
-          </Button>
-          {fieldRequirements?.showKpiField === true && (
-            <Button
+          </Stack>
+        </TableCell>
+
+        {/* Flags already stored on the field */}
+        <TableCell sx={{ minWidth: 120 }}>
+          <Stack spacing={0.75} alignItems="flex-start">
+            <Chip
+              label={field.isActive ? 'Active' : 'Inactive'}
               size="small"
-              variant="outlined"
-              onClick={() => setFrequencyDialogOpen(true)}
-              sx={{ borderRadius: '10px', fontWeight: 700, textTransform: 'none' }}
-            >
-              {field.frequency !== null ? 'Manage Frequency' : 'Assign Frequency'}
-            </Button>
-          )}
-        </Stack>
-      </Box>
+              sx={{
+                height: 22,
+                fontWeight: 800,
+                fontSize: 10,
+                borderRadius: '6px',
+                bgcolor: field.isActive
+                  ? alpha(theme.palette.success.main, 0.12)
+                  : alpha(theme.palette.text.primary, 0.06),
+                color: field.isActive ? 'success.main' : 'text.disabled',
+              }}
+            />
+            {field.isRequired && (
+              <Chip
+                label="Required"
+                size="small"
+                sx={{
+                  height: 22,
+                  fontSize: 10,
+                  fontWeight: 800,
+                  borderRadius: '6px',
+                  bgcolor: alpha(theme.palette.warning.main, 0.12),
+                  color: 'warning.dark',
+                }}
+              />
+            )}
+            {field.isReadOnly && (
+              <Chip
+                label="Read-only"
+                size="small"
+                sx={{
+                  height: 22,
+                  fontSize: 10,
+                  fontWeight: 800,
+                  borderRadius: '6px',
+                  bgcolor: alpha(theme.palette.primary.main, 0.08),
+                  color: theme.palette.primary.main,
+                }}
+              />
+            )}
+            {!field.isVisible && (
+              <Chip
+                label="Hidden"
+                size="small"
+                sx={{
+                  height: 22,
+                  fontSize: 10,
+                  fontWeight: 800,
+                  borderRadius: '6px',
+                  bgcolor: alpha(theme.palette.text.primary, 0.06),
+                  color: 'text.secondary',
+                }}
+              />
+            )}
+          </Stack>
+        </TableCell>
+
+        {/* Row actions stay visible when the table scrolls sideways */}
+        <TableCell
+          align="right"
+          sx={{
+            width: 96,
+            whiteSpace: 'nowrap',
+            position: 'sticky',
+            right: 0,
+            zIndex: 1,
+            borderLeft: '1px solid',
+            borderLeftColor: alpha(theme.palette.divider, 0.12),
+          }}
+        >
+          <Stack direction="row" spacing={0.75} justifyContent="flex-end">
+            <RowAction label="Edit Field" tone="accent" onClick={() => setEditFieldOpen(true)}>
+              <EditIcon sx={{ fontSize: 16 }} />
+            </RowAction>
+            <RowAction label="Delete field" tone="danger" onClick={() => setConfirmRemoveFieldOpen(true)}>
+              <DeleteIcon sx={{ fontSize: 16 }} />
+            </RowAction>
+          </Stack>
+        </TableCell>
+      </TableRow>
 
       {editFieldOpen && (
         <EditFieldDialog
@@ -1435,7 +1690,7 @@ const FieldCard: React.FC<FieldCardProps> = ({ formId, field }) => {
           </Button>
         </DialogActions>
       </Dialog>
-    </Paper>
+    </>
   );
 };
 
@@ -1484,227 +1739,301 @@ const FormDetail: React.FC = () => {
     ? Math.max(...fields.map((f) => f.displayOrder))
     : 0;
 
+  // Shared header cell style for the fields table.
+  const headerCellSx: SxProps<Theme> = {
+    fontSize: 11,
+    fontWeight: 700,
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase',
+    color: 'text.secondary',
+    bgcolor: alpha(theme.palette.text.primary, 0.03),
+    borderBottom: '1px solid',
+    borderColor: subtleBorder(theme, 0.12),
+    py: 1.75,
+  };
+
   return (
     <AdminLayout title={form.nameEn}>
-      <Box sx={{ maxWidth: 1000 }}>
-        {/* Header */}
-        <Paper
-          elevation={0}
-          sx={{
-            p: 3,
-            mb: 4,
-            borderRadius: '24px',
-            border: '1px solid',
-            borderColor: alpha(theme.palette.divider, 0.08),
-            bgcolor: alpha('#fff', 0.95),
-            backdropFilter: 'blur(12px)',
-            position: 'sticky',
-            top: -40,
-            zIndex: 11,
-            boxShadow: '0 8px 24px rgba(15, 23, 42, 0.06)',
-          }}
+      <Box sx={{ width: '100%', maxWidth: 1360 }}>
+        {/* Page header */}
+        <Stack
+          direction={{ xs: 'column', md: 'row' }}
+          alignItems={{ xs: 'stretch', md: 'center' }}
+          justifyContent="space-between"
+          spacing={2}
+          sx={{ mb: 3 }}
         >
-          <Stack direction="row" alignItems="center" gap={3}>
+          <Stack direction="row" alignItems="center" spacing={2} sx={{ minWidth: 0 }}>
             <IconButton
               onClick={() => navigate('/admin/forms')}
-              sx={{ bgcolor: 'action.hover', borderRadius: '12px' }}
+              aria-label="Back to forms"
+              sx={{
+                borderRadius: '12px',
+                border: '1px solid',
+                borderColor: subtleBorder(theme, 0.18),
+                bgcolor: 'background.paper',
+              }}
             >
               <BackIcon />
             </IconButton>
-
-            <Box sx={{ flex: 1 }}>
-              <Stack direction="row" alignItems="center" gap={2} sx={{ mb: 0.5 }}>
-                <Typography variant="h5" fontWeight={900} color="text.primary" sx={{ letterSpacing: -0.5 }}>
+            <Box sx={{ minWidth: 0 }}>
+              <Stack direction="row" alignItems="center" spacing={1.25} flexWrap="wrap" useFlexGap>
+                <Typography variant="h5" fontWeight={800} color="text.primary" sx={{ letterSpacing: -0.4 }}>
                   {form.nameEn}
                 </Typography>
                 <Chip
                   label={form.formKey}
                   size="small"
-                  sx={{ bgcolor: alpha(BRAND_NAVY, 0.05), color: BRAND_NAVY, fontWeight: 800, borderRadius: '6px', fontSize: 10 }}
+                  sx={{
+                    height: 22,
+                    bgcolor: alpha(theme.palette.primary.main, 0.08),
+                    color: theme.palette.primary.main,
+                    fontWeight: 800,
+                    borderRadius: '6px',
+                    fontSize: 11,
+                    fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
+                  }}
                 />
               </Stack>
-              <Typography variant="body2" color="text.secondary" fontWeight={600} sx={{ direction: 'rtl', display: 'block' }}>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                fontWeight={600}
+                sx={{ direction: 'rtl', display: 'block', mt: 0.25 }}
+              >
                 {form.nameAr}
               </Typography>
             </Box>
+          </Stack>
 
-            <Stack direction="row" gap={1.5}>
-              <IconButton
-                onClick={() => void refetch()}
-                disabled={isFetching}
-                sx={{ bgcolor: 'action.hover', borderRadius: '12px' }}
+          <Stack direction="row" spacing={1.25} justifyContent="flex-end">
+            <IconButton
+              onClick={() => void refetch()}
+              disabled={isFetching}
+              aria-label="Refresh form"
+              sx={{
+                borderRadius: '12px',
+                border: '1px solid',
+                borderColor: subtleBorder(theme, 0.18),
+                bgcolor: 'background.paper',
+              }}
+            >
+              {isFetching ? <CircularProgress size={20} thickness={6} /> : <RefreshIcon fontSize="small" />}
+            </IconButton>
+            <Button
+              variant="contained"
+              disableElevation
+              startIcon={<AddIcon />}
+              onClick={() => setAddFieldOpen(true)}
+              sx={{ borderRadius: '12px', fontWeight: 700, px: 2.5, textTransform: 'none' }}
+            >
+              Add Field
+            </Button>
+          </Stack>
+        </Stack>
+
+        {/* Form properties, laid out beside the table instead of a sidebar */}
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', md: '220px 260px minmax(0, 1fr)' },
+            gap: 2,
+            mb: 3,
+          }}
+        >
+          <SummaryCard label="STATUS">
+            <Chip
+              label={form.isActive ? 'PUBLISHED & ACTIVE' : 'DRAFT / INACTIVE'}
+              size="small"
+              sx={{
+                height: 28,
+                borderRadius: '8px',
+                fontWeight: 800,
+                fontSize: 10,
+                bgcolor: form.isActive ? alpha(theme.palette.success.main, 0.12) : alpha(theme.palette.text.primary, 0.06),
+                color: form.isActive ? 'success.main' : 'text.disabled',
+              }}
+            />
+          </SummaryCard>
+
+          <SummaryCard label="VERSION HISTORY">
+            <Stack direction="row" alignItems="center" spacing={1.25}>
+              <Box
+                sx={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: '10px',
+                  display: 'grid',
+                  placeItems: 'center',
+                  bgcolor: alpha(theme.palette.primary.main, 0.08),
+                  color: theme.palette.primary.main,
+                }}
               >
-                {isFetching ? <CircularProgress size={20} thickness={6} /> : <RefreshIcon fontSize="small" />}
-              </IconButton>
-              <Button
-                variant="contained"
-                disableElevation
-                startIcon={<AddIcon />}
-                onClick={() => setAddFieldOpen(true)}
-                sx={{ borderRadius: '12px', fontWeight: 700, px: 3, textTransform: 'none' }}
-              >
-                Add Field
-              </Button>
+                <VersionIcon fontSize="small" />
+              </Box>
+              <Box>
+                <Typography variant="body2" fontWeight={800}>
+                  v{form.version}.0
+                </Typography>
+                <Typography variant="caption" color="text.secondary" fontWeight={600}>
+                  Updated: {new Date(form.createdAt).toLocaleDateString()}
+                </Typography>
+              </Box>
+            </Stack>
+          </SummaryCard>
+
+          <SummaryCard label="DESCRIPTION">
+            <Typography variant="body2" color="text.secondary" fontWeight={600} sx={{ lineHeight: 1.6 }}>
+              {form.descriptionEn || 'No description provided for this form structure.'}
+            </Typography>
+          </SummaryCard>
+        </Box>
+
+        {/* Fields table */}
+        <Paper
+          elevation={0}
+          sx={{
+            borderRadius: '16px',
+            border: '1px solid',
+            borderColor: subtleBorder(theme, 0.14),
+            bgcolor: 'background.paper',
+            overflow: 'hidden',
+          }}
+        >
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            alignItems={{ xs: 'stretch', sm: 'center' }}
+            justifyContent="space-between"
+            spacing={1.5}
+            sx={{
+              px: 2.5,
+              py: 2,
+              borderBottom: '1px solid',
+              borderColor: subtleBorder(theme, 0.12),
+            }}
+          >
+            <Box>
+              <Typography variant="subtitle1" fontWeight={800} color="text.primary">
+                Fields
+              </Typography>
+              <Typography variant="caption" color="text.disabled" fontWeight={800} sx={{ letterSpacing: '0.04em' }}>
+                CHANGES ARE SAVED AUTOMATICALLY
+              </Typography>
+            </Box>
+            <Stack direction="row" alignItems="center" spacing={1.5} flexWrap="wrap" useFlexGap>
+              <FormControl size="small" sx={{ minWidth: 160 }}>
+                <Select
+                  value={isActiveFilter === undefined ? '' : String(isActiveFilter)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setIsActiveFilter(val === '' ? undefined : val === 'true');
+                  }}
+                  displayEmpty
+                  startAdornment={<FilterIcon fontSize="small" sx={{ mr: 1, color: 'text.secondary' }} />}
+                  sx={{
+                    borderRadius: '10px',
+                    bgcolor: 'background.paper',
+                    fontWeight: 600,
+                    fontSize: 13,
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: subtleBorder(theme, 0.28),
+                    },
+                  }}
+                >
+                  <MenuItem value="" sx={{ fontWeight: 600 }}>All Status</MenuItem>
+                  <MenuItem value="true" sx={{ fontWeight: 600 }}>Active Only</MenuItem>
+                  <MenuItem value="false" sx={{ fontWeight: 600 }}>Inactive Only</MenuItem>
+                </Select>
+              </FormControl>
+              <Typography variant="caption" color="text.secondary" fontWeight={800} sx={{ letterSpacing: '0.04em' }}>
+                {isActiveFilter === undefined
+                  ? `${fields.length} TOTAL ELEMENTS`
+                  : `${filteredFields.length} OF ${fields.length} ELEMENTS`}
+              </Typography>
             </Stack>
           </Stack>
-        </Paper>
 
-        <Grid container spacing={4}>
-          <Grid size={{ xs: 12, md: 8 }}>
-            <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 3, px: 1 }} flexWrap="wrap" gap={2}>
-              <Typography variant="h6" fontWeight={800} color="text.primary" sx={{ letterSpacing: -0.5 }}>
-                Form Canvas
+          {fields.length === 0 ? (
+            <Box sx={{ px: 3, py: 10, textAlign: 'center' }}>
+              <Avatar
+                sx={{
+                  width: 64,
+                  height: 64,
+                  bgcolor: alpha(theme.palette.text.primary, 0.05),
+                  color: 'text.disabled',
+                  mx: 'auto',
+                  mb: 2.5,
+                }}
+              >
+                <FormIcon />
+              </Avatar>
+              <Typography variant="h6" fontWeight={800} color="text.secondary" gutterBottom>
+                Empty Canvas
               </Typography>
-              <Stack direction="row" alignItems="center" gap={2}>
-                <FormControl size="small" sx={{ minWidth: 140 }}>
-                  <Select
-                    value={isActiveFilter === undefined ? '' : String(isActiveFilter)}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setIsActiveFilter(val === '' ? undefined : val === 'true');
-                    }}
-                    displayEmpty
-                    startAdornment={<FilterIcon fontSize="small" sx={{ mr: 1, color: 'text.secondary' }} />}
-                    sx={{ borderRadius: '12px', bgcolor: 'action.hover', '& fieldset': { border: 'none' } }}
-                  >
-                    <MenuItem value="" sx={{ fontWeight: 600 }}>All Status</MenuItem>
-                    <MenuItem value="true" sx={{ fontWeight: 600 }}>Active Only</MenuItem>
-                    <MenuItem value="false" sx={{ fontWeight: 600 }}>Inactive Only</MenuItem>
-                  </Select>
-                </FormControl>
-                <Typography variant="caption" color="text.secondary" fontWeight={800}>
-                  {isActiveFilter === undefined
-                    ? `${fields.length} TOTAL ELEMENTS`
-                    : `${filteredFields.length} OF ${fields.length} ELEMENTS`}
-                </Typography>
-              </Stack>
-            </Stack>
-
-            {fields.length === 0 ? (
-              <Box
-                sx={{
-                  p: 10,
-                  textAlign: 'center',
-                  border: '2px dashed',
-                  borderColor: 'divider',
-                  borderRadius: '32px',
-                  bgcolor: alpha(theme.palette.divider, 0.02)
-                }}
+              <Typography variant="body2" color="text.disabled" fontWeight={600} sx={{ mb: 3 }}>
+                Start building your form by adding the first field element.
+              </Typography>
+              <Button
+                variant="outlined"
+                startIcon={<AddIcon />}
+                onClick={() => setAddFieldOpen(true)}
+                sx={{ borderRadius: '12px', fontWeight: 700, px: 4, borderColor: BRAND_ACCENT, color: BRAND_ACCENT }}
               >
-                <Avatar sx={{ width: 64, height: 64, bgcolor: alpha(theme.palette.divider, 0.1), color: 'text.disabled', mx: 'auto', mb: 3 }}>
-                  <FormIcon />
-                </Avatar>
-                <Typography variant="h6" fontWeight={800} color="text.secondary" gutterBottom>
-                  Empty Canvas
-                </Typography>
-                <Typography variant="body2" color="text.disabled" fontWeight={600} sx={{ mb: 4 }}>
-                  Start building your form by adding the first field element.
-                </Typography>
-                <Button
-                  variant="outlined"
-                  startIcon={<AddIcon />}
-                  onClick={() => setAddFieldOpen(true)}
-                  sx={{ borderRadius: '12px', fontWeight: 700, px: 4, borderColor: BRAND_ACCENT, color: BRAND_ACCENT }}
-                >
-                  Add First Field
-                </Button>
-              </Box>
-            ) : filteredFields.length === 0 ? (
-              <Box
-                sx={{
-                  p: 8,
-                  textAlign: 'center',
-                  border: '2px dashed',
-                  borderColor: 'divider',
-                  borderRadius: '32px',
-                  bgcolor: alpha(theme.palette.divider, 0.02),
-                }}
-              >
-                <Typography variant="h6" fontWeight={800} color="text.secondary" gutterBottom>
-                  No Matching Fields
-                </Typography>
-                <Typography variant="body2" color="text.disabled" fontWeight={600}>
-                  No fields match the selected status filter.
-                </Typography>
-              </Box>
-            ) : (
-              <Box>
-                {[...filteredFields]
-                  .sort((a, b) => a.displayOrder - b.displayOrder)
-                  .map((field) => (
-                    <FieldCard key={field.fieldId} formId={form.formId} field={field} />
-                  ))}
-              </Box>
-            )}
-          </Grid>
-
-          <Grid size={{ xs: 12, md: 4 }}>
-            <Stack spacing={3}>
-              {/* Form Properties Sidebar */}
-              <Paper
-                elevation={0}
-                sx={{
-                  p: 3,
-                  borderRadius: '24px',
-                  border: '1px solid',
-                  borderColor: alpha(theme.palette.divider, 0.08),
-                  bgcolor: '#fff',
-                }}
-              >
-                <Typography variant="subtitle1" fontWeight={800} color="text.primary" sx={{ mb: 2.5, display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <SettingsIcon fontSize="small" sx={{ color: BRAND_NAVY }} />
-                  Properties
-                </Typography>
-
-                <Stack spacing={2.5}>
-                  <Box>
-                    <Typography variant="caption" fontWeight={800} color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>STATUS</Typography>
-                    <Chip
-                      label={form.isActive ? 'PUBLISHED & ACTIVE' : 'DRAFT / INACTIVE'}
-                      size="small"
+                Add First Field
+              </Button>
+            </Box>
+          ) : (
+            <TableContainer>
+              <Table sx={{ width: '100%', '& .MuiTableCell-root': { px: 1.5 } }}>
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ ...headerCellSx, width: 56 }}>Order</TableCell>
+                    <TableCell sx={headerCellSx}>Field</TableCell>
+                    <TableCell sx={headerCellSx}>Control</TableCell>
+                    <TableCell sx={headerCellSx}>Configuration</TableCell>
+                    <TableCell sx={headerCellSx}>Rules</TableCell>
+                    <TableCell sx={headerCellSx}>Status</TableCell>
+                    <TableCell
+                      align="right"
                       sx={{
-                        width: '100%',
-                        height: 32,
-                        borderRadius: '8px',
-                        fontWeight: 900,
-                        fontSize: 10,
-                        bgcolor: form.isActive ? alpha(theme.palette.success.main, 0.1) : alpha(theme.palette.divider, 0.1),
-                        color: form.isActive ? 'success.main' : 'text.disabled',
-                        border: 'none'
+                        ...headerCellSx,
+                        width: 96,
+                        position: 'sticky',
+                        right: 0,
+                        zIndex: 3,
+                        bgcolor: 'background.paper',
+                        borderLeft: '1px solid',
+                        borderLeftColor: alpha(theme.palette.divider, 0.12),
                       }}
-                    />
-                  </Box>
-
-                  <Divider />
-
-                  <Box>
-                    <Typography variant="caption" fontWeight={800} color="text.secondary" sx={{ display: 'block', mb: 1 }}>VERSION HISTORY</Typography>
-                    <Stack direction="row" alignItems="center" gap={1.5} sx={{ p: 1.5, bgcolor: 'action.hover', borderRadius: '12px' }}>
-                      <VersionIcon sx={{ color: BRAND_NAVY }} />
-                      <Box>
-                        <Typography variant="body2" fontWeight={800}>v{form.version}.0</Typography>
-                        <Typography variant="caption" color="text.secondary" fontWeight={600}>Updated: {new Date(form.createdAt).toLocaleDateString()}</Typography>
-                      </Box>
-                    </Stack>
-                  </Box>
-
-                  <Box>
-                    <Typography variant="caption" fontWeight={800} color="text.secondary" sx={{ display: 'block', mb: 1 }}>DESCRIPTION</Typography>
-                    <Typography variant="body2" color="text.secondary" fontWeight={600} sx={{ lineHeight: 1.6 }}>
-                      {form.descriptionEn || 'No description provided for this form structure.'}
-                    </Typography>
-                  </Box>
-                </Stack>
-              </Paper>
-
-              <Box sx={{ p: 3, borderRadius: '24px', bgcolor: alpha(BRAND_NAVY, 0.03), border: '1px dashed', borderColor: alpha(BRAND_NAVY, 0.1) }}>
-                <Typography variant="caption" fontWeight={800} color="text.disabled" sx={{ display: 'block', textAlign: 'center' }}>
-                  CHANGES ARE SAVED AUTOMATICALLY
-                </Typography>
-              </Box>
-            </Stack>
-          </Grid>
-        </Grid>
+                    >
+                      Actions
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {filteredFields.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={7} align="center" sx={{ py: 8, borderBottom: 0 }}>
+                        <Typography variant="h6" fontWeight={800} color="text.secondary" gutterBottom>
+                          No Matching Fields
+                        </Typography>
+                        <Typography variant="body2" color="text.disabled" fontWeight={600}>
+                          No fields match the selected status filter.
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    [...filteredFields]
+                      .sort((a, b) => a.displayOrder - b.displayOrder)
+                      .map((field) => (
+                        <FieldCard key={field.fieldId} formId={form.formId} field={field} />
+                      ))
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+        </Paper>
       </Box>
 
       {/* Add field dialog */}

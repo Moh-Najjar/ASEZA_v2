@@ -134,13 +134,13 @@ body,
 
 /* Dark theme overrides — synced from ThemeContext via html[data-theme]. */
 html[data-theme='dark'] {
-  --app-bg: #0a1520;
-  --app-text: #c8daf5;
-  --scrollbar-track: #111e30;
-  --scrollbar-thumb: #3698BF;
-  --scrollbar-thumb-hover: #5db0d1;
-  --scrollbar-thumb-active: #0367A6;
-  --scrollbar-border: #111e30;
+  --app-bg: #0B1623;
+  --app-text: #E3ECF7;
+  --scrollbar-track: #0B1623;
+  --scrollbar-thumb: #2A3E57;
+  --scrollbar-thumb-hover: #3A9BD5;
+  --scrollbar-thumb-active: #1F78B0;
+  --scrollbar-border: #0B1623;
 
   color-scheme: dark;
   color: var(--app-text);

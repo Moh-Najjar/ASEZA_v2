@@ -15,7 +15,6 @@ import {
   useTheme,
   alpha,
   Avatar,
-  Button,
   Menu,
   MenuItem,
 } from '@mui/material';
@@ -29,11 +28,19 @@ import {
   Menu as MenuIcon,
   ChevronLeft as ChevronLeftIcon,
   NotificationsNone as NotificationsIcon,
+  MenuBook as DocsIcon,
 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useAdminAuth } from '../../../../core/context/AdminAuthContext';
-import { BRAND_NAVY, BRAND_NAVY_LIGHT, BRAND_ACCENT } from '../../../../core/constants/theme';
+import {
+  BRAND_NAVY,
+  BRAND_NAVY_LIGHT,
+  BRAND_ACCENT,
+  BRAND_PANEL_DARK,
+  BRAND_PANEL_DARK_LIGHT,
+} from '../../../../core/constants/theme';
 import LanguageSwitcher from '../../../shared/LanguageSwitcher';
+import ThemeToggle from '../../../shared/ThemeToggle';
 
 // ─── Sidebar constants ────────────────────────────────────────────────────────
 
@@ -52,6 +59,7 @@ const NAV_ITEMS: NavItem[] = [
   { labelKey: 'admin.nav.users', path: '/admin/users', icon: <UsersIcon /> },
   { labelKey: 'admin.nav.directorates', path: '/admin/directorates', icon: <DirectoratesIcon /> },
   { labelKey: 'admin.nav.forms', path: '/admin/forms', icon: <FormsIcon /> },
+  { labelKey: 'admin.nav.documentation', path: '/admin/docs', icon: <DocsIcon /> },
 ];
 
 // ─── AdminLayout ──────────────────────────────────────────────────────────────
@@ -69,6 +77,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
   const { adminLogout } = useAdminAuth();
   const muiTheme = useTheme();
   const palette = muiTheme.palette;
+  const isDark = palette.mode === 'dark';
+
+  // The bright brand gradient glares in dark mode, so the sidebar switches to deep navy.
+  const sidebarGradient = isDark
+    ? `linear-gradient(180deg, ${BRAND_PANEL_DARK} 0%, ${BRAND_PANEL_DARK_LIGHT} 100%)`
+    : `linear-gradient(180deg, ${BRAND_NAVY} 0%, ${BRAND_NAVY_LIGHT} 100%)`;
 
   const [expanded, setExpanded] = useState(true);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -95,7 +109,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
   };
 
   return (
-    <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden', bgcolor: '#f8fafc' }}>
+    <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden', bgcolor: isDark ? 'background.default' : '#f8fafc' }}>
 
       {/* ── Sidebar ── */}
       <Drawer
@@ -109,8 +123,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
             boxSizing: 'border-box',
             overflow: 'hidden',
             transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-            background: `linear-gradient(180deg, ${BRAND_NAVY} 0%, ${BRAND_NAVY_LIGHT} 100%)`,
+            background: sidebarGradient,
             borderRight: 'none',
+            borderInlineEnd: isDark ? `1px solid ${palette.divider}` : 'none',
             boxShadow: '4px 0 24px rgba(0,0,0,0.05)',
           },
         }}
@@ -261,13 +276,13 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
             display: 'flex',
             alignItems: 'center',
             px: 4,
-            bgcolor: alpha('#fff', 0.8),
+            bgcolor: alpha(palette.background.paper, 0.8),
             backdropFilter: 'blur(12px)',
             position: 'sticky',
             top: 0,
             zIndex: 10,
             borderBottom: '1px solid',
-            borderColor: alpha(palette.divider, 0.05),
+            borderColor: isDark ? palette.divider : alpha(palette.divider, 0.05),
             flexShrink: 0,
           }}
         >
@@ -296,6 +311,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
           <Stack direction="row" alignItems="center" gap={2}>
             {/* EN / AR toggle — persists via i18n localStorage and flips RTL layout. */}
             <LanguageSwitcher />
+            <Box sx={{ color: 'text.secondary' }}>
+              <ThemeToggle />
+            </Box>
             <Tooltip title={t('admin.notifications')}>
               <IconButton size="small" sx={{ color: 'text.secondary' }} aria-label={t('admin.notifications')}>
                 <NotificationsIcon />

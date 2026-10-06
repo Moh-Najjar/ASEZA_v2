@@ -79,6 +79,16 @@ export const ThemeContextProvider: React.FC<React.PropsWithChildren> = ({
   const theme = useMemo(() => {
     const themeConfig = THEME_CONFIG[mode];
     const commonConfig = THEME_CONFIG.common;
+    const isDark = mode === "dark";
+
+    // Light mode keeps a white page; dark mode uses the deepest layer so cards stand out.
+    const pageBackground = isDark
+      ? themeConfig.background.default
+      : themeConfig.background.paper;
+
+    // Hairline used to outline floating surfaces (menus, dialogs) in dark mode,
+    // where shadows alone are not visible.
+    const floatingBorder = `1px solid ${themeConfig.divider}`;
 
     return createTheme({
       direction,
@@ -92,6 +102,7 @@ export const ThemeContextProvider: React.FC<React.PropsWithChildren> = ({
         background: themeConfig.background,
         text: themeConfig.text,
         divider: themeConfig.divider,
+        action: themeConfig.action,
         error: themeConfig.error,
         warning: themeConfig.warning,
         info: themeConfig.info,
@@ -108,7 +119,7 @@ export const ThemeContextProvider: React.FC<React.PropsWithChildren> = ({
         MuiCssBaseline: {
           styleOverrides: {
             body: {
-              backgroundColor: themeConfig.background.paper,
+              backgroundColor: pageBackground,
               color: themeConfig.text.primary,
               transition: `background-color ${commonConfig.transitions.duration.standard}ms ${commonConfig.transitions.easing.easeInOut}, color ${commonConfig.transitions.duration.standard}ms ${commonConfig.transitions.easing.easeInOut}`,
               fontFamily: "var(--font-base)",
@@ -123,6 +134,97 @@ export const ThemeContextProvider: React.FC<React.PropsWithChildren> = ({
               "&:last-child": {
                 paddingBottom: 0,
               },
+            },
+          },
+        },
+        MuiPaper: {
+          styleOverrides: {
+            root: {
+              // MUI lightens dark papers with a white gradient per elevation,
+              // which washes out the navy palette. Use flat surfaces instead.
+              ...(isDark && { backgroundImage: "none" }),
+            },
+          },
+        },
+        MuiDialog: {
+          styleOverrides: {
+            paper: {
+              ...(isDark && { border: floatingBorder }),
+            },
+          },
+        },
+        MuiPopover: {
+          styleOverrides: {
+            paper: {
+              ...(isDark && {
+                backgroundColor: themeConfig.background.surface,
+                border: floatingBorder,
+              }),
+            },
+          },
+        },
+        MuiMenu: {
+          styleOverrides: {
+            paper: {
+              ...(isDark && {
+                backgroundColor: themeConfig.background.surface,
+                border: floatingBorder,
+              }),
+            },
+          },
+        },
+        MuiTooltip: {
+          styleOverrides: {
+            tooltip: {
+              ...(isDark && {
+                backgroundColor: themeConfig.background.surface,
+                color: themeConfig.text.primary,
+                border: floatingBorder,
+                boxShadow: "0 6px 20px rgba(0, 0, 0, 0.45)",
+              }),
+            },
+            arrow: {
+              ...(isDark && { color: themeConfig.background.surface }),
+            },
+          },
+        },
+        MuiBackdrop: {
+          styleOverrides: {
+            root: {
+              // Only tint modal backdrops; invisible backdrops (menus) stay transparent.
+              ...(isDark && {
+                "&:not(.MuiBackdrop-invisible)": {
+                  backgroundColor: "rgba(3, 8, 15, 0.72)",
+                },
+              }),
+            },
+          },
+        },
+        MuiOutlinedInput: {
+          styleOverrides: {
+            notchedOutline: {
+              ...(isDark && { borderColor: "rgba(157, 178, 204, 0.28)" }),
+            },
+            root: {
+              ...(isDark && {
+                "&:hover:not(.Mui-focused):not(.Mui-error):not(.Mui-disabled) .MuiOutlinedInput-notchedOutline":
+                  { borderColor: "rgba(157, 178, 204, 0.55)" },
+              }),
+            },
+          },
+        },
+        MuiTableCell: {
+          styleOverrides: {
+            root: {
+              // MUI darkens the divider for table rules, making them vanish on navy.
+              ...(isDark && { borderBottomColor: themeConfig.divider }),
+            },
+          },
+        },
+        MuiSkeleton: {
+          styleOverrides: {
+            root: {
+              ...(isDark && { backgroundColor: "rgba(157, 178, 204, 0.12)" }),
             },
           },
         },

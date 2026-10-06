@@ -52,7 +52,7 @@ import {
   useAssignFormToDirectorate,
   useRemoveFormFromDirectorate,
 } from '../../../../core/hooks/admin/useAdminDirectorates';
-import { BRAND_NAVY, BRAND_ACCENT } from '../../../../core/constants/theme';
+import { BRAND_ACCENT, subtleBorder } from '../../../../core/constants/theme';
 import type { AdminDirectorate, DirectorateFormAccess } from '../../../../core/types/admin/adminDirectorates';
 
 // ─── Assign Form Dialog ───────────────────────────────────────────────────────
@@ -252,7 +252,7 @@ const DirectorateRow: React.FC<DirectorateRowProps> = ({ directorate }) => {
               </Typography>
             </Box>
           ) : (
-            <TableContainer component={Paper} elevation={0} sx={{ borderRadius: '16px', border: '1px solid', borderColor: alpha(theme.palette.divider, 0.08), overflow: 'hidden' }}>
+            <TableContainer component={Paper} elevation={0} sx={{ borderRadius: '16px', border: '1px solid', borderColor: subtleBorder(theme, 0.08), overflow: 'hidden' }}>
               <Table size="small">
                 <TableHead>
                   <TableRow sx={{ bgcolor: alpha(theme.palette.divider, 0.02) }}>
@@ -334,8 +334,8 @@ const DirectorateManagement: React.FC = () => {
             mb: 4,
             borderRadius: '24px',
             border: '1px solid',
-            borderColor: alpha(theme.palette.divider, 0.08),
-            bgcolor: '#fff',
+            borderColor: subtleBorder(theme, 0.08),
+            bgcolor: 'background.paper',
           }}
         >
           <Stack direction="row" justifyContent="space-between" alignItems="center">
@@ -347,7 +347,7 @@ const DirectorateManagement: React.FC = () => {
                 <Chip
                   label={`${directorates.length} units`}
                   size="small"
-                  sx={{ bgcolor: alpha(BRAND_NAVY, 0.1), color: BRAND_NAVY, fontWeight: 800, borderRadius: '6px' }}
+                  sx={{ bgcolor: alpha(theme.palette.primary.main, 0.1), color: theme.palette.primary.main, fontWeight: 800, borderRadius: '6px' }}
                 />
                 <Typography variant="caption" color="text.secondary" fontWeight={600}>
                   Organizational hierarchy and access control
@@ -386,9 +386,9 @@ const DirectorateManagement: React.FC = () => {
                 elevation={0}
                 sx={{
                   border: '1px solid',
-                  borderColor: alpha(theme.palette.divider, 0.08),
+                  borderColor: subtleBorder(theme, 0.08),
                   borderRadius: '20px !important',
-                  bgcolor: '#fff',
+                  bgcolor: 'background.paper',
                   transition: 'all 0.3s ease',
                   overflow: 'hidden',
                   animation: `slideUp 0.4s ease-out ${index * 0.05}s both`,
@@ -399,13 +399,13 @@ const DirectorateManagement: React.FC = () => {
                   '&:before': { display: 'none' },
                   '&.Mui-expanded': {
                     borderColor: alpha(BRAND_ACCENT, 0.3),
-                    boxShadow: `0 12px 24px ${alpha(BRAND_NAVY, 0.06)}`,
+                    boxShadow: `0 12px 24px ${alpha(theme.palette.primary.main, 0.06)}`,
                     transform: 'scale(1.01)',
                   },
                 }}
               >
                 <AccordionSummary
-                  expandIcon={<ExpandMoreIcon sx={{ color: BRAND_NAVY }} />}
+                  expandIcon={<ExpandMoreIcon sx={{ color: theme.palette.primary.main }} />}
                   sx={{ px: 3, py: 1, '& .MuiAccordionSummary-content': { alignItems: 'center' } }}
                 >
                   <Stack direction="row" alignItems="center" gap={2} sx={{ flex: 1 }}>
@@ -414,11 +414,11 @@ const DirectorateManagement: React.FC = () => {
                         width: 44,
                         height: 44,
                         borderRadius: '12px',
-                        bgcolor: alpha(BRAND_NAVY, 0.05),
+                        bgcolor: alpha(theme.palette.primary.main, 0.05),
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: BRAND_NAVY,
+                        color: theme.palette.primary.main,
                       }}
                     >
                       <DirectorateIcon />

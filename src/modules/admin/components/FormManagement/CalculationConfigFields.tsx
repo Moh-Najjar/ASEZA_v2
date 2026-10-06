@@ -18,7 +18,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
-import { BRAND_ACCENT, BRAND_NAVY } from '../../../../core/constants/theme';
+import { BRAND_ACCENT, subtleBorder } from '../../../../core/constants/theme';
 import type { ControlType, DataType } from '../../../../core/types/admin/adminLookups';
 import type { CalculationConfigDraft, CalculationInputDraft } from './calculationConfig.utils';
 import { createCalculationInputDraft } from './calculationConfig.utils';
@@ -326,8 +326,8 @@ const CalculationConfigFields: React.FC<CalculationConfigFieldsProps> = ({
                 p: 2,
                 borderRadius: '16px',
                 border: '1px solid',
-                borderColor: alpha(theme.palette.divider, 0.12),
-                bgcolor: alpha(BRAND_NAVY, 0.02),
+                borderColor: subtleBorder(theme, 0.12),
+                bgcolor: alpha(theme.palette.primary.main, 0.02),
               }}
             >
               <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1.5 }}>

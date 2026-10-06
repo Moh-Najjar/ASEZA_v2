@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import {
   Box,
   Card,
@@ -11,6 +11,7 @@ import {
   useTheme,
   Stack,
   Avatar,
+  Link,
 } from '@mui/material';
 import {
   People as UsersIcon,
@@ -19,7 +20,11 @@ import {
   ArrowForward as ArrowIcon,
 } from '@mui/icons-material';
 import AdminLayout from '../shared/AdminLayout';
-import { BRAND_ACCENT, BRAND_NAVY } from '../../../core/constants/theme';
+import {
+  BRAND_ACCENT,
+  resolveCategoryColor,
+  type CategoryColor,
+} from '../../../core/constants/theme';
 
 // ─── Navigation cards ─────────────────────────────────────────────────────────
 
@@ -28,7 +33,8 @@ interface DashboardCard {
   description: string;
   path: string;
   icon: React.ReactNode;
-  color: string;
+  /** Resolved to a hex value per theme mode at render time. */
+  color: CategoryColor;
   count?: string;
 }
 
@@ -38,7 +44,7 @@ const CARDS: DashboardCard[] = [
     description: 'Manage user accounts, assign roles, and configure directorate access.',
     path: '/admin/users',
     icon: <UsersIcon sx={{ fontSize: 32 }} />,
-    color: BRAND_NAVY,
+    color: 'navy',
     count: 'Active Users',
   },
   {
@@ -46,7 +52,7 @@ const CARDS: DashboardCard[] = [
     description: 'Configure directorate structures and assign form access permissions.',
     path: '/admin/directorates',
     icon: <DirectoratesIcon sx={{ fontSize: 32 }} />,
-    color: '#7b1fa2',
+    color: 'purple',
     count: 'Internal Units',
   },
   {
@@ -54,7 +60,7 @@ const CARDS: DashboardCard[] = [
     description: 'Create and manage forms, fields, options, dependencies, and calculations.',
     path: '/admin/forms',
     icon: <FormsIcon sx={{ fontSize: 32 }} />,
-    color: BRAND_ACCENT,
+    color: 'teal',
     count: 'Dynamic Forms',
   },
 ];
@@ -85,16 +91,19 @@ const AdminDashboard: React.FC = () => {
 
         {/* Navigation cards */}
         <Grid container spacing={4}>
-          {CARDS.map((card, index) => (
+          {CARDS.map((card, index) => {
+            // Pick the light or dark variant of the card's category colour.
+            const color = resolveCategoryColor(card.color, theme.palette.mode);
+            return (
             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={card.path}>
               <Card
                 elevation={0}
                 sx={{
                   borderRadius: '24px',
                   border: '1px solid',
-                  borderColor: alpha(theme.palette.divider, 0.08),
+                  borderColor: alpha(theme.palette.divider, theme.palette.mode === 'dark' ? 0.9 : 0.08),
                   height: '100%',
-                  bgcolor: '#fff',
+                  bgcolor: 'background.paper',
                   transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                   position: 'relative',
                   overflow: 'hidden',
@@ -105,15 +114,15 @@ const AdminDashboard: React.FC = () => {
                   },
                   '&:hover': {
                     transform: 'translateY(-12px)',
-                    boxShadow: `0 20px 40px ${alpha(card.color, 0.12)}`,
-                    borderColor: alpha(card.color, 0.3),
+                    boxShadow: `0 20px 40px ${alpha(color, 0.12)}`,
+                    borderColor: alpha(color, 0.3),
                     '& .card-icon-bg': {
                       transform: 'scale(1.1) rotate(-5deg)',
-                      bgcolor: alpha(card.color, 0.15),
+                      bgcolor: alpha(color, 0.15),
                     },
                     '& .arrow-icon': {
                       transform: 'translateX(4px)',
-                      color: card.color,
+                      color,
                     }
                   },
                 }}
@@ -130,8 +139,8 @@ const AdminDashboard: React.FC = () => {
                           width: 64,
                           height: 64,
                           borderRadius: '18px',
-                          bgcolor: alpha(card.color, 0.1),
-                          color: card.color,
+                          bgcolor: alpha(color, 0.1),
+                          color,
                           transition: 'all 0.3s ease',
                         }}
                       >
@@ -143,8 +152,8 @@ const AdminDashboard: React.FC = () => {
                           px: 1.5,
                           py: 0.5,
                           borderRadius: '20px',
-                          bgcolor: alpha(card.color, 0.05),
-                          color: card.color,
+                          bgcolor: alpha(color, 0.05),
+                          color,
                           fontWeight: 700,
                           textTransform: 'uppercase',
                           letterSpacing: 0.5,
@@ -195,7 +204,8 @@ const AdminDashboard: React.FC = () => {
                 </CardActionArea>
               </Card>
             </Grid>
-          ))}
+            );
+          })}
         </Grid>
 
         {/* Quick Stats / Info Footer */}
@@ -204,16 +214,25 @@ const AdminDashboard: React.FC = () => {
             mt: 8,
             p: 4,
             borderRadius: '24px',
-            bgcolor: alpha(BRAND_NAVY, 0.03),
+            bgcolor: alpha(theme.palette.primary.main, 0.03),
             border: '1px dashed',
-            borderColor: alpha(BRAND_NAVY, 0.1),
+            borderColor: alpha(theme.palette.primary.main, 0.1),
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'
           }}
         >
           <Typography variant="body2" color="text.secondary" fontWeight={600}>
-            Need help? Check the <Typography component="span" sx={{ color: BRAND_ACCENT, fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}>documentation</Typography> or contact the development team.
+            Need help? Check the{' '}
+            <Link
+              component={RouterLink}
+              to="/admin/docs"
+              underline="always"
+              sx={{ color: BRAND_ACCENT, fontWeight: 700 }}
+            >
+              documentation
+            </Link>{' '}
+            or contact the development team.
           </Typography>
         </Box>
       </Box>

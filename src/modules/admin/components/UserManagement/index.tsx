@@ -53,7 +53,7 @@ import {
   useAssignDirectorateToUser,
 } from '../../../../core/hooks/admin/useAdminUsers';
 import { useAdminDirectorates } from '../../../../core/hooks/admin/useAdminDirectorates';
-import { BRAND_NAVY, BRAND_ACCENT } from '../../../../core/constants/theme';
+import { BRAND_ACCENT, subtleBorder } from '../../../../core/constants/theme';
 import type { AdminUser, UserRoleAssignment } from '../../../../core/types/admin/adminUsers';
 import type { SelectChangeEvent } from '@mui/material';
 
@@ -161,7 +161,7 @@ const ManageUserDialog: React.FC<ManageUserDialogProps> = ({ user, onClose }) =>
                       size="small"
                       onDelete={() => handleRemoveRole(assignment)}
                       sx={{
-                        bgcolor: '#fff',
+                        bgcolor: 'background.paper',
                         fontWeight: 700,
                         borderRadius: '8px',
                         border: '1px solid',
@@ -207,7 +207,7 @@ const ManageUserDialog: React.FC<ManageUserDialogProps> = ({ user, onClose }) =>
           {/* ── Directorate section ── */}
           <Box>
             <Typography variant="subtitle2" fontWeight={800} color="text.primary" gutterBottom sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-              <DirectorateIcon fontSize="small" sx={{ color: BRAND_NAVY }} />
+              <DirectorateIcon fontSize="small" sx={{ color: theme.palette.primary.main }} />
               Primary Directorate
             </Typography>
 
@@ -234,15 +234,15 @@ const ManageUserDialog: React.FC<ManageUserDialogProps> = ({ user, onClose }) =>
                 variant="outlined"
                 disabled={assignDirectorate.isPending}
                 onClick={handleAssignDirectorate}
-                sx={{ borderRadius: '12px', px: 3, fontWeight: 700, borderColor: BRAND_NAVY, color: BRAND_NAVY }}
+                sx={{ borderRadius: '12px', px: 3, fontWeight: 700, borderColor: theme.palette.primary.main, color: theme.palette.primary.main }}
               >
                 {assignDirectorate.isPending ? '...' : 'Save'}
               </Button>
             </Stack>
 
             {user.directorate !== null && (
-              <Box sx={{ mt: 2, p: 1.5, borderRadius: '12px', bgcolor: alpha(BRAND_NAVY, 0.05), border: '1px solid', borderColor: alpha(BRAND_NAVY, 0.1) }}>
-                <Typography variant="caption" fontWeight={700} color={BRAND_NAVY}>
+              <Box sx={{ mt: 2, p: 1.5, borderRadius: '12px', bgcolor: alpha(theme.palette.primary.main, 0.05), border: '1px solid', borderColor: alpha(theme.palette.primary.main, 0.1) }}>
+                <Typography variant="caption" fontWeight={700} color={theme.palette.primary.main}>
                   CURRENTLY ASSIGNED TO:
                 </Typography>
                 <Typography variant="body2" fontWeight={800} color="text.primary">
@@ -320,8 +320,8 @@ const UserManagement: React.FC = () => {
             mb: 4,
             borderRadius: '24px',
             border: '1px solid',
-            borderColor: alpha(theme.palette.divider, 0.08),
-            bgcolor: '#fff',
+            borderColor: subtleBorder(theme, 0.08),
+            bgcolor: 'background.paper',
           }}
         >
           <Stack
@@ -338,7 +338,7 @@ const UserManagement: React.FC = () => {
                 <Chip
                   label={data !== undefined ? `${data.total} users` : '...'}
                   size="small"
-                  sx={{ bgcolor: alpha(BRAND_NAVY, 0.1), color: BRAND_NAVY, fontWeight: 800, borderRadius: '6px' }}
+                  sx={{ bgcolor: alpha(theme.palette.primary.main, 0.1), color: theme.palette.primary.main, fontWeight: 800, borderRadius: '6px' }}
                 />
                 <Typography variant="caption" color="text.secondary" fontWeight={600}>
                   System-wide user accounts
@@ -406,8 +406,8 @@ const UserManagement: React.FC = () => {
           sx={{
             borderRadius: '24px',
             border: '1px solid',
-            borderColor: alpha(theme.palette.divider, 0.08),
-            bgcolor: '#fff',
+            borderColor: subtleBorder(theme, 0.08),
+            bgcolor: 'background.paper',
             overflow: 'hidden',
           }}
         >
@@ -453,7 +453,7 @@ const UserManagement: React.FC = () => {
                         >
                           <TableCell sx={{ py: 2.5 }}>
                             <Stack direction="row" alignItems="center" gap={2}>
-                              <Avatar sx={{ width: 40, height: 40, bgcolor: alpha(BRAND_NAVY, 0.1), color: BRAND_NAVY, fontWeight: 800, fontSize: 15 }}>
+                              <Avatar sx={{ width: 40, height: 40, bgcolor: alpha(theme.palette.primary.main, 0.1), color: theme.palette.primary.main, fontWeight: 800, fontSize: 15 }}>
                                 {user.fullNameEn.charAt(0)}
                               </Avatar>
                               <Box>
@@ -526,7 +526,7 @@ const UserManagement: React.FC = () => {
                 rowsPerPageOptions={[10, 20, 50]}
                 sx={{
                   borderTop: '1px solid',
-                  borderColor: alpha(theme.palette.divider, 0.05),
+                  borderColor: subtleBorder(theme, 0.05),
                   '.MuiTablePagination-toolbar': { minHeight: 64 }
                 }}
               />

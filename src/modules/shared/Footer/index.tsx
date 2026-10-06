@@ -13,6 +13,7 @@ import { useTheme } from '@mui/material/styles';
 import Logo from '../../../assets/Logo.svg';
 import { USEFUL_LINKS, CONTACT_ITEMS, SOCIAL_LINKS, BOTTOM_LINKS } from './footerLinks';
 import { useAuth } from '../../../core/context/AuthContext';
+import { BRAND_PANEL_DARK } from '../../../core/constants/theme';
 
 /**
  * Strongly-typed props for the shared Footer component.
@@ -49,7 +50,9 @@ const Footer: React.FC<FooterProps> = ({ sx }) => {
         position: 'relative',
         left: '50%',
         transform: 'translateX(-50%)',
-        backgroundColor: theme.palette.primary.main,
+        // Dark mode uses the deep brand panel; the lifted primary blue would glare as a large fill.
+        backgroundColor: theme.palette.mode === 'dark' ? BRAND_PANEL_DARK : theme.palette.primary.main,
+        borderTop: theme.palette.mode === 'dark' ? `1px solid ${theme.palette.divider}` : 'none',
         color: 'white',
         pt: 8,
         pb: 4,

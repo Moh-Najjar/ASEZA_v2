@@ -10,6 +10,7 @@ const FormManagement = lazy(() => import('../../../modules/admin/components/Form
 const FormDetail = lazy(
   () => import('../../../modules/admin/components/FormManagement/FormDetail'),
 );
+const AdminDocumentation = lazy(() => import('../../../modules/admin/documentation'));
 
 /** Protected admin routes — accessible only when authenticated as admin. */
 export const adminProtectedRoutes: RouteObject[] = [
@@ -32,5 +33,9 @@ export const adminProtectedRoutes: RouteObject[] = [
   {
     path: '/admin/forms/:formId',
     element: <FormDetail />,
+  },
+  {
+    path: '/admin/docs',
+    element: <AdminDocumentation />,
   },
 ];

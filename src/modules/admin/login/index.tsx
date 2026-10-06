@@ -31,6 +31,8 @@ import {
   BRAND_NAVY,
   BRAND_NAVY_LIGHT,
   BRAND_ACCENT,
+  BRAND_PANEL_DARK,
+  BRAND_PANEL_DARK_LIGHT,
 } from '../../../core/constants/theme';
 
 // ─── Admin Login page ─────────────────────────────────────────────────────────
@@ -39,6 +41,7 @@ const AdminLogin: React.FC = () => {
   const navigate = useNavigate();
   const { adminLogin, isAdminLoginPending, adminLoginError } = useAdminAuth();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const [email, setEmail] = useState('admin@aseza.com');
   const [password, setPassword] = useState('123456789');
@@ -81,7 +84,7 @@ const AdminLogin: React.FC = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#fff', overflow: 'hidden', position: 'relative' }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.paper', overflow: 'hidden', position: 'relative' }}>
       {/* Global Back Button */}
       <Button
         component={RouterLink}
@@ -116,7 +119,10 @@ const AdminLogin: React.FC = () => {
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          background: `linear-gradient(135deg, ${BRAND_NAVY} 0%, ${BRAND_NAVY_LIGHT} 100%)`,
+          // Deep navy panel in dark mode keeps the branding without glare.
+          background: isDark
+            ? `linear-gradient(135deg, ${BRAND_PANEL_DARK} 0%, ${BRAND_PANEL_DARK_LIGHT} 100%)`
+            : `linear-gradient(135deg, ${BRAND_NAVY} 0%, ${BRAND_NAVY_LIGHT} 100%)`,
           position: 'relative',
           px: 8,
           color: '#fff',
@@ -200,14 +206,14 @@ const AdminLogin: React.FC = () => {
           justifyContent: 'center',
           alignItems: 'center',
           p: { xs: 4, sm: 8 },
-          bgcolor: '#f8fafc',
+          bgcolor: isDark ? 'background.default' : '#f8fafc',
         }}
       >
         <Fade in timeout={800}>
           <Box sx={{ width: '100%', maxWidth: 420 }}>
             {/* Mobile Logo */}
             <Box sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'center', mb: 4 }}>
-              <Avatar sx={{ bgcolor: BRAND_NAVY, width: 56, height: 56 }}>
+              <Avatar sx={{ bgcolor: theme.palette.primary.main, width: 56, height: 56 }}>
                 <AdminIcon />
               </Avatar>
             </Box>
@@ -252,9 +258,9 @@ const AdminLogin: React.FC = () => {
                     InputProps={{
                       sx: {
                         borderRadius: '16px',
-                        bgcolor: '#fff',
+                        bgcolor: 'background.paper',
                         fontWeight: 700,
-                        '& fieldset': { borderColor: alpha(theme.palette.divider, 0.1) },
+                        '& fieldset': { borderColor: alpha(theme.palette.divider, isDark ? 1 : 0.1) },
                       }
                     }}
                   />
@@ -275,9 +281,9 @@ const AdminLogin: React.FC = () => {
                     InputProps={{
                       sx: {
                         borderRadius: '16px',
-                        bgcolor: '#fff',
+                        bgcolor: 'background.paper',
                         fontWeight: 700,
-                        '& fieldset': { borderColor: alpha(theme.palette.divider, 0.1) },
+                        '& fieldset': { borderColor: alpha(theme.palette.divider, isDark ? 1 : 0.1) },
                       },
                       endAdornment: (
                         <InputAdornment position="end">
@@ -302,10 +308,10 @@ const AdminLogin: React.FC = () => {
                     fontWeight: 800,
                     fontSize: 16,
                     textTransform: 'none',
-                    bgcolor: BRAND_NAVY,
+                    bgcolor: theme.palette.primary.main,
                     transition: 'all 0.3s ease',
                     mt: 2,
-                    '&:hover': { bgcolor: BRAND_NAVY_LIGHT, transform: 'translateY(-2px)', boxShadow: '0 8px 24px rgba(0,0,0,0.15)' }
+                    '&:hover': { bgcolor: theme.palette.primary.light, transform: 'translateY(-2px)', boxShadow: '0 8px 24px rgba(0,0,0,0.15)' }
                   }}
                 >
                   {isAdminLoginPending ? <CircularProgress size={24} color="inherit" /> : 'Enter Portal'}

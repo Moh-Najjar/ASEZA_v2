@@ -32,7 +32,7 @@ import {
   useRemoveRow,
 } from '../../../../core/hooks/admin/useAdminForms';
 import { useAdminControlTypes, useAdminDataTypes, useAdminLookupTypes } from '../../../../core/hooks/admin/useAdminLookups';
-import { BRAND_ACCENT, BRAND_NAVY } from '../../../../core/constants/theme';
+import { BRAND_ACCENT, subtleBorder } from '../../../../core/constants/theme';
 import { ControlKeys } from '../../../../core/enums/control-keys.enum';
 import type { AdminFormField, FieldColumn, FieldRow } from '../../../../core/types/admin/adminForms';
 import { isLookupRequired, resolveControlType } from './controlFieldRequirements';
@@ -256,7 +256,7 @@ const ManageTableStructureDialog: React.FC<ManageTableStructureDialogProps> = ({
                       p: 1.5,
                       borderRadius: '12px',
                       border: '1px solid',
-                      borderColor: alpha(theme.palette.divider, 0.12),
+                      borderColor: subtleBorder(theme, 0.12),
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
@@ -314,7 +314,7 @@ const ManageTableStructureDialog: React.FC<ManageTableStructureDialogProps> = ({
               )}
             </Stack>
 
-            <Paper elevation={0} sx={{ p: 2, borderRadius: '16px', bgcolor: alpha(BRAND_NAVY, 0.03), border: '1px dashed', borderColor: 'divider' }}>
+            <Paper elevation={0} sx={{ p: 2, borderRadius: '16px', bgcolor: alpha(theme.palette.primary.main, 0.03), border: '1px dashed', borderColor: 'divider' }}>
               <Stack spacing={2}>
                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                   <TextField label="Column Key" value={columnKey} onChange={(e) => { setColumnKey(e.target.value); setColumnErrors((p) => ({ ...p, columnKey: '' })); }} error={Boolean(columnErrors.columnKey)} helperText={columnErrors.columnKey} fullWidth size="small" required InputProps={{ sx: textFieldSx }} />
@@ -375,7 +375,7 @@ const ManageTableStructureDialog: React.FC<ManageTableStructureDialogProps> = ({
               <Stack spacing={1.5} sx={{ mb: 2 }}>
                 {rows.length > 0 ? (
                   rows.map((row: FieldRow) => (
-                    <Paper key={row.rowId} elevation={0} sx={{ p: 1.5, borderRadius: '12px', border: '1px solid', borderColor: alpha(theme.palette.divider, 0.12), display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Paper key={row.rowId} elevation={0} sx={{ p: 1.5, borderRadius: '12px', border: '1px solid', borderColor: subtleBorder(theme, 0.12), display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       {editingRowId === row.rowId ? (
                         /* Inline editor: labels + Required (rows carry the flag in RAW_TABLE) */
                         <StructureItemEditor
@@ -416,7 +416,7 @@ const ManageTableStructureDialog: React.FC<ManageTableStructureDialogProps> = ({
                 )}
               </Stack>
 
-              <Paper elevation={0} sx={{ p: 2, borderRadius: '16px', bgcolor: alpha(BRAND_NAVY, 0.03), border: '1px dashed', borderColor: 'divider' }}>
+              <Paper elevation={0} sx={{ p: 2, borderRadius: '16px', bgcolor: alpha(theme.palette.primary.main, 0.03), border: '1px dashed', borderColor: 'divider' }}>
                 <Stack spacing={2}>
                   <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                     <TextField label="Row Key" value={rowKey} onChange={(e) => { setRowKey(e.target.value); setRowErrors((p) => ({ ...p, rowKey: '' })); }} error={Boolean(rowErrors.rowKey)} helperText={rowErrors.rowKey} fullWidth size="small" required InputProps={{ sx: textFieldSx }} />
