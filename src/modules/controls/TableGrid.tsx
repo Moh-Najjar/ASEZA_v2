@@ -198,8 +198,8 @@ const TableGrid: React.FC<TableGridProps> = ({ formField, formMethods, hideHelpe
                   sx={{ fontWeight: "bold", whiteSpace: "nowrap" }}
                 >
                   {loc(col.labelEn, col.labelAr)}
-                  {/* Required marker driven by the column's isRequired flag */}
-                  {isTableColumnRequired(col) && (
+                  {/* Required marker driven by the column's isRequired flag, hidden when the table is locked */}
+                  {!isReadOnly && isTableColumnRequired(col) && (
                     <Box component="span" sx={{ color: "error.main", ml: 0.5 }}>
                       *
                     </Box>
@@ -228,8 +228,8 @@ const TableGrid: React.FC<TableGridProps> = ({ formField, formMethods, hideHelpe
                 {columns.map((col) => {
                   /** Full RHF nested path: e.g. "KPI_0050.0.FOOD_TYPE" */
                   const fieldName = `${formField.fieldKey}.${rowIndex}.${col.columnKey}`;
-                  /** Required comes from the column's own isRequired flag */
-                  const isRequired = isTableColumnRequired(col);
+                  /** Required comes from the column's own isRequired flag, unless the table is locked */
+                  const isRequired = !isReadOnly && isTableColumnRequired(col);
 
                   /** Wrap the column as a FormField so existing controls work as-is */
                   const cellField = columnToFormField(
@@ -272,7 +272,8 @@ const TableGrid: React.FC<TableGridProps> = ({ formField, formMethods, hideHelpe
                           formMethods={formMethods}
                           hideLabel={true}
                           size="small"
-                          extraValidate={extraValidate}
+                          /** Locked tables cannot be edited, so skip the live uniqueness check */
+                          extraValidate={isReadOnly ? undefined : extraValidate}
                         />
                       ) : Component ? (
                         <Component

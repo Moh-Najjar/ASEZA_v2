@@ -57,6 +57,16 @@ const resolveLabelCellName = (
   };
 };
 
+/**
+ * True when the parent RAW_TABLE field is locked, either by its own read-only
+ * flag or because a KPI next-submission date is set. Every cell inherits this.
+ */
+const isParentFieldLocked = (parentField: FormField): boolean => {
+  const kpiDateEn = parentField.kpiNextSubmissionDateEn ?? "";
+  const kpiDateAr = parentField.kpiNextSubmissionDateAr ?? "";
+  return parentField.isReadOnly || kpiDateEn !== "" || kpiDateAr !== "";
+};
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Helper: build a synthetic FormField from a GridCell so existing control
 // components (InputField, DropDown, etc.) can render each cell unchanged.
@@ -72,6 +82,9 @@ const gridCellToFormField = (
     ? resolveLabelCellName(cell, parentField)
     : null;
 
+  /** A locked parent makes every cell read-only and never required */
+  const isLocked = isParentFieldLocked(parentField);
+
   return {
     fieldId: 0,
     formId: 0,
@@ -81,10 +94,10 @@ const gridCellToFormField = (
     labelAr: labelCellName !== null ? labelCellName.labelAr : cell.columnLabelAr,
     dataType: cell.dataType,
     controlType: cell.controlType,
-    // Required comes from the row's isRequired flag (not the parent field)
-    isRequired: isRawTableCellRequired(cell, parentField),
+    // Required comes from the row's isRequired flag, unless the parent is locked
+    isRequired: !isLocked && isRawTableCellRequired(cell, parentField),
     displayOrder: cell.column,
-    isReadOnly: parentField.isReadOnly || cell.isReadOnly,
+    isReadOnly: isLocked || cell.isReadOnly,
     isVisible: cell.isVisible,
     lookupType: cell.lookupType,
     placeholderEn: cell.placeholderEn,
@@ -142,7 +155,7 @@ const RawTable: React.FC<RawTableProps> = ({
     kpiNextSubmissionDate !== null && kpiNextSubmissionDate !== "";
 
   /** The table is read-only either by its own flag or when a next-submission date is set */
-  const isTableReadOnly = formField.isReadOnly || hasNextSubmissionDate;
+  const isTableReadOnly = isParentFieldLocked(formField);
 
   /** Column definitions are taken directly from formField.columns */
   const columns = formField.columns ?? [];
@@ -313,8 +326,8 @@ const RawTable: React.FC<RawTableProps> = ({
                     }}
                   >
                     {loc(row.rowLabelEn, row.rowLabelAr)}
-                    {/* Required marker driven by the row's isRequired flag */}
-                    {(formField.rows ?? []).some(
+                    {/* Required marker driven by the row's isRequired flag, hidden when the table is locked */}
+                    {!isTableReadOnly && (formField.rows ?? []).some(
                       (rowDef) =>
                         rowDef.rowKey === row.rowKey && rowDef.isRequired
                     ) && (
