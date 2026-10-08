@@ -178,9 +178,8 @@ const RequestDetail: React.FC = () => {
     navigate("/my-requests");
   };
 
-  const handleEdit = (_submissionId: number): void => {
-    // Navigate to the edit page once available (not yet implemented)
-    navigate(`/my-requests/${_submissionId}/edit`);
+  const handleEdit = (editSubmissionId: number): void => {
+    navigate(`/my-requests/${editSubmissionId}/edit`);
   };
 
   // ── Invalid param guard ───────────────────────────────────────────────────

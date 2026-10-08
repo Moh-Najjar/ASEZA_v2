@@ -15,16 +15,34 @@ import Actions from "./Actions";
 import Header from "./Header";
 import styles from "./Stepper.module.css";
 import { useDeviceType } from "../../../core/hooks/useDeviceType";
+import type { FormField } from "../../../core/types/FormField";
+import type { GetSubmissionDetailsResponse } from "../../../core/types/getSubmissionDetailsResponse";
+import { buildFormDefaultValues } from "../../my-requests/utils/buildFormDefaultValues";
 
 interface StepperProps {
   onStepChange?: (step: number, total: number) => void;
+  /** When set, the stepper is prefilled with this submission and saves via PUT */
+  editSubmission?: GetSubmissionDetailsResponse;
 }
 
-const Stepper: React.FC<StepperProps> = ({ onStepChange }) => {
+const Stepper: React.FC<StepperProps> = ({ onStepChange, editSubmission }) => {
   const { t } = useLocale();
   const { i18n } = useTranslation();
 
-  const { data: formFieldsData, isError, error, isLoading, isSuccess } = useFormFields();
+  const { data: liveFormFields, isError, error, isLoading, isSuccess } = useFormFields();
+
+  /** In edit mode, clear next-submission dates: controls treat them as a lock */
+  const formFieldsData = useMemo(
+    (): FormField[] | undefined =>
+      editSubmission === undefined
+        ? liveFormFields
+        : liveFormFields?.map((field) => ({
+            ...field,
+            kpiNextSubmissionDateEn: null,
+            kpiNextSubmissionDateAr: null,
+          })),
+    [editSubmission, liveFormFields]
+  );
 
   /** Number of data-entry pages derived from the live API response */
   const dataStepCount = useMemo(
@@ -42,6 +60,20 @@ const Stepper: React.FC<StepperProps> = ({ onStepChange }) => {
     mode: "onChange",
     shouldUnregister: false,
   });
+
+  // Prefill the form once per submission, after field definitions are ready
+  const prefilledSubmissionIdRef = useRef<number | undefined>(undefined);
+  useEffect(() => {
+    if (
+      editSubmission === undefined ||
+      formFieldsData === undefined ||
+      prefilledSubmissionIdRef.current === editSubmission.submissionId
+    ) {
+      return;
+    }
+    prefilledSubmissionIdRef.current = editSubmission.submissionId;
+    methods.reset(buildFormDefaultValues(editSubmission.fieldValues));
+  }, [editSubmission, formFieldsData, methods]);
 
   const prevLanguageRef = useRef(i18n.language);
   useEffect(() => {
@@ -83,7 +115,7 @@ const Stepper: React.FC<StepperProps> = ({ onStepChange }) => {
     isSubmitting,
     isSuccessDialogOpen,
     handleSuccessDialogConfirm,
-  } = useStepper(attributePagesTitles, methods, formFieldsData ?? []);
+  } = useStepper(attributePagesTitles, methods, formFieldsData ?? [], { editSubmission });
 
   const isReviewStep = dataStepCount > 0 && activeStep === reviewStepIndex;
 

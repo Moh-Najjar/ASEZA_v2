@@ -4,8 +4,15 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import { useSubmitForm, MY_SUBMISSIONS_QUERY_KEY, FORM_FIELDS_QUERY_KEY } from "./useFormApi";
+import {
+  useSubmitForm,
+  useUpdateSubmission,
+  MY_SUBMISSIONS_QUERY_KEY,
+  FORM_FIELDS_QUERY_KEY,
+  SUBMISSION_DETAILS_QUERY_KEY,
+} from "./useFormApi";
 import { SubmitFormRequest } from "../types/submitFormRequest";
+import type { GetSubmissionDetailsResponse } from "../types/getSubmissionDetailsResponse";
 import { mapFormDataToFieldValues } from "../utils/formDataMapper";
 import { FormField } from "../types/FormField";
 import { useLocale } from "./useLocale";
@@ -23,6 +30,11 @@ interface StepperPage {
   UIViewAlias: string | null;
 }
 
+interface UseStepperOptions {
+  /** When set, the stepper updates this submission instead of creating a new one */
+  editSubmission?: GetSubmissionDetailsResponse;
+}
+
 // ---------------------------------------------------------------------------
 // Hook
 // ---------------------------------------------------------------------------
@@ -30,13 +42,17 @@ interface StepperPage {
 export const useStepper = (
   pages: StepperPage[],
   formMethods: UseFormReturn<Record<string, unknown>>,
-  formFieldsData: FormField[]
+  formFieldsData: FormField[],
+  options?: UseStepperOptions
 ) => {
+  const editSubmission = options?.editSubmission;
   const [activeStep, setActiveStep] = useState(0);
   const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { mutate: submitForm, isPending: isSubmitting } = useSubmitForm();
+  const { mutate: submitForm, isPending: isCreating } = useSubmitForm();
+  const { mutate: updateSubmission, isPending: isUpdating } = useUpdateSubmission();
+  const isSubmitting = isCreating || isUpdating;
   const { t, loc } = useLocale();
   const { authSession } = useAuth();
 
@@ -127,6 +143,38 @@ export const useStepper = (
    * Maps the raw field values to the API request shape and fires the mutation.
    */
   const handleSubmit = async (formData: Record<string, unknown>): Promise<void> => {
+    // Edit mode: keep the original submission's metadata and replace only the values
+    if (editSubmission !== undefined) {
+      updateSubmission(
+        {
+          submissionId: editSubmission.submissionId,
+          data: {
+            formId: editSubmission.formId,
+            directorateId: editSubmission.directorateId,
+            reportingDate: editSubmission.reportingDate.split("T")[0],
+            periodYear: editSubmission.periodYear,
+            periodMonth: editSubmission.periodMonth,
+            kpiId: editSubmission.kpiId,
+            notes: editSubmission.notes ?? "",
+            fieldValues: mapFormDataToFieldValues(formData, formFieldsData),
+          },
+        },
+        {
+          onSuccess: async () => {
+            void queryClient.invalidateQueries({ queryKey: [MY_SUBMISSIONS_QUERY_KEY] });
+            // Wait for fresh details so the detail page opens with the saved values
+            await queryClient.invalidateQueries({
+              queryKey: [SUBMISSION_DETAILS_QUERY_KEY, editSubmission.submissionId],
+              refetchType: "all",
+            });
+            toast.success(t("editRequest.success"));
+            navigate(`/my-requests/${editSubmission.submissionId}`, { replace: true });
+          },
+        }
+      );
+      return;
+    }
+
     const request: SubmitFormRequest = {
       formId: authSession?.kpiFormId ?? 0,
       directorateId: authSession?.directorateId ?? 0,

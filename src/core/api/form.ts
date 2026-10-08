@@ -5,7 +5,7 @@ import type { GetSubmissionDetailsRequest } from '../types/getSubmissionDetailsR
 import type { GetMySubmissionsResponse } from '../types/getMySubmissionsResponse';
 import type { GetMySubmissionsRequest } from '../types/getMySubmissionsRequest';
 import type { SubmitFormResponse } from '../types/submitFormResponse';
-import type { SubmitFormRequest } from '../types/submitFormRequest';
+import type { SubmitFormRequest, UpdateSubmissionRequest } from '../types/submitFormRequest';
 import type { LoginResponse } from '../types/loginResponse';
 import { AUTH_STORAGE_KEY } from '../context/AuthContext';
 import type { FormField } from '../types/FormField';
@@ -73,6 +73,17 @@ export const getSubmissionDetails = async (
 ): Promise<GetSubmissionDetailsResponse> => {
   return await http.get<GetSubmissionDetailsResponse>(
     `${BASE_URL}/submissions/${params.submissionId}/detail`,
+    getAuthHeaders(),
+  );
+};
+
+// Updates an existing submission - PUT /submissions/{submissionId}
+export const updateSubmission = async (
+  params: UpdateSubmissionRequest,
+): Promise<SubmitFormResponse> => {
+  return await http.put<SubmitFormRequest, SubmitFormResponse>(
+    `${BASE_URL}/submissions/${params.submissionId}`,
+    params.data,
     getAuthHeaders(),
   );
 };

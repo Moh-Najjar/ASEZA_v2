@@ -15,7 +15,6 @@ import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
-import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { alpha, useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
@@ -169,10 +168,6 @@ const RequestDetailDrawer: React.FC<RequestDetailDrawerProps> = ({
   const formName     = detail ? (isAr ? detail.formNameAr     : detail.formNameEn)     : '';
   const directorate  = detail ? (isAr ? detail.directorateNameAr : detail.directorateNameEn) : '';
   const kpiCount     = detail ? detail.fieldValues.length : 0;
-  const canEdit      = detail
-    ? (detail.submissionStatus === 'Draft' || detail.submissionStatus === 'Returned')
-    : false;
-
   // Period label: "April 2026" style
   const periodLabel  = detail
     ? new Date(detail.reportingDate).toLocaleDateString(isAr ? 'ar-JO' : 'en-GB', {
@@ -348,39 +343,34 @@ const RequestDetailDrawer: React.FC<RequestDetailDrawerProps> = ({
           bgcolor: 'background.paper',
           flexShrink: 0,
         }}>
-        <Tooltip title={canEdit ? '' : t('myRequests.detail.cannotEditTooltip')} arrow>
-          <span>
-            <Box
-              component="button"
-              disabled={!canEdit}
-              onClick={() => {
-                if (submissionId !== null && canEdit && onEdit !== undefined) {
-                  onEdit(submissionId);
-                }
-              }}
-              sx={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 0.75,
-                px: 2.5,
-                py: 1,
-                borderRadius: 2,
-                border: '1px solid',
-                borderColor: canEdit ? 'primary.main' : 'divider',
-                bgcolor: 'transparent',
-                color: canEdit ? 'primary.main' : 'text.disabled',
-                fontWeight: 700,
-                fontSize: '0.875rem',
-                cursor: canEdit ? 'pointer' : 'not-allowed',
-                transition: 'all 0.2s ease',
-                fontFamily: 'inherit',
-                '&:hover': canEdit ? { bgcolor: alpha(theme.palette.primary.main, 0.08) } : {},
-              }}>
-              <EditOutlinedIcon sx={{ fontSize: 16 }} />
-              {t('myRequests.actions.edit')}
-            </Box>
-          </span>
-        </Tooltip>
+        <Box
+          component="button"
+          onClick={() => {
+            if (submissionId !== null && onEdit !== undefined) {
+              onEdit(submissionId);
+            }
+          }}
+          sx={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 0.75,
+            px: 2.5,
+            py: 1,
+            borderRadius: 2,
+            border: '1px solid',
+            borderColor: 'primary.main',
+            bgcolor: 'transparent',
+            color: 'primary.main',
+            fontWeight: 700,
+            fontSize: '0.875rem',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+            fontFamily: 'inherit',
+            '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.08) },
+          }}>
+          <EditOutlinedIcon sx={{ fontSize: 16 }} />
+          {t('myRequests.actions.edit')}
+        </Box>
 
         <Box
           component="button"

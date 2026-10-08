@@ -48,3 +48,9 @@ export interface SubmitFormRequest {
   /** Map of KPI field keys to their submitted values */
   fieldValues: Record<string, FieldValue>;
 }
+
+/** Parameters for PUT /submissions/{submissionId}; the body matches the create payload */
+export interface UpdateSubmissionRequest {
+  submissionId: number;
+  data: SubmitFormRequest;
+}

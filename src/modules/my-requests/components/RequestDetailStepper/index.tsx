@@ -4,13 +4,10 @@ import Box from "@mui/material/Box";
 import { FormProvider, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-import { ControlKeys } from "../../../../core/enums/control-keys.enum";
 import { useLocale } from "../../../../core/hooks/useLocale";
-import type {
-  FieldValue,
-  GetSubmissionDetailsResponse,
-} from "../../../../core/types/getSubmissionDetailsResponse";
+import type { GetSubmissionDetailsResponse } from "../../../../core/types/getSubmissionDetailsResponse";
 import { FIELDS_PER_PAGE } from "../../../../core/utils/groupAttributesByPage";
+import { buildFormDefaultValues } from "../../utils/buildFormDefaultValues";
 import Header from "../../../new-request/Stepper/Header";
 import styles from "../../../new-request/Stepper/Stepper.module.css";
 import ViewActions from "./ViewActions";
@@ -31,36 +28,6 @@ interface RequestDetailStepperProps {
   /** Fires on every step change so the parent can track progress (e.g. progress bar) */
   onStepChange?: (current: number, total: number) => void;
 }
-
-/**
- * Converts the API's saved fieldValues into react-hook-form defaultValues.
- *
- * - TABLE fields: the fieldArray reads from defaultValues[fieldKey] as an
- *   array of column-keyed objects, matching the shape TableGrid produces.
- * - MULTISELECT fields: RHF expects an array of selected option values.
- * - All other fields: use the scalar string value (or empty string).
- */
-const buildDefaultValues = (fields: FieldValue[]): Record<string, unknown> =>
-  fields.reduce<Record<string, unknown>>((acc, fv) => {
-    if (fv.controlType.controlKey === ControlKeys.Table) {
-      acc[fv.fieldKey] = (fv.tableValues ?? []).map((row) => row.columns);
-    } else if (fv.controlType.controlKey === ControlKeys.RawTable) {
-      // RAW_TABLE RHF shape: { [rowKey]: { [columnKey]: value } }
-      const rawTableRows = fv.rawTableValues ?? [];
-      acc[fv.fieldKey] = rawTableRows.reduce<Record<string, Record<string, string | number>>>(
-        (rowAcc, row) => {
-          rowAcc[row.rowKey] = row.columns;
-          return rowAcc;
-        },
-        {},
-      );
-    } else if (fv.controlType.controlKey === ControlKeys.Multiselect) {
-      acc[fv.fieldKey] = fv.multiSelectValues ?? [];
-    } else {
-      acc[fv.fieldKey] = fv.value ?? "";
-    }
-    return acc;
-  }, {});
 
 const RequestDetailStepper: React.FC<RequestDetailStepperProps> = ({
   detail,
@@ -102,7 +69,7 @@ const RequestDetailStepper: React.FC<RequestDetailStepperProps> = ({
   );
 
   const methods = useForm<Record<string, unknown>>({
-    defaultValues: detail !== undefined ? buildDefaultValues(detail.fieldValues) : {},
+    defaultValues: detail !== undefined ? buildFormDefaultValues(detail.fieldValues) : {},
     mode: "onChange",
   });
 
@@ -115,7 +82,7 @@ const RequestDetailStepper: React.FC<RequestDetailStepperProps> = ({
       loadedSubmissionIdRef.current !== detail.submissionId
     ) {
       loadedSubmissionIdRef.current = detail.submissionId;
-      methods.reset(buildDefaultValues(detail.fieldValues));
+      methods.reset(buildFormDefaultValues(detail.fieldValues));
     }
   }, [detail, methods]);
 
@@ -179,6 +146,7 @@ const RequestDetailStepper: React.FC<RequestDetailStepperProps> = ({
             onClose={onClose}
             onApprove={handleApprove}
             onReject={handleReject}
+            onEdit={detail !== undefined ? () => onEdit?.(detail.submissionId) : undefined}
             requestStatus={mapApiStatus(detail?.submissionStatus ?? '')}
           />
         </Box>

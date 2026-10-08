@@ -35,6 +35,7 @@ const Breadcrumbs: React.FC = () => {
     'my-requests': 'nav.my-requests',
     'new-request': 'newRequest.pageTitle',
     new: 'newRequest.pageTitle',
+    edit: 'editRequest.breadcrumb',
     profile: 'nav.profile',
     login: 'nav.login',
     home: 'nav.home',

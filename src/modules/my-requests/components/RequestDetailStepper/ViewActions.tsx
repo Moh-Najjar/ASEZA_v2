@@ -21,7 +21,8 @@ interface ViewActionsProps {
 
   requestStatus: RequestStatus;
 
-  /** Whether the submission can be edited (Draft or Returned status only) */
+  /** Opens the edit page for this submission */
+  onEdit?: () => void;
   onBack: () => void;
   onNext: () => void;
   /** Navigates the user back to the My Requests list */
@@ -39,6 +40,7 @@ const ViewActions: React.FC<ViewActionsProps> = ({
   onApprove,
   onReject,
   requestStatus,
+  onEdit,
 }) => {
   const { t, isAr } = useLocale();
   const isLastStep = activeStep === stepsCount - 1;
@@ -105,6 +107,15 @@ const ViewActions: React.FC<ViewActionsProps> = ({
             </span>
           </Tooltip>
         </>}
+
+        <Button
+          onClick={onEdit}
+          variant="outlined"
+          startIcon={<EditOutlinedIcon />}
+          sx={{ borderRadius: "8px", px: 3, textTransform: "none", fontWeight: 600 }}
+        >
+          {t("myRequests.actions.edit")}
+        </Button>
 
         {isLastStep ? (
           <Button

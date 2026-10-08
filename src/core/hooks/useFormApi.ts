@@ -1,10 +1,10 @@
-import { getDropdownListValues, getFormFields, getMySubmissions, getSubmissionDetails, submitForm } from "../api/form";
+import { getDropdownListValues, getFormFields, getMySubmissions, getSubmissionDetails, submitForm, updateSubmission } from "../api/form";
 import type { GetSubmissionDetailsResponse } from "../types/getSubmissionDetailsResponse";
 import { GetDropdownListValuesResponse } from "../types/getDropdownListValuesResponse";
 import type { GetMySubmissionsResponse } from "../types/getMySubmissionsResponse";
 import type { GetMySubmissionsRequest } from "../types/getMySubmissionsRequest";
 import { SubmitFormResponse } from "../types/submitFormResponse";
-import { SubmitFormRequest } from "../types/submitFormRequest";
+import { SubmitFormRequest, UpdateSubmissionRequest } from "../types/submitFormRequest";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import type { FormField } from "../types/FormField";
 import { useAuth } from "../context/AuthContext";
@@ -64,6 +64,15 @@ export const useSubmitForm = () => {
         mutationKey: SUBMIT_FORM_MUTATION_KEY,
         mutationFn: async (data: SubmitFormRequest): Promise<SubmitFormResponse> => {
             return await submitForm(data);
+        },
+        retry: 0,
+    });
+};
+
+export const useUpdateSubmission = () => {
+    return useMutation<SubmitFormResponse, Error, UpdateSubmissionRequest>({
+        mutationFn: async (params: UpdateSubmissionRequest): Promise<SubmitFormResponse> => {
+            return await updateSubmission(params);
         },
         retry: 0,
     });

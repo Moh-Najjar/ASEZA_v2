@@ -18,6 +18,7 @@ import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import HomeWorkIcon from '@mui/icons-material/HomeWork';
 import HeroBanner from '../shared/HeroBanner';
 import { useAuth } from '../../core/context/AuthContext';
@@ -401,7 +402,7 @@ const Home: React.FC = () => {
                 </Typography>
                 <Button
                   size="small"
-                  endIcon={<ArrowForwardIcon sx={{ fontSize: '0.9rem' }} />}
+                  endIcon={isAr ? <ArrowBackIcon sx={{ fontSize: '0.9rem' }} /> : <ArrowForwardIcon sx={{ fontSize: '0.9rem' }} />}
                   onClick={handleMyRequests}
                   sx={{ textTransform: 'none', fontWeight: 600, fontSize: '0.8rem' }}>
                   {t('home.recent.viewAll')}

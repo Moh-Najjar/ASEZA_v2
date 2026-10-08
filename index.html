@@ -7,24 +7,10 @@
     <title>Aseza</title>
 
     <!--
-      Detect the saved theme preference BEFORE the stylesheet is parsed so the
-      splash background never flickers.  Mirrors the logic in ThemeContext.tsx:
-        1. localStorage  →  2. OS prefers-color-scheme  →  3. default (light)
+      Blocking (non-module) script so the theme is applied before first paint.
+      Lives in public/ so the CSP can stay script-src 'self'.
     -->
-    <script>
-      (function () {
-        var stored;
-        try { stored = localStorage.getItem('theme-mode'); } catch (_) { /* ignore */ }
-        var prefersDark =
-          !stored &&
-          typeof window !== 'undefined' &&
-          window.matchMedia &&
-          window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (stored === 'dark' || prefersDark) {
-          document.documentElement.setAttribute('data-theme', 'dark');
-        }
-      })();
-    </script>
+    <script src="/theme-init.js"></script>
 
     <style>
       /* ── Reset ────────────────────────────────────────────────────────────── */
